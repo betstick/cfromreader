@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.hpp"
 
-#ifndef DCX_FORMAT
-#define DCX_FORMAT
+/*#ifndef DCX_FORMAT
+#define DCX_FORMAT*/
 
 namespace cfr {
 	class DCX 
@@ -32,8 +32,8 @@ namespace cfr {
 		char dca[4]; //assert DCA\0
 		int32_t dcaSize; //from before "DCA" to dca end //not sure what this means?
 
-		void read(std::string assetName, ){};
+		//void read(std::string assetName, ){};
 	};
 };
 
-#endif
+//#endif

@@ -1,8 +1,8 @@
+/*#ifndef CFR_FILE_READER
+#define CFR_FILE_READER*/
+
 #pragma once
 #include "stdafx.hpp"
-
-#ifndef CFR_FILE_READER
-#define CFR_FILE_READER
 
 namespace cfr {
 	class FileReader
@@ -43,14 +43,16 @@ namespace cfr {
 		//four bytes
 		void readDouble(void* target)
 		{
-			memcpy(target,file+offset,4);
+			//memcpy(target,file+offset,4);
+			fread(target,4,1,file);
 			offset += 4;
 		};
 
 		//eight bytes
 		void readQuad(void* target)
 		{
-			memcpy(target,file+offset,4);
+			//memcpy(target,file+offset,4);
+			fread(target,8,1,file);
 			offset += 8;
 		};
 
@@ -58,6 +60,23 @@ namespace cfr {
 
 		private:
 	};
+
+	//this function is *very* stupid. its simple and works though
+	//this may or may not need to be reversed :^)
+	int32_t byteToBinary(int8_t byte)
+	{
+		int32_t output = 0;
+		output += (bool)((byte >> 0) & 0x01) ?        1 : 0;
+		output += (bool)((byte >> 1) & 0x01) ?       10 : 0;
+		output += (bool)((byte >> 2) & 0x01) ?      100 : 0;
+		output += (bool)((byte >> 3) & 0x01) ?     1000 : 0;
+		output += (bool)((byte >> 4) & 0x01) ?    10000 : 0;
+		output += (bool)((byte >> 5) & 0x01) ?   100000 : 0;
+		output += (bool)((byte >> 6) & 0x01) ?  1000000 : 0;
+		output += (bool)((byte >> 7) & 0x01) ? 10000000 : 0;
+
+		return output;
+	};
 };
 
-#endif
+//#endif
