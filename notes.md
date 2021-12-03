@@ -1,4 +1,4 @@
-#Notes
+# Notes
 this file is for general scrawlings and information i've gathered from the games, people, and code relating to souls structures.
 
 | Format | Ext  | DS | DSR | DS2 | DS3 |
