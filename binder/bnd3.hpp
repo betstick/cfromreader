@@ -20,9 +20,6 @@ namespace cfr {
 		int32_t fileHeadersEnd; //does not include padding before data starts
 		int32_t unk18;
 		int32_t unk1C; //assert 0
-
-		//generated
-		//uint8_t format; //not needed as we're always little endian
 	};
 
 	struct _BND3_File_
@@ -38,10 +35,7 @@ namespace cfr {
 		int32_t nameOffset; //if(header.format & 0b00000100 | header.format & 0b00001000)
 		int32_t uncompressedSize; //if(header.format & 0b00100000)
 		char name[256]; //only if nameOffset exists per its conditions, will be located at the offset
-		char* bytes; //supposed to be an array the size of compressedSize
-
-		//generated
-		//uint8_t flags; not needed as we're always little endian
+		char* bytes; //supposed to be an array the size of compressedSize, may not be needed
 	};
 
 	class BND3 
@@ -59,18 +53,18 @@ namespace cfr {
 		BND3(std::string path)
 		{
 			FILE* ptr = fopen(path.c_str(),"rb");
-			if(ptr == NULL)
-				throw std::runtime_error("E");
+			/*if(ptr == NULL)
+				throw std::runtime_error("E");*/
 			initBinderHeader(ptr, 0);
 		};
 
 		bool validateBinderHeader()
 		{
 			assert(strncmp("BND3",header.magic,5)); //5th char is NUL
-			//printf("unk0F: %i\n", header.unk0F);
 			assert(header.unk0F == 0);
-			//printf("unk1C: %i\n", header.unk1C);
 			assert(header.unk1C == 0);
+			assert(header.bigEndian == 0);
+			assert(header.bitBigEndian == 0);
 
 			//printf("bigEndian: %i\n",byteToBinary(header.bigEndian));
 			//printf("bitBigEndian: %i\n",byteToBinary(header.bitBigEndian));
