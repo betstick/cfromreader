@@ -9,7 +9,7 @@ This repo comes with a test.cpp file that you can build and use to test files.
 Make a bin directory in the root of the repo, cd into it, then run: cmake..
 From there you can then run ./release/CFRTEST to run it. Be aware of where you execute FROM and also where you path to the files you want to test with. Relative pathing wasted over an hour of my time.
 If you're getting segfaults, try executing the binary from the directory where it is located and put the files you want to validate in the same directory. Then you can just directly access them without worrying about relative pathing.
-Run `cmake .. -DDEBUG=true` to get a more verbose output. Off by default.
+Run `cmake .. -DDEBUG=true` to get a more verbose output. Off by default. Also enables GDB debugging support.
 
 ## How to Use
 You should be able to clone this repo onto your computer then include the cfromreader.hpp file I suppose.

@@ -34,7 +34,7 @@ namespace cfr {
 		int32_t id; //if(header.format & 0b00000010)//???
 		int32_t nameOffset; //if(header.format & 0b00000100 | header.format & 0b00001000)
 		int32_t uncompressedSize; //if(header.format & 0b00100000)
-		char name[256]; //only if nameOffset exists per its conditions, will be located at the offset
+		char name[256]; //only if nameOffset exists per its conditions, located at the offset
 		char* bytes; //supposed to be an array the size of compressedSize, may not be needed
 	};
 
