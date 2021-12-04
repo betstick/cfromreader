@@ -76,7 +76,7 @@ namespace cfr {
 			assert(file.unk01 == 0);
 			assert(file.unk02 == 0);
 			assert(file.unk03 == 0);
-
+			//printf("File header passed validation.\n");
 			return true;
 		};
 
@@ -97,14 +97,17 @@ namespace cfr {
 			fread(&header.unk18,4,1,file);
 			fread(&header.unk1C,4,1,file);
 
-//#ifdef DEBUG
+#ifdef DEBUG
 			validateBinderHeader();
-//#endif
+#endif
 
 			for(uint64_t i = 0; i < header.fileCount; i++)
 			{
 				initFileHeaders(file, offset);
 			}
+#ifdef DEBUG
+			printf("If you can see this message, all BND3 checks passed!\n");
+#endif			
 		};
 
 		void initFileHeaders(FILE* file, uint64_t offset)
@@ -141,16 +144,16 @@ namespace cfr {
 				while(bndFile.name[i-1] != 0 || i == 0)
 				{
 					fread(&bndFile.name[i],1,1,file);
-					printf("%c",bndFile.name[i]);
+					//printf("%c",bndFile.name[i]);
 					i++;
 				}
-				printf("\n");
+				//printf("\n");
 
 				fsetpos(file,&position);
 			}
-//#ifdef DEBUG
+#ifdef DEBUG
 			validateFileHeader(bndFile);
-//#endif
+#endif
 			files.push_back(bndFile);
 		};
 	};

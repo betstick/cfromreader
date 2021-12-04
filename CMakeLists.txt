@@ -40,6 +40,13 @@ list(APPEND DIRS
 
 add_dir("${DIRS}")
 
+option(DEBUG OFF)
+
+if(DEBUG)
+    add_definitions(-DDEBUG)
+endif()
+#unset(DEBUG cache)
+
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}__SOURCES} ${${PROJECT_NAME}__INCLUDES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")

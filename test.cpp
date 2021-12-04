@@ -1,8 +1,6 @@
 #include "cfromreader.hpp"
 using namespace cfr;
 
-#define DEBUG TRUE
-
 int main()
 {
 	//printf("_BND3_Heasder_ size: %i\n",sizeof(_BND3_Header_));
