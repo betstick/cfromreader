@@ -40,14 +40,17 @@ list(APPEND DIRS
 
 add_dir("${DIRS}")
 
-option(DEBUG OFF)
+option(DEBUG "enable verbose stuff and GDB support" OFF)
 
 if(DEBUG)
-    add_definitions(-DDEBUG)
+	add_compile_definitions(DEBUG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb")
+	message("Using debug mode...")
+else()
+	message("Using release...")
 endif()
-#unset(DEBUG cache)
+unset(DEBUG CACHE)
 
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}__SOURCES} ${${PROJECT_NAME}__INCLUDES})
 

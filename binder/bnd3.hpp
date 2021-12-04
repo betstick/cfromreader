@@ -43,7 +43,7 @@ namespace cfr {
 		public:
 		_BND3_Header_ header;
 		std::vector<_BND3_File_> files; //array of files, size set on class init
-		uint64_t offset;
+		uint64_t offset = 0; //inherited from parent file (if there is one)
 
 		//this initializer is only for use by other classes.
 		BND3(FILE* file, uint64_t priorOffset)
@@ -53,7 +53,7 @@ namespace cfr {
 			//this comment probably makes no sense.
 			fseek(file,offset,0);
 			offset += priorOffset;
-			initBinderHeader(file, offset);
+			init(file, offset);
 		};
 
 		//this initializer is the one for user use.
@@ -62,7 +62,7 @@ namespace cfr {
 			FILE* ptr = fopen(path.c_str(),"rb");
 			/*if(ptr == NULL)
 				throw std::runtime_error("E");*/
-			initBinderHeader(ptr, 0);
+			init(ptr, 0);
 		};
 
 		bool validateBinderHeader()
@@ -88,6 +88,19 @@ namespace cfr {
 		};
 
 		private:
+		void init(FILE* file, uint64_t offset)
+		{
+			initBinderHeader(file, 0);
+			
+			for(uint64_t i = 0; i < header.fileCount; i++)
+			{
+				initFileHeaders(file, offset);
+			}
+#ifdef DEBUG
+			printf("If you can see this message, all BND3 checks passed!\n");
+#endif		
+		};
+
 		void initBinderHeader(FILE* file, uint64_t offset)
 		{
 			//can't just map ALL the bytes from the file
@@ -106,15 +119,7 @@ namespace cfr {
 
 #ifdef DEBUG
 			validateBinderHeader();
-#endif
-
-			for(uint64_t i = 0; i < header.fileCount; i++)
-			{
-				initFileHeaders(file, offset);
-			}
-#ifdef DEBUG
-			printf("If you can see this message, all BND3 checks passed!\n");
-#endif			
+#endif	
 		};
 
 		void initFileHeaders(FILE* file, uint64_t offset)
