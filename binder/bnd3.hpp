@@ -43,13 +43,20 @@ namespace cfr {
 		public:
 		_BND3_Header_ header;
 		std::vector<_BND3_File_> files; //array of files, size set on class init
+		uint64_t offset;
 
-		BND3(FILE* file, uint64_t offset)
+		//this initializer is only for use by other classes.
+		BND3(FILE* file, uint64_t priorOffset)
 		{
+			//prior offset should be gotten from the file this file came from
+			//so that we get the net offset regarding the larger scope of files
+			//this comment probably makes no sense.
 			fseek(file,offset,0);
+			offset += priorOffset;
 			initBinderHeader(file, offset);
 		};
 
+		//this initializer is the one for user use.
 		BND3(std::string path)
 		{
 			FILE* ptr = fopen(path.c_str(),"rb");
