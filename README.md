@@ -23,9 +23,7 @@ This doesn't support console files. This code is primarily for use in some other
 
 ## Credits
 Souls file info: JKAndarson's SoulsTemplates
-HKX file inof: https://github.com/figment/hkxcmd
+HKX library:
 
 ## License
-Under JKAnderson's blessings I'm releasing this source code with the agreement that it is not to be sold or easily confused with his tools. All rights are to their respective owners.
-
-If you redistribute this code in any way, I ask that you respect his wishes and his work.
+This code is hereby GPLv3! If you use this code, please be polite and credit the same people I did as their work was instrumental to this project.

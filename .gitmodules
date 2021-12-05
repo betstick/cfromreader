@@ -1,0 +1,3 @@
+[submodule "external/HavokLib"]
+	path = external/HavokLib
+	url = https://github.com/PredatorCZ/HavokLib
