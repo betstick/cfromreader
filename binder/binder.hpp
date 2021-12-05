@@ -2,9 +2,19 @@
 #include "stdafx.hpp"
 
 namespace cfr {
-	struct File
+	class BinderFileHeader
 	{
-		
+		public:
+		char name[256];//assets must fit in win32 path size limit, saves mem.
+		uint64_t offset; //relative to the binder?, support 64 bit
+		uint64_t sizeUncompressed;
+		//probably don't need ID?
+
+		BinderFileHeader(char* nameIn, uint64_t sizeIn)
+		{
+			memcpy(&name,nameIn,256);
+			sizeUncompressed = sizeIn;
+		};
 	};
 
 	class Binder
@@ -14,8 +24,9 @@ namespace cfr {
 		char magicBytes[4];
 
 		public:
-		std::string format;
-
+		std::string format; //technically dupe of magicBytes. easier to use.
+		uint64_t fileCount;
+		std::vector<BinderFileHeader> fileHeaders;
 
 		Binder(FILE* file, uint64_t priorOffset)
 		{
@@ -39,11 +50,19 @@ namespace cfr {
 			{
 				format = "BND3";
 				//init bnd3
+				BND3 tempBinder = BND3(file,offset);
+
+				for(uint32_t i = 0; i < tempBinder.fileHeaders.size(); i++)
+				{
+					//printf("%.256s\n",tempBinder.fileHeaders[i].name);
+					BinderFileHeader tempFileHeader = BinderFileHeader(tempBinder.fileHeaders[i].name, tempBinder.fileHeaders[i].uncompressedSize);
+					fileHeaders.push_back(tempFileHeader);
+				}
 			} 
 			else if(magicBytes[3] == '4')
 			{
 				format = "BND4";
-				//TODO set up bnd4 classes
+				//TODO: set up bnd4 classes, *later*
 			}
 			else
 			{

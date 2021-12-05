@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <cstdint>
-#include <stdint-gcc.h>
+//#include <stdint-gcc.h> //nonstandard
 #include <stdlib.h>
 #include <vector>
 #include <exception>

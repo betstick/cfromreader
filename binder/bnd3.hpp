@@ -56,7 +56,7 @@ namespace cfr {
 			init(file, offset);
 		};
 
-		//this initializer is the one for user use.
+		//this initializer is depricated. use binder class.
 		/*BND3(std::string path)
 		{
 			FILE* ptr = fopen(path.c_str(),"rb");
@@ -105,7 +105,7 @@ namespace cfr {
 			//can't just map ALL the bytes from the file
 			//because i'm not packing my structs!
 			//longer to load into mem, but faster to use
-			fread(&header.magic,4,1,file);
+			fread(&header.magic,4,1,file); //can't remove idk why
 			fread(&header.version,8,1,file);
 			fread(&header.rawFormat,1,1,file);
 			fread(&header.bigEndian,1,1,file);
@@ -161,7 +161,7 @@ namespace cfr {
 				}
 				//printf("\n");
 
-				fsetpos(file,&position);
+				fsetpos(file, &position);
 			}
 #ifdef DEBUG
 			validateFileHeader(bndFile);
