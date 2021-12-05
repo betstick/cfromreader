@@ -21,6 +21,10 @@ I have also not tested this in Windows, but in theory if you can satisfy the lib
 ## Misc
 This doesn't support console files. This code is primarily for use in some other code that I am working on and will be a library that is dynamically loaded. This is to maintain copyright on this file while licensing my other code as AGPL without breaking either terms.
 
+## Credits
+Souls file info: JKAndarson's SoulsTemplates
+HKX file inof: https://github.com/figment/hkxcmd
+
 ## License
 Under JKAnderson's blessings I'm releasing this source code with the agreement that it is not to be sold or easily confused with his tools. All rights are to their respective owners.
 
