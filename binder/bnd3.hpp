@@ -42,7 +42,7 @@ namespace cfr {
 	{
 		public:
 		_BND3_Header_ header;
-		std::vector<_BND3_File_> files; //array of files, size set on class init
+		std::vector<_BND3_File_> fileHeaders; //array of files, size set on class init
 		uint64_t offset = 0; //inherited from parent file (if there is one)
 
 		//this initializer is only for use by other classes.
@@ -57,13 +57,11 @@ namespace cfr {
 		};
 
 		//this initializer is the one for user use.
-		BND3(std::string path)
+		/*BND3(std::string path)
 		{
 			FILE* ptr = fopen(path.c_str(),"rb");
-			/*if(ptr == NULL)
-				throw std::runtime_error("E");*/
 			init(ptr, 0);
-		};
+		};*/
 
 		bool validateBinderHeader()
 		{
@@ -91,14 +89,15 @@ namespace cfr {
 		void init(FILE* file, uint64_t offset)
 		{
 			initBinderHeader(file, 0);
-			
+
 			for(uint64_t i = 0; i < header.fileCount; i++)
 			{
 				initFileHeaders(file, offset);
 			}
 #ifdef DEBUG
 			printf("If you can see this message, all BND3 checks passed!\n");
-#endif		
+#endif
+			initSubFiles(file, offset);
 		};
 
 		void initBinderHeader(FILE* file, uint64_t offset)
@@ -134,6 +133,7 @@ namespace cfr {
 			//printf("headerFormat: %08i\n", byteToBinary(header.rawFormat));
 			
 			//all of these binary comparisons had to have the numbers inverted >:(
+			//better to invert them this way than to make to CPU do it manually
 			if(header.rawFormat & 0b01000000)
 				fread(&bndFile.id,4,1,file);
 				
@@ -166,7 +166,12 @@ namespace cfr {
 #ifdef DEBUG
 			validateFileHeader(bndFile);
 #endif
-			files.push_back(bndFile);
+			fileHeaders.push_back(bndFile);
+		};
+	
+		void initSubFiles(FILE* file, uint64_t offset)
+		{
+
 		};
 	};
 };

@@ -1,0 +1,1 @@
+enum binderType {BND3, BND4};
