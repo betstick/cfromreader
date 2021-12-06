@@ -8,6 +8,7 @@ int main()
 	
 	printf("File count: %i\n",bnd.fileHeaders.size());
 	printf("Example: %.256s\n",bnd.fileHeaders[0].name);
+	printf("Example: %x\n",bnd.fileHeaders[0].dataOffset);
 
 	return 0;
 };

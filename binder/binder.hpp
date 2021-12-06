@@ -6,12 +6,13 @@ namespace cfr {
 	{
 		public:
 		char name[256];//assets must fit in win32 path size limit, saves mem.
-		uint64_t offset; //relative to the binder?, support 64 bit
+		uint64_t dataOffset; //relative to the binder?, support 64 bit
 		uint64_t sizeUncompressed;
 		//probably don't need ID?
 
-		BinderFileHeader(char* nameIn, uint64_t sizeIn)
+		BinderFileHeader(char* nameIn, uint64_t sizeIn, uint64_t offsetIn)
 		{
+			dataOffset = offsetIn;
 			memcpy(&name,nameIn,256);
 			sizeUncompressed = sizeIn;
 		};
@@ -55,7 +56,7 @@ namespace cfr {
 				for(uint32_t i = 0; i < tempBinder.fileHeaders.size(); i++)
 				{
 					//printf("%.256s\n",tempBinder.fileHeaders[i].name);
-					BinderFileHeader tempFileHeader = BinderFileHeader(tempBinder.fileHeaders[i].name, tempBinder.fileHeaders[i].uncompressedSize);
+					BinderFileHeader tempFileHeader = BinderFileHeader(tempBinder.fileHeaders[i].name, tempBinder.fileHeaders[i].uncompressedSize, tempBinder.fileHeaders[i].dataOffset);
 					fileHeaders.push_back(tempFileHeader);
 				}
 			} 
