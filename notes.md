@@ -40,3 +40,5 @@ this is "wrong" but can totally be done. extremely cursed.
 
 the structure *generally* goes (bdt+bhd)/bnd/(textures/meshes/animations)
 as mentioned before, this isn't always the case. sometimes From gets freaky.
+
+need to add in a failure for if trying to compile on big endian systems. i will not support them.

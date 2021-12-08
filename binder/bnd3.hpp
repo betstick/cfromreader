@@ -146,8 +146,8 @@ namespace cfr {
 
 			if(bndFile.nameOffset > 0)
 			{
-				fpos_t position;
-				fgetpos(file, &position);
+				fpos64_t position;
+				fgetpos64(file, &position);
 
 				fseek(file, bndFile.nameOffset, SEEK_SET);
 
@@ -161,7 +161,7 @@ namespace cfr {
 				}
 				//printf("\n");
 
-				fsetpos(file, &position);
+				fsetpos64(file, &position);
 			}
 #ifdef DEBUG
 			validateFileHeader(bndFile);
