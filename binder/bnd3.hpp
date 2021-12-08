@@ -140,7 +140,6 @@ namespace cfr {
 			if(header.rawFormat & 0b00100000 | header.rawFormat & 0b00010000)
 				fread(&bndFile.nameOffset,4,1,file);
 
-
 			if(header.rawFormat & 0b00000100)
 				fread(&bndFile.uncompressedSize,4,1,file);
 

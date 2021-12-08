@@ -20,3 +20,4 @@
 #include "../util/stdafx.hpp"
 #include "../binder/stdafx.hpp"
 #include "../formats/stdafx.hpp"
+#include "../havok/stdafx.hpp"
