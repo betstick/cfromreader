@@ -7,56 +7,36 @@
 namespace cfr {
 	class FileReader
 	{
-		uint64_t offset; //64 bit for the FUTURE!
-		//need a pointer to the file
+		uint64_t position; //64 bit for the FUTURE!
+		uint64_t offset; //buffer start relative to file
 		FILE* file;
+		void* buffer;
+		uint64_t bufferSize;
 
 		public:
 
-		FileReader(FILE* filePtr, uint64_t offsetInput)
+		FileReader(FILE* filePtr, void* buffer, size_t size)
 		{
 			file = filePtr;
-			offset = offsetInput;
+			position = 0;
+			bufferSize = size;
+			fread(buffer,size,1,filePtr);
 		};
 
-		/*glm::vec3 readVector3()
+		void cfrread(void* target, size_t size)
 		{
-			glm::vec3 value;
-			offset += 12;
-			return value;
-		};*/
+			uint64_t end = position + size;
 
-		//one byte
-		void readByte(void* target)
-		{
-			memcpy(target,file+offset,1);
-			offset += 1;
+			if(end < bufferSize + offset)
+			{
+				position += size;
+				memcpy();
+			}
+			else if(position )
+			{
+
+			}
 		};
-
-		//two bytes
-		void readWord(void* target)
-		{
-			memcpy(target,file+offset,2);
-			offset += 2;
-		};
-
-		//four bytes
-		void readDouble(void* target)
-		{
-			//memcpy(target,file+offset,4);
-			fread(target,4,1,file);
-			offset += 4;
-		};
-
-		//eight bytes
-		void readQuad(void* target)
-		{
-			//memcpy(target,file+offset,4);
-			fread(target,8,1,file);
-			offset += 8;
-		};
-
-		//void assertPattern(){};
 
 		private:
 	};
