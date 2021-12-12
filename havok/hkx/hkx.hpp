@@ -83,12 +83,12 @@ namespace cfr {
 			fread(&magic1,4,1,file);
 			fread(&magic2,4,1,file);
 
-	//#ifdef DEBUG
+#ifdef DEBUG
 			if(magic1 != 0x57e0e057)
 				throw std::runtime_error("invalid HKX magic1");
 			if(magic2 != 0x10c0c010)
 				throw std::runtime_error("invalid HKX magic2");
-	//#endif
+#endif
 
 			fread(&userTag,4,1,file);
 			fread(&version,4,1,file);
@@ -108,6 +108,7 @@ namespace cfr {
 
 			fread(&flags,4,1,file);
 
+			//TODO: translate this to use toolset version
 			if(version >= 0x0B) //newer version of hkx
 			{
 				fread(&maxPredicate,2,1,file);
@@ -322,9 +323,17 @@ namespace cfr {
 				}
 			}
 
+			//these likely aren't needed
 			//localRefrence vector
 			//globalReference vector
 			//virtualReference vector
+		};
+		void readClassNames(FILE* file, uint64_t offset, hkToolset version, int32_t sectionDataInput)
+		{
+			//goto the section data itself, its a location in the file!
+			fseek(file,sectionDataInput,SEEK_SET);
+			//TODO: confirm this works
+			objects.push_back(hkxClassNames(file,offset,version));
 		};
 	};
 
@@ -335,7 +344,7 @@ namespace cfr {
 		char className[32]; //i sure hope its not more than 32 :^)
 		uint32_t sectionOffset;
 
-		hkxClassName(FILE* file, uint64_t offset)
+		hkxClassName(FILE* file, uint64_t offset, hkToolset version)
 		{
 			fread(&signature,4,1,file);
 			if(fgetc(file) != 0x09)
@@ -354,6 +363,27 @@ namespace cfr {
 		};
 	};
 
+	class hkxClassNames : public hkxObject
+	{
+		public:
+		//offset[n] refers to the offset of classNames[n]
+		//original code uses dictionary, i don't have those
+		std::vector<hkxClassName> classNames;
+		std::vector<uint64_t> offsets;
+
+		hkxClassNames(FILE* file, uint64_t offset, hkToolset version)
+		{
+			uint16_t temp;
+			//this line is ugly and may not work.
+			while((fread(&temp,2,1,file) == sizeof(uint16_t))&&(temp != 0xFFFF))
+			{
+				fseek(file,-2,SEEK_CUR);
+				offsets.push_back(ftell(file) + 5);
+				classNames.push_back(hkxClassName(file,offset,version));
+			}
+		};
+	};
+
 	//hktoolset sctruct/var is needed??!?!?!
 
 	class hkx
@@ -369,15 +399,23 @@ namespace cfr {
 		public:
 		hkx(FILE* file, uint64_t offset)
 		{
+			//read headers
 			headerData = hkxHeader(file, offset, version);
 
+			//find out what version the file is
 			determineVersion(); //sets the version variable.
 
+			//initialize the sections (usually 3)
 			for(uint32_t s = 0; s > headerData.numSections; s++)
 			{
 				hkxSection tempSection = hkxSection(file, 0, version);
 				sections.push_back(tempSection);
 			};
+
+			//set up the classnames?
+			sections[0].readClassNames(file, offset, version, headerData.predicateArraySizePlusPadding);
+			//deserialize the objects
+			sections[1].readDataObjects(file, offset, version, headerData.predicateArraySizePlusPadding);
 		};
 
 		private:	

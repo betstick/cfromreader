@@ -46,22 +46,15 @@ namespace cfr {
 		uint64_t offset = 0; //inherited from parent file (if there is one)
 
 		//this initializer is only for use by other classes.
-		BND3(FILE* file, uint64_t priorOffset)
+		BND3(BSReader* file, uint64_t priorOffset)
 		{
 			//prior offset should be gotten from the file this file came from
 			//so that we get the net offset regarding the larger scope of files
 			//this comment probably makes no sense.
-			fseek(file,offset,0);
+			file->seek(offset,0);
 			offset += priorOffset;
 			init(file, offset);
 		};
-
-		//this initializer is depricated. use binder class.
-		/*BND3(std::string path)
-		{
-			FILE* ptr = fopen(path.c_str(),"rb");
-			init(ptr, 0);
-		};*/
 
 		bool validateBinderHeader()
 		{
@@ -86,7 +79,7 @@ namespace cfr {
 		};
 
 		private:
-		void init(FILE* file, uint64_t offset)
+		void init(BSReader* file, uint64_t offset)
 		{
 			initBinderHeader(file, 0);
 
@@ -100,67 +93,69 @@ namespace cfr {
 			initSubFiles(file, offset);
 		};
 
-		void initBinderHeader(FILE* file, uint64_t offset)
+		void initBinderHeader(BSReader* file, uint64_t offset)
 		{
 			//can't just map ALL the bytes from the file
 			//because i'm not packing my structs!
 			//longer to load into mem, but faster to use
-			fread(&header.magic,4,1,file); //can't remove idk why
-			fread(&header.version,8,1,file);
-			fread(&header.rawFormat,1,1,file);
-			fread(&header.bigEndian,1,1,file);
-			fread(&header.bitBigEndian,1,1,file);
-			fread(&header.unk0F,1,1,file);
-			fread(&header.fileCount,4,1,file);
-			fread(&header.fileHeadersEnd,4,1,file);
-			fread(&header.unk18,4,1,file);
-			fread(&header.unk1C,4,1,file);
+			file->read(&header.magic,4); //can't remove idk why
+			file->read(&header.version,8);
+			file->read(&header.rawFormat,1);
+			file->read(&header.bigEndian,1);
+			file->read(&header.bitBigEndian,1);
+			file->read(&header.unk0F,1);
+			file->read(&header.fileCount,4);
+			file->read(&header.fileHeadersEnd,4);
+			file->read(&header.unk18,4);
+			file->read(&header.unk1C,4);
 
 #ifdef DEBUG
 			validateBinderHeader();
 #endif	
 		};
 
-		void initFileHeaders(FILE* file, uint64_t offset)
+		void initFileHeaders(BSReader* file, uint64_t offset)
 		{
 			_BND3_File_ bndFile;
-			fread(&bndFile.rawFlags,1,1,file);
-			fread(&bndFile.unk01,1,1,file);
-			fread(&bndFile.unk02,1,1,file);
-			fread(&bndFile.unk03,1,1,file);
-			fread(&bndFile.compressedSize,4,1,file);
-			fread(&bndFile.dataOffset,4,1,file);
+			file->read(&bndFile.rawFlags,1);
+			file->read(&bndFile.unk01,1);
+			file->read(&bndFile.unk02,1);
+			file->read(&bndFile.unk03,1);
+			file->read(&bndFile.compressedSize,4);
+			file->read(&bndFile.dataOffset,4);
 			//printf("headerFormat: %08i\n", byteToBinary(header.rawFormat));
 			
 			//all of these binary comparisons had to have the numbers inverted >:(
 			//better to invert them this way than to make to CPU do it manually
 			if(header.rawFormat & 0b01000000)
-				fread(&bndFile.id,4,1,file);
+				file->read(&bndFile.id,4);
 				
 			if(header.rawFormat & 0b00100000 | header.rawFormat & 0b00010000)
-				fread(&bndFile.nameOffset,4,1,file);
+				file->read(&bndFile.nameOffset,4);
 
 			if(header.rawFormat & 0b00000100)
-				fread(&bndFile.uncompressedSize,4,1,file);
+				file->read(&bndFile.uncompressedSize,4);
 
 			if(bndFile.nameOffset > 0)
 			{
-				fpos64_t position;
-				fgetpos64(file, &position);
+				/*fpos64_t position;
+				fgetpos64(file, &position);*/
+				int64_t pos = file->position;
 
-				fseek(file, bndFile.nameOffset, SEEK_SET);
+				file->seek(bndFile.nameOffset,0);
 
 				int32_t i = 0;
 				//this while condition is gross but it works. idk why
 				while(bndFile.name[i-1] != 0 || i == 0)
 				{
-					fread(&bndFile.name[i],1,1,file);
+					file->read(&bndFile.name[i],1);
 					//printf("%c",bndFile.name[i]);
 					i++;
 				}
 				//printf("\n");
 
-				fsetpos64(file, &position);
+				/*fsetpos64(file, &position);*/
+				file->seek(pos,0);
 			}
 #ifdef DEBUG
 			validateFileHeader(bndFile);
@@ -168,7 +163,7 @@ namespace cfr {
 			fileHeaders.push_back(bndFile);
 		};
 	
-		void initSubFiles(FILE* file, uint64_t offset)
+		void initSubFiles(BSReader* file, uint64_t offset)
 		{
 
 		};

@@ -17,7 +17,9 @@
 #include <random>
 #include <time.h>
 
+#include "../external/bsreader/bsreader.hpp"
+
 #include "../util/stdafx.hpp"
 #include "../binder/stdafx.hpp"
 #include "../formats/stdafx.hpp"
-#include "../havok/stdafx.hpp"
+//#include "../havok/stdafx.hpp"

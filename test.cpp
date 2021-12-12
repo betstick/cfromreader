@@ -7,8 +7,8 @@ int main()
 	Binder bnd = Binder("../c0000.anibnd");
 	
 	printf("File count: %i\n",bnd.fileHeaders.size());
-	printf("Example: %.256s\n",bnd.fileHeaders[0].name);
-	printf("Example: %x\n",bnd.fileHeaders[0].dataOffset);
+	printf("Example file name: %.256s\n",bnd.fileHeaders[0].name);
+	printf("Example offset hex: %x\n",bnd.fileHeaders[0].dataOffset);
 
 	return 0;
 };

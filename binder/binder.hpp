@@ -29,29 +29,31 @@ namespace cfr {
 		uint64_t fileCount;
 		std::vector<BinderFileHeader> fileHeaders;
 
-		Binder(FILE* file, uint64_t priorOffset)
+		//TODO: reimplement this
+		/*Binder(FILE* file, uint64_t priorOffset)
 		{
 			fseek(file,offset,0);
 			offset += priorOffset;
 			init(file, offset);
-		};
+		};*/
 
 		Binder(std::string path)
 		{
-			FILE* ptr = fopen(path.c_str(),"rb");
-			init(ptr, 0);
+			char buffer[4096];
+			BSReader file = BSReader(path,buffer,4096);
+			init(file, 0);
 		};
 
 		private:
-		void init(FILE* file, uint64_t offset)
+		void init(BSReader file, uint64_t offset)
 		{
-			fread(&magicBytes,4,1,file);
+			file.read(&magicBytes,4);
 
 			if(magicBytes[3] == '3')
 			{
 				format = "BND3";
 				//init bnd3
-				BND3 tempBinder = BND3(file,offset);
+				BND3 tempBinder = BND3(&file,offset);
 
 				for(uint32_t i = 0; i < tempBinder.fileHeaders.size(); i++)
 				{

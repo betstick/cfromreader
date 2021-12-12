@@ -1,3 +1,6 @@
 [submodule "external/HavokLib"]
 	path = external/HavokLib
 	url = https://github.com/PredatorCZ/HavokLib
+[submodule "external/bsreader"]
+	path = external/bsreader
+	url = git@github.com:betstick/bsreader.git
