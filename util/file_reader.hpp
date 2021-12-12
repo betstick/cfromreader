@@ -5,7 +5,7 @@
 #include "stdafx.hpp"
 
 namespace cfr {
-	class FileReader
+	/*class FileReader
 	{
 		uint64_t position; //64 bit for the FUTURE!
 		uint64_t offset; //buffer start relative to file
@@ -39,7 +39,7 @@ namespace cfr {
 		};
 
 		private:
-	};
+	};*/
 
 	//this function is *very* stupid. its simple and works though
 	//this may or may not need to be reversed :^)
