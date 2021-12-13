@@ -16,7 +16,7 @@ I have not tested it in Clang. I use GCC.
 I have also not tested this in Windows, but in theory if you can satisfy the library requirements, it should compile with MinGW or Cygwin or however it is you compile GNU stuff on Windows.
 
 ## Misc
-This doesn't support console files. This code is primarily for use in some other code that I am working on and will be a library that is dynamically loaded. This is to maintain copyright on this file while licensing my other code as AGPL without breaking either terms.
+This doesn't support console files nor does it support Sekiro or the Steel Batallion series or Kings Field. For now it is limited to Dark Souls Remastered, Bloodborne(?), and Dark Souls 3. More may get added later. This code is primarily for my personal use in another project, this was abstracted for licensing reasons, but now its like this for organizational purposes.
 
 ## Credits
 JKAndarson's [SoulsTemplates](https://github.com/JKAnderson/SoulsTemplates) and [SoulsFormats](https://github.com/JKAnderson/SoulsFormats)<br/>
