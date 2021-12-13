@@ -1,8 +1,5 @@
 # C++ FromSoftware Data Reader
-A simple library based on JKAnderson's SoulsTemplates. Link: https://github.com/JKAnderson/
-Written in C++ as a read only, minimal, little endian, speed focused, Assimp compatible layer of sorts.
-If you're looking for a more fleshed out tool, go check out SoulsFormats instead. It's made by JKAnderson and is able to read/write data in the original formats and has more features.
-This project is not meant to be a full scope utility, it's purely meant for real time reading in C++ projects.
+A read only library for Souls game file formats. The scope for the library is limited to being read only, little endian, and Souls games only. It is intended for use as a layer for/like Assimp. For more fleshed out and featureful tools, check out the credits. There's read/write support, map editors, full libraries, and more. The code here wouldn't have been possible without those other tools and libraries.
 
 ## Validation
 This repo comes with a test.cpp file that you can build and use to test files.
@@ -22,8 +19,11 @@ I have also not tested this in Windows, but in theory if you can satisfy the lib
 This doesn't support console files. This code is primarily for use in some other code that I am working on and will be a library that is dynamically loaded. This is to maintain copyright on this file while licensing my other code as AGPL without breaking either terms.
 
 ## Credits
-Souls file info: JKAndarson's SoulsTemplates
-HKX library:
+JKAndarson's [SoulsTemplates](https://github.com/JKAnderson/SoulsTemplates) and [SoulsFormats](https://github.com/JKAnderson/SoulsFormats)<br/>
+Katalash's [HavokLib](https://github.com/katalash/HavokLib) and [DSMapStudio](https://github.com/katalash/DSMapStudio)<br/>
+Meowmaritus' [SoulsAssetPipeline](https://github.com/Meowmaritus/SoulsAssetPipeline)<br/>
+?ServerName? for help with programming and advice in general<br/>
+If your name is/or is not on here and you want that changed, please let me know.<br/>
 
 ## License
-This code is hereby GPLv3! If you use this code, please be polite and credit the same people I did as their work was instrumental to this project.
+This code is hereby GPLv3! If you use this code, please be polite and credit the same people I did as their work was instrumental to this project and get their permission for their code if you are going to use it.
