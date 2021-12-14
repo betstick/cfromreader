@@ -83,6 +83,8 @@ namespace cfr {
 		int32_t unk38; //assert(0)
 		int32_t unk3C; //assert(0)
 
+		FLVER_Dummy(){};
+
 		FLVER_Dummy(BSReader* file, uint64_t offset)
 		{
 			file->seek(offset,0);
@@ -97,6 +99,8 @@ namespace cfr {
 		int32_t unk04; //maybe assert(100)? if header.version < 0x20010
 		int32_t length;
 		std::vector<char> data; //size of (length - 0xC)
+
+		FLVER_GXItem(){};
 
 		//TODO: validate this mess
 		FLVER_GXItem(BSReader* file, uint64_t offset)
@@ -128,6 +132,8 @@ namespace cfr {
 		int32_t unk1C; //assert(0)
 
 		std::vector<FLVER_GXItem> items;
+
+		FLVER_Material(){};
 
 		FLVER_Material(BSReader* file, uint64_t offset, uint32_t version)
 		{
@@ -178,6 +184,8 @@ namespace cfr {
 		Vector3 boundingBoxMax;
 		//next 13 or so bytes should be 0 i think?
 
+		FLVER_Bone(){};
+
 		FLVER_Bone(BSReader* file, uint64_t offset)
 		{
 			file->read(&translation,12);
@@ -223,6 +231,8 @@ namespace cfr {
 
 		std::vector<int32_t> faceSetIndices; //size of faceSetCount
 		std::vector<int32_t> vertexBufferIndices; //size of vertexBufferCount
+
+		FLVER_Mesh(){};
 
 		FLVER_Mesh(BSReader* file, uint64_t offset, uint32_t version)
 		{
@@ -353,6 +363,8 @@ namespace cfr {
 		FLVER_EdgeIndices vertexIndices;
 		std::vector<uint32_t> vertexIndicesVec; //size of vertexIndexCount
 
+		FLVER_FaceSet(){};
+
 		FLVER_FaceSet(BSReader* file, uint64_t offset, FLVER_Header header)
 		{
 			file->read(&flags,16);
@@ -412,6 +424,8 @@ namespace cfr {
 
 		std::vector<FLVER_Vertex> vertices; //size of vertexCount
 
+		FLVER_VertexBuffer(){};
+
 		FLVER_VertexBuffer(BSReader* file, uint64_t offset, FLVER_Header header)
 		{
 			file->read(&bufferIndex,32); //bufferIndex thru bufferOffset
@@ -459,6 +473,8 @@ namespace cfr {
 		uint32_t membersOffset;
 		std::vector<FLVER_LayoutMember> members; //size of memberCount
 
+		FLVER_BufferLayout(){};
+
 		FLVER_BufferLayout(BSReader* file, uint64_t offset)
 		{
 			file->read(&memberCount,32);
@@ -485,6 +501,8 @@ namespace cfr {
 		float unk14;
 		float unk18;
 		float unk1C;
+
+		FLVER_Texture(){};
 
 		FLVER_Texture(BSReader* file, uint64_t offset)
 		{
@@ -523,6 +541,38 @@ namespace cfr {
 		void init(BSReader* file, uint64_t offset)
 		{
 			header = FLVER_Header(file,offset);
+			
+			dummies.resize(header.dummyCount);
+			for(uint32_t i = 0; i < header.dummyCount; i++)
+				dummies.push_back(FLVER_Dummy(file,offset));
+
+			materials.resize(header.materialCount);
+			for(uint32_t i = 0; i < header.materialCount; i++)
+				materials.push_back(FLVER_Material(file,offset,header.version));
+
+			bones.resize(header.boneCount);
+			for(uint32_t i = 0; i < header.boneCount; i++)
+				bones.push_back(FLVER_Bone(file,offset));
+					
+			meshes.resize(header.meshCount);
+			for(uint32_t i = 0; i < header.meshCount; i++)
+				meshes.push_back(FLVER_Mesh(file,offset,header.version));
+					
+			facesets.resize(header.faceSetCount);
+			for(uint32_t i = 0; i < header.faceSetCount; i++)
+				facesets.push_back(FLVER_FaceSet(file,offset,header));
+						
+			vertexbuffers.resize(header.vertexBufferCount);
+			for(uint32_t i = 0; i < header.vertexBufferCount; i++)
+				vertexbuffers.push_back(FLVER_VertexBuffer(file,offset,header));
+			
+			bufferlayouts.resize(header.bufferLayoutCount);
+			for(uint32_t i = 0; i < header.bufferLayoutCount; i++)
+				bufferlayouts.push_back(FLVER_BufferLayout(file,offset));
+			
+			textures.resize(header.textureCount);
+			for(uint32_t i = 0; i < header.textureCount; i++)
+				textures.push_back(FLVER_Texture(file,offset));
 		};
 	};
 };
