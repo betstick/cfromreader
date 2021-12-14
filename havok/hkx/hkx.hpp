@@ -205,16 +205,64 @@ namespace cfr {
 		
 		hkxObject sourceObject;
 		hkxObject destObject;
+	};*/
+
+
+
+	class hkxClassName
+	{
+		public:
+		uint32_t signature;
+		char className[32]; //i sure hope its not more than 32 :^)
+		uint32_t sectionOffset;
+
+		hkxClassName(FILE* file, uint64_t offset, hkToolset version)
+		{
+			fread(&signature,4,1,file);
+			if(fgetc(file) != 0x09)
+				throw std::runtime_error("hkxclassname didn't have a 9 in it");
+			sectionOffset = ftell(file);
+			
+			uint64_t i = 0;
+			//like in bnd3.hpp, i still don't fully get how this works
+			while(className[i-1] != 0 || i == 0)
+			{
+				fread(&className[i],1,1,file);
+				i++;
+			}
+			//maybe i'm just dumb. 
+			//TODO: make it a function later i suppose.
+		};
 	};
 
-	//may only be used for writing
+	class hkxClassNames : public hkxObject
+	{
+		public:
+		//offset[n] refers to the offset of classNames[n]
+		//original code uses dictionary, i don't have those
+		std::vector<hkxClassName> classNames;
+		std::vector<uint64_t> offsets;
+
+		hkxClassNames(FILE* file, uint64_t offset, hkToolset version)
+		{
+			uint16_t temp;
+			//this line is ugly and may not work.
+			while((fread(&temp,2,1,file) == sizeof(uint16_t))&&(temp != 0xFFFF))
+			{
+				fseek(file,-2,SEEK_CUR);
+				offsets.push_back(ftell(file) + 5);
+				classNames.push_back(hkxClassName(file,offset,version));
+			}
+		};
+	};
+
 	class hkxVirtualReference
 	{
 		public:
-		hkxObject sourceObject;
-		hkxSection destSection;
-		hkxClassName className;
-	};*/
+		hkxObject* sourceObject; //
+		void* destSection;  //hkxSection, would cause dep loop
+		hkxClassName className; //
+	};
 
 	class hkxSection 
 	{
@@ -335,51 +383,12 @@ namespace cfr {
 			//TODO: confirm this works
 			objects.push_back(hkxClassNames(file,offset,version));
 		};
-	};
 
-	class hkxClassName
-	{
-		public:
-		uint32_t signature;
-		char className[32]; //i sure hope its not more than 32 :^)
-		uint32_t sectionOffset;
-
-		hkxClassName(FILE* file, uint64_t offset, hkToolset version)
+		void readDataObjects(FILE* file, uint64_t offset, hkToolset version, int32_t sectionDataInput)
 		{
-			fread(&signature,4,1,file);
-			if(fgetc(file) != 0x09)
-				throw std::runtime_error("hkxclassname didn't have a 9 in it");
-			sectionOffset = ftell(file);
-			
-			uint64_t i = 0;
-			//like in bnd3.hpp, i still don't fully get how this works
-			while(className[i-1] != 0 || i == 0)
+			for(uint64_t i = 0; i < virtualFixups.size(); i++)
 			{
-				fread(&className[i],1,1,file);
-				i++;
-			}
-			//maybe i'm just dumb. 
-			//TODO: make it a function later i suppose.
-		};
-	};
 
-	class hkxClassNames : public hkxObject
-	{
-		public:
-		//offset[n] refers to the offset of classNames[n]
-		//original code uses dictionary, i don't have those
-		std::vector<hkxClassName> classNames;
-		std::vector<uint64_t> offsets;
-
-		hkxClassNames(FILE* file, uint64_t offset, hkToolset version)
-		{
-			uint16_t temp;
-			//this line is ugly and may not work.
-			while((fread(&temp,2,1,file) == sizeof(uint16_t))&&(temp != 0xFFFF))
-			{
-				fseek(file,-2,SEEK_CUR);
-				offsets.push_back(ftell(file) + 5);
-				classNames.push_back(hkxClassName(file,offset,version));
 			}
 		};
 	};

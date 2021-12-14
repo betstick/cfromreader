@@ -5,44 +5,10 @@
 #include "stdafx.hpp"
 
 namespace cfr {
-	/*class FileReader
-	{
-		uint64_t position; //64 bit for the FUTURE!
-		uint64_t offset; //buffer start relative to file
-		FILE* file;
-		void* buffer;
-		uint64_t bufferSize;
-
-		public:
-
-		FileReader(FILE* filePtr, void* buffer, size_t size)
-		{
-			file = filePtr;
-			position = 0;
-			bufferSize = size;
-			fread(buffer,size,1,filePtr);
-		};
-
-		void cfrread(void* target, size_t size)
-		{
-			uint64_t end = position + size;
-
-			if(end < bufferSize + offset)
-			{
-				position += size;
-				memcpy();
-			}
-			else if(position )
-			{
-
-			}
-		};
-
-		private:
-	};*/
 
 	//this function is *very* stupid. its simple and works though
 	//this may or may not need to be reversed :^)
+	//for debugging purposes only!
 	int32_t byteToBinary(int8_t byte)
 	{
 		int32_t output = 0;
@@ -56,6 +22,42 @@ namespace cfr {
 		output += (bool)((byte >> 7) & 0x01) ? 10000000 : 0;
 
 		return output;
+	};
+
+	struct Vector2
+	{
+		float x;
+		float y;
+	};
+
+	struct Vector3
+	{
+		float x;
+		float y;
+		float z;
+	};
+
+	struct OffsetString
+	{
+		int64_t offset; //can sometimes be a uint32, made a 64 to stay big enough
+		char string[64]; //confirm if this is too many chars
+	};
+
+	//assumes null terminated strings less than 2^64 in length
+	uint64_t getStringSize(BSReader* file)
+	{
+		uint64_t initialPos = file->position;
+		uint64_t i = 0;
+		char temp = 'a';
+
+		while(temp != '\0')
+		{
+			file->read(&temp,1);
+			i++;
+		}
+
+		file->seek(initialPos,0); //return to where started
+		return i;
 	};
 };
 

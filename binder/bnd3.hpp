@@ -1,6 +1,3 @@
-/*#ifndef BND3_FORMAT
-#define BND3_FORMAT*/
-
 #pragma once
 #include "stdafx.hpp"
 
@@ -51,8 +48,8 @@ namespace cfr {
 			//prior offset should be gotten from the file this file came from
 			//so that we get the net offset regarding the larger scope of files
 			//this comment probably makes no sense.
-			file->seek(offset,0);
 			offset += priorOffset;
+			file->seek(offset,0);
 			init(file, offset);
 		};
 
@@ -95,19 +92,8 @@ namespace cfr {
 
 		void initBinderHeader(BSReader* file, uint64_t offset)
 		{
-			//can't just map ALL the bytes from the file
-			//because i'm not packing my structs!
-			//longer to load into mem, but faster to use
-			file->read(&header.magic,4); //can't remove idk why
-			file->read(&header.version,8);
-			file->read(&header.rawFormat,1);
-			file->read(&header.bigEndian,1);
-			file->read(&header.bitBigEndian,1);
-			file->read(&header.unk0F,1);
-			file->read(&header.fileCount,4);
-			file->read(&header.fileHeadersEnd,4);
-			file->read(&header.unk18,4);
-			file->read(&header.unk1C,4);
+			//needs to start at magic for some reason :/
+			file->read(&header.magic,sizeof(_BND3_Header_));
 
 #ifdef DEBUG
 			validateBinderHeader();
@@ -117,12 +103,7 @@ namespace cfr {
 		void initFileHeaders(BSReader* file, uint64_t offset)
 		{
 			_BND3_File_ bndFile;
-			file->read(&bndFile.rawFlags,1);
-			file->read(&bndFile.unk01,1);
-			file->read(&bndFile.unk02,1);
-			file->read(&bndFile.unk03,1);
-			file->read(&bndFile.compressedSize,4);
-			file->read(&bndFile.dataOffset,4);
+			file->read(&bndFile.rawFlags,12);
 			//printf("headerFormat: %08i\n", byteToBinary(header.rawFormat));
 			
 			//all of these binary comparisons had to have the numbers inverted >:(
@@ -138,8 +119,6 @@ namespace cfr {
 
 			if(bndFile.nameOffset > 0)
 			{
-				/*fpos64_t position;
-				fgetpos64(file, &position);*/
 				int64_t pos = file->position;
 
 				file->seek(bndFile.nameOffset,0);
@@ -149,12 +128,9 @@ namespace cfr {
 				while(bndFile.name[i-1] != 0 || i == 0)
 				{
 					file->read(&bndFile.name[i],1);
-					//printf("%c",bndFile.name[i]);
 					i++;
 				}
-				//printf("\n");
 
-				/*fsetpos64(file, &position);*/
 				file->seek(pos,0);
 			}
 #ifdef DEBUG
@@ -169,5 +145,3 @@ namespace cfr {
 		};
 	};
 };
-
-//#endif
