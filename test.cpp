@@ -10,5 +10,8 @@ int main()
 	printf("Example file name: %.256s\n",bnd.fileHeaders[0].name);
 	printf("Example offset hex: %x\n",bnd.fileHeaders[0].dataOffset);
 
+	FLVER flver = FLVER("../c5370.flver");
+	printf("bones: %i\n",flver.bones.size());
+
 	return 0;
 };

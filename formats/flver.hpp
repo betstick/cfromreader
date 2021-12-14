@@ -111,7 +111,7 @@ namespace cfr {
 			if(length > 0xC)
 			{
 				data.resize(length-0xC,0);
-				file->read(&data,data.size());
+				file->read(&data,length-0xC);
 			}
 		};
 	};
@@ -532,8 +532,9 @@ namespace cfr {
 
 		FLVER(std::string path)
 		{
-			char buffer[4096];
-			BSReader file = BSReader(path,buffer,4096);
+			printf("this buffer is WAY too big! 131072KB (128MB) FIX IT\n");
+			char buffer[131072];
+			BSReader file = BSReader(path,buffer,131072);
 			init(&file,0); //this one is differet, its okay
 		};
 
