@@ -59,9 +59,10 @@ namespace cfr {
 		FLVER_Header(BSReader* file, uint64_t offset)
 		{
 			file->seek(offset,0);
-			file->read(&magic[0],38); //magic thru vertexBufferCount
-			file->read(&boundingBoxMin, 24); //both boundingBox vars
-			file->read(&trueFaceCount, 64); //trueFactCount thru unk7C
+			//file->read(&magic[0],38); //magic thru vertexBufferCount
+			//file->read(&boundingBoxMin, 24); //both boundingBox vars
+			//file->read(&trueFaceCount, 64); //trueFactCount thru unk7C
+			file->read(&magic[0],sizeof(FLVER_Header));
 		};
 	};
 
@@ -111,7 +112,11 @@ namespace cfr {
 			if(length > 0xC)
 			{
 				data.resize(length-0xC,0);
-				file->read(&data,length-0xC);
+				//file->read(&data,length-0xC);
+				for(uint64_t i = 0; i < length-0xC; i++)
+				{
+					file->read(&data+i,1);
+				}
 			}
 		};
 	};
@@ -135,7 +140,7 @@ namespace cfr {
 
 		FLVER_Material(){};
 
-		FLVER_Material(BSReader* file, uint64_t offset, uint32_t version)
+		FLVER_Material(BSReader* file, uint64_t offset, FLVER_Header header)
 		{
 			file->read(&name.offset,4);
 			//file->read(&name.string,getStringSize(file)); //TODO: validate
@@ -155,7 +160,7 @@ namespace cfr {
 				{
 					FLVER_GXItem gxItem = FLVER_GXItem(file,0);
 
-					if(version >= 0x20010 && gxItem.id != 0x7FFFFFFF && gxItem.id != 0xFFFFFFFF)
+					if(header.version >= 0x20010 && gxItem.id != 0x7FFFFFFF && gxItem.id != 0xFFFFFFFF)
 						valid = true;
 					else
 						valid = false;
@@ -234,7 +239,7 @@ namespace cfr {
 
 		FLVER_Mesh(){};
 
-		FLVER_Mesh(BSReader* file, uint64_t offset, uint32_t version)
+		FLVER_Mesh(BSReader* file, uint64_t offset, FLVER_Header header)
 		{
 			file->read(&dynamic,48);
 
@@ -244,7 +249,7 @@ namespace cfr {
 			{
 				file->seek(boundingBoxOffset,0);
 				file->read(&boundingBoxMin,24);
-				if(version >= 0x2001A)
+				if(header.version >= 0x2001A)
 					file->read(&boundingBoxUnk,12);
 			}
 
@@ -532,9 +537,10 @@ namespace cfr {
 
 		FLVER(std::string path)
 		{
-			printf("this buffer is WAY too big! 131072KB (128MB) FIX IT\n");
-			char buffer[131072];
-			BSReader file = BSReader(path,buffer,131072);
+			printf("this buffer is WAY too big! 1310720KB (1280MB) FIX IT\n");
+			std::vector<char> buffer(4096,0);
+			BSReader file = BSReader(path,&buffer,4096);
+			//BSReader file = BSReader(path,131072);
 			init(&file,0); //this one is differet, its okay
 		};
 
@@ -549,7 +555,7 @@ namespace cfr {
 
 			materials.resize(header.materialCount);
 			for(uint32_t i = 0; i < header.materialCount; i++)
-				materials.push_back(FLVER_Material(file,offset,header.version));
+				materials.push_back(FLVER_Material(file,offset,header));
 
 			bones.resize(header.boneCount);
 			for(uint32_t i = 0; i < header.boneCount; i++)
@@ -557,7 +563,7 @@ namespace cfr {
 					
 			meshes.resize(header.meshCount);
 			for(uint32_t i = 0; i < header.meshCount; i++)
-				meshes.push_back(FLVER_Mesh(file,offset,header.version));
+				meshes.push_back(FLVER_Mesh(file,offset,header));
 					
 			facesets.resize(header.faceSetCount);
 			for(uint32_t i = 0; i < header.faceSetCount; i++)
