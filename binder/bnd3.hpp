@@ -49,7 +49,7 @@ namespace cfr {
 			//so that we get the net offset regarding the larger scope of files
 			//this comment probably makes no sense.
 			offset += priorOffset;
-			file->seek(offset,0);
+			file->seek(offset);
 			init(file, offset);
 		};
 
@@ -119,9 +119,9 @@ namespace cfr {
 
 			if(bndFile.nameOffset > 0)
 			{
-				int64_t pos = file->position;
+				int64_t pos = file->readPos;
 
-				file->seek(bndFile.nameOffset,0);
+				file->seek(bndFile.nameOffset);
 
 				int32_t i = 0;
 				//this while condition is gross but it works. idk why
@@ -131,7 +131,7 @@ namespace cfr {
 					i++;
 				}
 
-				file->seek(pos,0);
+				file->seek(pos);
 			}
 #ifdef DEBUG
 			validateFileHeader(bndFile);

@@ -31,15 +31,15 @@ namespace cfr {
 
 		Binder(BSReader* file, uint64_t priorOffset)
 		{
-			file->seek(offset,0);
+			file->seek(offset);
 			offset += priorOffset;
 			init(file, offset);
 		};
 
 		Binder(std::string path)
 		{
-			char buffer[4096];
-			BSReader file = BSReader(path,buffer,4096);
+			//char buffer[4096];
+			BSReader file = BSReader(path,4096);
 			init(&file, 0); //this one is differet, its okay
 		};
 

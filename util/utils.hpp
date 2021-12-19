@@ -26,27 +26,27 @@ namespace cfr {
 
 	struct Vector2
 	{
-		float x;
-		float y;
+		_Float32 x;
+		_Float32 y;
 	};
 
 	struct Vector3
 	{
-		float x;
-		float y;
-		float z;
+		_Float32 x;
+		_Float32 y;
+		_Float32 z;
 	};
 
 	struct OffsetString
 	{
-		int64_t offset; //can sometimes be a uint32, made a 64 to stay big enough
+		uint64_t offset; //can sometimes be a uint32, made a 64 to stay big enough
 		char string[64]; //confirm if this is too many chars
 	};
 
 	//assumes null terminated strings less than 2^64 in length
 	uint64_t getStringSize(BSReader* file)
 	{
-		uint64_t initialPos = file->position;
+		uint64_t initialPos = file->readPos;
 		uint64_t i = 0;
 		char temp = 'a';
 
@@ -56,7 +56,7 @@ namespace cfr {
 			i++;
 		}
 
-		file->seek(initialPos,0); //return to where started
+		file->seek(initialPos); //return to where started
 		return i;
 	};
 };
