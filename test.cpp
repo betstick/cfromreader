@@ -15,6 +15,7 @@ int main()
 	FLVER* flver = new FLVER(reader,0);
 	printf("headerstuff:%i\n",flver->dummies[1].referenceID);
 	printf("materials:%i\n",flver->materials[1].textureCount);
+	printf("rotation:%f\n",flver->bones->rotation.x);
 
 	/*FLVER flver = FLVER("../c5370.flver");
 	printf("bones: %i\n",flver.bones.size());*/

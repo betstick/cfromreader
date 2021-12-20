@@ -1,14 +1,9 @@
-/*#ifndef CFR_FILE_READER
-#define CFR_FILE_READER*/
-
 #pragma once
 #include "stdafx.hpp"
 
-namespace cfr {
-
-	//this function is *very* stupid. its simple and works though
-	//this may or may not need to be reversed :^)
-	//for debugging purposes only!
+namespace cfr 
+{
+	//Outputs a string representation of a byte as a number. Debugging only.
 	int32_t byteToBinary(int8_t byte)
 	{
 		int32_t output = 0;
@@ -37,28 +32,28 @@ namespace cfr {
 		_Float32 z;
 	};
 
+	//this is ugly. make it better :/
 	struct OffsetString
 	{
 		uint64_t offset; //can sometimes be a uint32, made a 64 to stay big enough
 		char string[64]; //confirm if this is too many chars
 	};
 
-	//assumes null terminated strings less than 2^64 in length
+	//Returns length of null terminated string or errors if there is no end.
 	uint64_t getStringSize(BSReader* file)
 	{
 		uint64_t initialPos = file->readPos;
-		uint64_t i = 0;
+		uint64_t length = 0;
 		char temp = 'a';
 
+		//would use for loop, but need to retrun length
 		while(temp != '\0')
 		{
 			file->read(&temp,1);
-			i++;
+			length++;
 		}
 
 		file->seek(initialPos); //return to where started
-		return i;
+		return length;
 	};
 };
-
-//#endif

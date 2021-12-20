@@ -188,6 +188,8 @@ namespace cfr
 
 		FLVER_Bone(BSReader* file, uint64_t offset)
 		{
+			//this has to be read in one element at a time.
+			//the vectors cause segfaults if you try to lump them together.
 			file->read(&translation.x,4);
 			file->read(&translation.y,4);
 			file->read(&translation.z,4);
@@ -216,6 +218,7 @@ namespace cfr
 
 	class FLVER_Mesh
 	{
+		public:
 		bool dynamic; 
 		
 		char unk01; //assert(0)
@@ -247,6 +250,52 @@ namespace cfr
 		int32_t* boneIndices; //size of boneCount
 		int32_t* faceSetIndices; //size of faceSetCount
 		int32_t* vertexBufferIndices; //size of vertexBufferCount
+
+		FLVER_Mesh(){};
+
+		FLVER_Mesh(BSReader* file, uint64_t offset, FLVER_Header header)
+		{
+			file->read(&dynamic,48); //dynamic thru vertexBufferIndicesOffset
+			
+			
+			
+			file->read(&boneIndices,12); //boneIndices thru vertexBufferIndices
+
+			uint64_t start = file->readPos;
+
+			if(boundingBoxOffset != 0)
+			{
+				file->seek(boundingBoxOffset);
+				
+				file->read(&boundingBoxMin.x,4);
+				file->read(&boundingBoxMin.y,4);
+				file->read(&boundingBoxMin.z,4);
+				file->read(&boundingBoxMax.x,4);
+				file->read(&boundingBoxMax.y,4);
+				file->read(&boundingBoxMax.z,4);
+
+				if(header.version >= 0x2001A)
+				{
+					file->read(&boundingBoxUnk.x,4);
+					file->read(&boundingBoxUnk.y,4);
+					file->read(&boundingBoxUnk.z,4);
+				}
+			}
+
+			if(boneCount > 0)
+			{
+				file->seek(boneIndicesOffset);
+				boneIndices = new int32_t[boneCount];
+			}
+
+			file->seek(faceSetIndicesOffset);
+			faceSetIndices = new int32_t[faceSetCount];
+			
+			file->seek(vertexBufferIndicesOffset);
+			vertexBufferIndices = new int32_t[vertexBufferCount];
+
+			file->seek(start);
+		};
 	};
 
 	//quad start??? position i think, maybe use offset?
