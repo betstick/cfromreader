@@ -183,7 +183,7 @@ namespace cfr
 		Vector3 boundingBoxMin;
 		int32_t unk3C;
 		Vector3 boundingBoxMax;
-		char* emptyJunk[52]; //all zero
+		char* emptyJunk[52]; //potentially needed for spacing :/
 
 		FLVER_Bone(){};
 
@@ -425,20 +425,55 @@ namespace cfr
 
 		//these have very specific conditions to be filled
 		FLVER_EdgeIndices vertexIndices;
-		uint32_t* vertexIndicesVec; //size of vertexIndexCount
+		uint32_t* vertexIndicesArr; //size of vertexIndexCount
 
 		FLVER_FaceSet(){};
 
-		/*FLVER_FaceSet(BSReader file)//, uint64_t offset)
+		FLVER_FaceSet(BSReader* file, FLVER_Header header)
 		{
+			file->read(&flags,16); //flags thru vertexIndicesOffset
 
-		};*/
+			if(header.version >= 0x20009)
+			{
+				file->read(&vertexIndicesLength,16); //thru unk1C
+			}
+
+			int32_t actualVertexIndexSize = header.vertexIndexSize == 0 ? vertexIndexSize : header.vertexIndexSize;
+
+			file->markPos();
+
+			file->seek(header.dataOffset + vertexIndicesOffset);
+
+			//TODO: improve this mess
+			if(actualVertexIndexSize == 8)
+			{
+				vertexIndices = FLVER_EdgeIndices();
+			}
+			else if(actualVertexIndexSize == 16)
+			{
+				vertexIndicesArr = new uint32_t[vertexIndexCount];
+			}
+			else if(actualVertexIndexSize == 32)
+			{
+				vertexIndicesArr = new uint32_t[vertexIndexCount];
+			}
+
+			file->returnToMark();
+		};
 	};
 
 	class FLVER_Vertex
 	{
 		public:
 		char* data; //size of size input
+
+		FLVER_Vertex(){};
+
+		FLVER_Vertex(BSReader* file, int32_t size)
+		{
+			data = new char[size];
+			file->read(&data[0],size); //TODO: make this work, it should
+		};
 	};
 
 	class FLVER_VertexBuffer
@@ -456,6 +491,30 @@ namespace cfr
 		uint32_t bufferOffset;
 
 		FLVER_Vertex* vertices; //size of vertexCount
+
+		FLVER_VertexBuffer(){};
+
+		FLVER_VertexBuffer(BSReader* file, FLVER_Header header)
+		{
+			file->read(&bufferIndex,32); //bufferIndex thru bufferOffset
+
+			//printf("vertexCount:%i\n",vertexCount);
+
+			if((unk10 == 0) && (unk14 == 0))
+			{
+				file->markPos();
+				file->seek(header.dataOffset + bufferOffset);
+
+				vertices = new FLVER_Vertex[vertexCount];
+				for(int32_t i = 0; i < vertexCount; i++)
+				{
+					//TODO: verify this works and is mem safe
+					vertices[i] = FLVER_Vertex(file,vertexSize);
+				}
+
+				file->returnToMark();
+			}
+		};
 	};
 
 	class FLVER_LayoutMember

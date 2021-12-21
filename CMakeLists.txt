@@ -42,13 +42,15 @@ add_dir("${DIRS}")
 
 option(DEBUG "enable verbose stuff and GDB support" OFF)
 
-if(DEBUG)
+if(BUILD STREQUAL "DEBUG")
 	add_compile_definitions(DEBUG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -Werror -Wall -Wextra -fmax-errors=8")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -Werror -Wall -Wextra -fmax-errors=8")
 	message("Using debug mode...")
 else()
 	message("Using release...")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 endif()
 unset(DEBUG CACHE)
 

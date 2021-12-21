@@ -68,6 +68,16 @@ namespace cfr {
 			{
 				meshes[i] = FLVER_Mesh(file,*header);
 			}
+
+			for(int32_t i = 0; i < header->faceSetCount; i++)
+			{
+				faceSets[i] = FLVER_FaceSet(file,*header);
+			}
+
+			for(int32_t i = 0; i < header->vertexBufferCount; i++)
+			{
+				vertexBuffers[i] = FLVER_VertexBuffer(file,*header);
+			}
 		};
 	};
 };
