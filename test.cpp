@@ -12,10 +12,11 @@ int main()
 
 	BSReader* reader = new BSReader("../c5370.flver",4096);
 
-	FLVER* flver = new FLVER(reader,0);
+	FLVER* flver = new FLVER(reader);
 	printf("headerstuff:%i\n",flver->dummies[1].referenceID);
 	printf("materials:%i\n",flver->materials[1].textureCount);
 	printf("rotation:%f\n",flver->bones->rotation.x);
+	printf("bonecount:%i\n",flver->meshes->boneCount);
 
 	/*FLVER flver = FLVER("../c5370.flver");
 	printf("bones: %i\n",flver.bones.size());*/

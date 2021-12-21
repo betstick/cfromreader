@@ -50,7 +50,7 @@ namespace cfr {
 			//this comment probably makes no sense.
 			offset += priorOffset;
 			file->seek(offset);
-			init(file, offset);
+			init(file);//, offset);
 		};
 
 		bool validateBinderHeader()
@@ -76,21 +76,21 @@ namespace cfr {
 		};
 
 		private:
-		void init(BSReader* file, uint64_t offset)
+		void init(BSReader* file) //, uint64_t offset)
 		{
-			initBinderHeader(file, 0);
+			initBinderHeader(file);//, 0);
 
-			for(uint64_t i = 0; i < header.fileCount; i++)
+			for(int32_t i = 0; i < header.fileCount; i++)
 			{
-				initFileHeaders(file, offset);
+				initFileHeaders(file); //, offset);
 			}
 #ifdef DEBUG
 			printf("If you can see this message, all BND3 checks passed!\n");
 #endif
-			initSubFiles(file, offset);
+			//initSubFiles(file); //, offset);
 		};
 
-		void initBinderHeader(BSReader* file, uint64_t offset)
+		void initBinderHeader(BSReader* file)//, uint64_t offset)
 		{
 			//needs to start at magic for some reason :/
 			file->read(&header.magic,sizeof(_BND3_Header_));
@@ -100,7 +100,7 @@ namespace cfr {
 #endif	
 		};
 
-		void initFileHeaders(BSReader* file, uint64_t offset)
+		void initFileHeaders(BSReader* file)//, uint64_t offset)
 		{
 			_BND3_File_ bndFile;
 			file->read(&bndFile.rawFlags,12);
@@ -111,7 +111,7 @@ namespace cfr {
 			if(header.rawFormat & 0b01000000)
 				file->read(&bndFile.id,4);
 				
-			if(header.rawFormat & 0b00100000 | header.rawFormat & 0b00010000)
+			if((header.rawFormat & 0b00100000) | (header.rawFormat & 0b00010000))
 				file->read(&bndFile.nameOffset,4);
 
 			if(header.rawFormat & 0b00000100)
@@ -139,9 +139,9 @@ namespace cfr {
 			fileHeaders.push_back(bndFile);
 		};
 	
-		void initSubFiles(BSReader* file, uint64_t offset)
+		/*(void initSubFiles(BSReader* file) //, uint64_t offset)
 		{
 
-		};
+		};*/
 	};
 };

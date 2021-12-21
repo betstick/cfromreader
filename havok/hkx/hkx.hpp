@@ -78,7 +78,7 @@ namespace cfr {
 
 		//this is the ONLY class that needs a default header????
 		hkxHeader(){}; //this just shouldn't be needed :/ but it is. //TODO: get rid of this!
-		hkxHeader(FILE* file, uint64_t offset, hkToolset version)
+		hkxHeader(FILE* file, hkToolset version)
 		{
 			fread(&magic1,4,1,file);
 			fread(&magic2,4,1,file);
@@ -112,7 +112,7 @@ namespace cfr {
 			if(version >= 0x0B) //newer version of hkx
 			{
 				fread(&maxPredicate,2,1,file);
-				if(maxPredicate = -1)
+				if(maxPredicate == -1)
 					fread(&predicateArraySizePlusPadding,2,1,file); //unk3c
 				
 				fread(&predicateArraySizePlusPadding,2,1,file); //section offset
@@ -136,7 +136,7 @@ namespace cfr {
 		uint32_t pointer;
 		uint32_t destination;
 
-		hkxLocalFixup(FILE* file, uint64_t offset)
+		hkxLocalFixup(FILE* file)
 		{
 			fread(&pointer,4,1,file);
 			fread(&destination,4,1,file);
@@ -165,7 +165,7 @@ namespace cfr {
 		uint32_t sectionIndex;
 		uint32_t classNameOffset;
 
-		hkxVirtualFixup(FILE* file, uint64_t offset)
+		hkxVirtualFixup(FILE* file)
 		{
 			fread(&pointer,4,1,file);
 			fread(&sectionIndex,4,1,file);
@@ -216,7 +216,7 @@ namespace cfr {
 		char className[32]; //i sure hope its not more than 32 :^)
 		uint32_t sectionOffset;
 
-		hkxClassName(FILE* file, uint64_t offset, hkToolset version)
+		hkxClassName(FILE* file, hkToolset version)
 		{
 			fread(&signature,4,1,file);
 			if(fgetc(file) != 0x09)
@@ -384,13 +384,13 @@ namespace cfr {
 			objects.push_back(hkxClassNames(file,offset,version));
 		};
 
-		void readDataObjects(FILE* file, uint64_t offset, hkToolset version, int32_t sectionDataInput)
+		/*void readDataObjects(FILE* file, uint64_t offset, hkToolset version, int32_t sectionDataInput)
 		{
 			for(uint64_t i = 0; i < virtualFixups.size(); i++)
 			{
 
 			}
-		};
+		};*/
 	};
 
 	//hktoolset sctruct/var is needed??!?!?!

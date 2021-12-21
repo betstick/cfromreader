@@ -1,6 +1,8 @@
 #pragma once
 #include "stdafx.hpp"
 
+//this messy file is for misc stuff needed by many files. types, functions, etc.
+
 namespace cfr 
 {
 	//Outputs a string representation of a byte as a number. Debugging only.
@@ -55,5 +57,23 @@ namespace cfr
 
 		file->seek(initialPos); //return to where started
 		return length;
+	};
+
+	/*template<typename T> void BSReader <Vector3>::read(Vector3* vecPtr)
+	{
+		file->read(vecPtr->x,4);
+		file->read(vecPtr->y,4);
+		file->read(vecPtr->z,4);
+	};*/
+
+	//template<> void BSReader::read<Vector3>(Vector3* vecPtr){};
+
+	Vector3 readVec3(BSReader* reader)
+	{
+		Vector3 tempVec;
+		reader->read(&tempVec.x,4);
+		reader->read(&tempVec.y,4);
+		reader->read(&tempVec.z,4);
+		return tempVec;
 	};
 };

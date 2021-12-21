@@ -23,21 +23,21 @@ namespace cfr {
 		FLVER_Texture* textures;
 
 		//the offset should actually be used for this one :^)
-		FLVER(BSReader* file, uint64_t offset)
+		FLVER(BSReader* file)
 		{
-			init(file,offset);
+			init(file);
 		};
 
 		FLVER(std::string path)
 		{
 			BSReader file = BSReader(path,4096);
-			init(&file,0); //this one is differet, its okay
+			init(&file); //this one is differet, its okay
 		};
 
 		private:
-		void init(BSReader* file, uint64_t offset)
+		void init(BSReader* file)//, uint64_t offset)
 		{
-			header = new FLVER_Header(file,offset);
+			header = new FLVER_Header(file);//,offset);
 
 			//just init them all at once onto the heap
 			dummies = new FLVER_Dummy[header->dummyCount];
@@ -49,19 +49,24 @@ namespace cfr {
 			bufferLayouts = new FLVER_BufferLayout[header->bufferLayoutCount];
 			textures = new FLVER_Texture[header->textureCount];
 
-			for(uint64_t i = 0; i < header->dummyCount; i++)
+			for(int32_t i = 0; i < header->dummyCount; i++)
 			{
-				dummies[i] = FLVER_Dummy(file,offset);
+				dummies[i] = FLVER_Dummy(file);//,offset);
 			}
 
-			for(uint64_t i = 0; i < header->materialCount; i++)
+			for(int32_t i = 0; i < header->materialCount; i++)
 			{
-				materials[i] = FLVER_Material(file,offset,*header);
+				materials[i] = FLVER_Material(file,*header);//,offset,*header);
 			}
 
-			for(uint64_t i = 0; i < header->boneCount; i++)
+			for(int32_t i = 0; i < header->boneCount; i++)
 			{
-				bones[i] = FLVER_Bone(file,offset);
+				bones[i] = FLVER_Bone(file);//,offset);
+			}
+
+			for(int32_t i = 0; i < header->meshCount; i++)
+			{
+				meshes[i] = FLVER_Mesh(file,*header);
 			}
 		};
 	};
