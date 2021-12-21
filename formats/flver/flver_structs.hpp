@@ -183,6 +183,7 @@ namespace cfr
 		Vector3 boundingBoxMin;
 		int32_t unk3C;
 		Vector3 boundingBoxMax;
+		char* emptyJunk[52]; //all zero
 
 		FLVER_Bone(){};
 
@@ -205,15 +206,15 @@ namespace cfr
 			file->read(&scale.z,4);
 			file->read(&nextSiblingIndex,2);
 			file->read(&previousSiblingIndex,2);
-			/*file->read(&boundingBoxMin.x,4);
+			file->read(&boundingBoxMin.x,4);
 			file->read(&boundingBoxMin.y,4);
-			file->read(&boundingBoxMin.z,4);*/
-			boundingBoxMin = readVec3(file); //function test
+			file->read(&boundingBoxMin.z,4);
+			//boundingBoxMin = readVec3(file); //function test
 			file->read(&unk3C,4);
 			file->read(&boundingBoxMax.x,4);
 			file->read(&boundingBoxMax.y,4);
 			file->read(&boundingBoxMax.z,4);
-			//i have reason to believe that this is the end
+			file->read(&emptyJunk,13*4);
 		};
 	};
 
@@ -302,8 +303,6 @@ namespace cfr
 
 			if(boneCount > 0)
 			{
-				printf("boneCount:%i\n",boneCount);
-
 				file->seek(boneIndicesOffset);
 				boneIndices = new int32_t[boneCount];
 				for(int32_t i = 0; i < boneCount; i++)
@@ -312,7 +311,6 @@ namespace cfr
 				}
 			}
 
-			printf("faceSetCount:%i\n",faceSetCount);
 			file->seek(faceSetIndicesOffset);
 			faceSetIndices = new int32_t[faceSetCount];
 			for(int32_t i = 0; i < faceSetCount; i++)
