@@ -11,8 +11,8 @@ struct testResults
 	int64_t e;
 	int64_t f;
 
-	std::chrono::_V2::system_clock::time_point startTime;
-	std::chrono::_V2::system_clock::time_point endTime;
+	//std::chrono::_V2::system_clock::time_point startTime;
+	//std::chrono::_V2::system_clock::time_point endTime;
 };
 
 /*bool validateResults(testResults* results, uint64_t count)
@@ -39,7 +39,7 @@ testResults benchmarkFlver(BSReader* reader)
 
 int main()
 {
-	auto startTime = std::chrono::system_clock::now();
+	//auto startTime = std::chrono::system_clock::now();
 
 	//printf("_BND3_Heasder_ size: %i\n",sizeof(_BND3_Header_));
 	/*Binder bnd = Binder("../c0000.anibnd");
@@ -60,12 +60,12 @@ int main()
 
 	FLVER* flver = new FLVER(reader);
 	testResults results;
-	/*printf("headerstuff:%i\n",flver->dummies[1].referenceID);
+	printf("headerstuff:%i\n",flver->dummies[1].referenceID);
 	printf("materials:%i\n",flver->materials[1].textureCount);
 	printf("rotation:%f\n",flver->bones->rotation.x);
 	printf("bonecount:%i\n",flver->meshes->boneCount);
 	printf("faceSets:%i\n",flver->faceSets->vertexIndexCount);
-	printf("vertexBuffer:%i\n",flver->vertexBuffers->vertexCount);*/
+	printf("vertexBuffer:%i\n",flver->vertexBuffers->vertexCount);
 	results.a = (int64_t)flver->dummies->referenceID;
 	results.b = (int64_t)flver->materials[0].textureCount;
 	results.c = (int64_t)flver->bones->rotation.x;
@@ -74,10 +74,12 @@ int main()
 	results.f = (int64_t)flver->vertexBuffers->vertexCount;
 
 	uint64_t result = results.a + results.b + results.c + results.d + results.e + results.f;
-	printf("final:%i\n",result);
+	printf("final:%lu\n",result);
 
-	/*FLVER flver = FLVER("../c5370.flver");
-	printf("bones: %i\n",flver.bones.size());*/
+	/*FLVER flver = FLVER("../c5370.flver");*/
+	printf("tex path offset:%u\n",flver->textures->path.offset);
+
+	//printf("texturestuff: %i")
 
 	//auto endTime = std::chrono::system_clock::now();
 	//std::chrono::duration<double> elapsed = endTime - startTime;

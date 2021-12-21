@@ -37,14 +37,14 @@ namespace cfr
 	//this is ugly. make it better :/
 	struct OffsetString
 	{
-		uint64_t offset; //can sometimes be a uint32, made a 64 to stay big enough
+		uint32_t offset; //might need to be 64 bit later...
 		char string[64]; //confirm if this is too many chars
 	};
 
 	//Returns length of null terminated string or errors if there is no end.
 	uint64_t getStringSize(BSReader* file)
 	{
-		uint64_t initialPos = file->readPos;
+		file->markPos();
 		uint64_t length = 0;
 		char temp = 'a';
 
@@ -55,7 +55,7 @@ namespace cfr
 			length++;
 		}
 
-		file->seek(initialPos); //return to where started
+		file->returnToMark(); //return to where started
 		return length;
 	};
 
@@ -65,6 +65,19 @@ namespace cfr
 		file->read(vecPtr->y,4);
 		file->read(vecPtr->z,4);
 	};*/
+
+	OffsetString readOffsetString(BSReader* file)
+	{
+		OffsetString temp;
+		file->read(&temp.offset,4);
+		file->stepIn(temp.offset);
+
+		uint64_t length = getStringSize(file);
+		file->read(&temp.string,length);
+		
+		file->stepOut();
+		return temp;
+	};
 
 	//template<> void BSReader::read<Vector3>(Vector3* vecPtr){};
 

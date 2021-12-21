@@ -134,8 +134,11 @@ namespace cfr
 
 		FLVER_Material(BSReader* file, FLVER_Header header)
 		{
-			file->read(&name.offset,4);
-			file->read(&mtd.offset,4);
+			//file->read(&name.offset,4);
+			//file->read(&mtd.offset,4);
+			name = readOffsetString(file);
+			mtd = readOffsetString(file);
+
 			file->read(&textureCount,24); //texCount thru unk1C
 
 			if(gxOffset != 0)
@@ -194,7 +197,8 @@ namespace cfr
 			file->read(&translation.x,4);
 			file->read(&translation.y,4);
 			file->read(&translation.z,4);
-			file->read(&name.offset,4);
+			//file->read(&name.offset,4);
+			name = readOffsetString(file);
 			//file->read(&name.string,getStringSize(file)); //TODO: validate
 			file->read(&rotation.x,4);
 			file->read(&rotation.y,4);
@@ -525,6 +529,13 @@ namespace cfr
 		uint32_t type;
 		uint32_t semantic;
 		int32_t index;
+
+		FLVER_LayoutMember(){};
+
+		FLVER_LayoutMember(BSReader* file)
+		{
+			file->read(&unk00,20); //EVERYTHING
+		};
 	};
 
 	class FLVER_BufferLayout
@@ -537,6 +548,20 @@ namespace cfr
 
 		uint32_t membersOffset;
 		FLVER_LayoutMember* members; //size of memberCount
+
+		FLVER_BufferLayout(){};
+
+		FLVER_BufferLayout(BSReader *file)
+		{
+			file->read(&memberCount,16);
+			file->stepIn(membersOffset);
+			members = new FLVER_LayoutMember[memberCount];
+			for(int32_t i = 0; i < memberCount; i++)
+			{
+				members[i] = FLVER_LayoutMember();
+			}
+			file->stepOut();
+		};
 	};
 
 	class FLVER_Texture
@@ -551,8 +576,23 @@ namespace cfr
 		char unk11;
 		int16_t unk12; //assert(0)
 
-		float unk14;
-		float unk18;
-		float unk1C;
+		_Float32 unk14;
+		_Float32 unk18;
+		_Float32 unk1C;
+
+		FLVER_Texture(){};
+
+		FLVER_Texture(BSReader* file)
+		{
+			//file->read(&path.offset,4);
+			//file->read(&type.offset,4);
+			path = readOffsetString(file);
+			type = readOffsetString(file);
+
+			file->read(&scale.x,4);
+			file->read(&scale.y,4);
+
+			file->read(&unk10,16);
+		};
 	};
 };

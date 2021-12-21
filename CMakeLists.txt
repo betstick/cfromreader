@@ -42,7 +42,7 @@ add_dir("${DIRS}")
 
 option(DEBUG "enable verbose stuff and GDB support" OFF)
 
-if(BUILD STREQUAL "DEBUG")
+if(BUILD STREQUAL "debug")
 	add_compile_definitions(DEBUG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -Werror -Wall -Wextra -fmax-errors=8")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -Werror -Wall -Wextra -fmax-errors=8")

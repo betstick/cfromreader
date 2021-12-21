@@ -35,7 +35,7 @@ namespace cfr {
 		};
 
 		private:
-		void init(BSReader* file)//, uint64_t offset)
+		void init(BSReader* file)
 		{
 			header = new FLVER_Header(file);//,offset);
 
@@ -56,7 +56,7 @@ namespace cfr {
 
 			for(int32_t i = 0; i < header->materialCount; i++)
 			{
-				materials[i] = FLVER_Material(file,*header);//,offset,*header);
+				materials[i] = FLVER_Material(file,*header);
 			}
 
 			for(int32_t i = 0; i < header->boneCount; i++)
@@ -77,6 +77,16 @@ namespace cfr {
 			for(int32_t i = 0; i < header->vertexBufferCount; i++)
 			{
 				vertexBuffers[i] = FLVER_VertexBuffer(file,*header);
+			}
+
+			for(int32_t i = 0; i < header->bufferLayoutCount; i++)
+			{
+				bufferLayouts[i] = FLVER_BufferLayout(file);
+			}
+
+			for(int32_t i = 0; i < header->textureCount; i++)
+			{
+				textures[i] = FLVER_Texture(file);
 			}
 		};
 	};
