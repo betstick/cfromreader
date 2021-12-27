@@ -524,17 +524,49 @@ namespace cfr
 	class FLVER_LayoutMember
 	{
 		public:
-		int32_t unk00;
-		int32_t structOffset;
+		int32_t unk00; //0, 1, or 2
+		int32_t structOffset; //unused?
 		uint32_t type;
 		uint32_t semantic;
 		int32_t index;
+		int32_t size; //calc'd via type
 
 		FLVER_LayoutMember(){};
 
-		FLVER_LayoutMember(BSReader* file)
+		FLVER_LayoutMember(BSReader* file, int32_t offset)
 		{
-			file->read(&unk00,20); //EVERYTHING
+			file->read(&unk00,4);
+			file->read(&structOffset,4);
+			file->read(&type,4); //this may be wrong
+			file->read(&semantic,4); //same for this one
+			file->read(&index,4);
+
+			switch(type)
+			{
+				case 0xF0:
+					size = 1;
+
+				case 0x10:
+				case 0x11:
+				case 0x12:
+				case 0x13:
+				case 0x15:
+				case 0x2F:
+					size = 4;
+
+				case 0x01:
+				case 0x16:
+				case 0x18:
+				case 0x1A:
+				case 0x2E:
+					size = 8;
+
+				case 0x02:
+					size = 12;
+				
+				case 0x03:
+					size = 16;
+			}
 		};
 	};
 
@@ -593,6 +625,219 @@ namespace cfr
 			file->read(&scale.y,4);
 
 			file->read(&unk10,16);
+		};
+	};
+
+	//weight of the four potential bones, 0 means no bone
+	//format for this class is for what type of data to read
+	class FLVER_VertexBoneWeights
+	{
+		public:
+		_Float32 a,b,c,d;
+		int32_t length; //always 4
+
+		FLVER_VertexBoneWeights(){};
+
+		FLVER_VertexBoneWeights(BSReader* file, uint32_t format, _Float32 divisor)
+		{
+			a = getValue(file,format,divisor);
+			b = getValue(file,format,divisor);
+			c = getValue(file,format,divisor);
+			d = getValue(file,format,divisor);
+
+			length = 4; //always 4
+		};
+
+		private:
+		_Float32 getValue(BSReader* file, uint32_t format, _Float32 divisor)
+		{
+			_Float32 value = 0;
+			char temp[2];
+
+			//cast to the appropriate type and calculate the final value
+			switch(format)
+			{
+				case 0: file->read(&temp,1); value = (  int8_t)temp / divisor;
+				case 1: file->read(&temp,1); value = ( uint8_t)temp / divisor;
+				case 2: file->read(&temp,2); value = ( int16_t)temp / divisor;
+				case 3: file->read(&temp,2); value = (uint16_t)temp / divisor;
+			}
+
+			return value;
+		};
+	};
+
+	//index of which bone (if any) a vert is bound to
+	//0 means no bone :(
+	class FLVER_VertexBoneIndices
+	{
+		public:
+		int32_t a,b,c,d;
+		int32_t length; //always 4
+
+		FLVER_VertexBoneIndices(){};
+
+		FLVER_VertexBoneIndices(BSReader* file, uint32_t format)
+		{
+			a = getValue(file,format);
+			b = getValue(file,format);
+			c = getValue(file,format);
+			d = getValue(file,format);
+
+			length = 4; //always 4
+		};
+
+		private:
+		int32_t getValue(BSReader* file, uint32_t format)
+		{
+			int32_t value = 0;
+			char temp[2];
+
+			//cast to the appropriate type and calculate the final value
+			switch(format)
+			{
+				case 0: file->read(&temp,1); value = (  int8_t)temp;
+				case 1: file->read(&temp,1); value = ( uint8_t)temp;
+				case 2: file->read(&temp,2); value = ( int16_t)temp;
+				case 3: file->read(&temp,2); value = (uint16_t)temp;
+			}
+
+			return value;
+		};
+	};
+
+	class FLVER_VertexColor
+	{
+		public:
+		_Float32 a,r,g,b;
+
+		FLVER_VertexColor(BSReader* file)
+		{
+			file->read(&a,4);
+			file->read(&r,4);
+			file->read(&g,4);
+			file->read(&b,4);
+		};
+	};
+
+	// SoulsFormats/Formats/FLVER/Vertex.cs
+	class FLVER_VertexData
+	{
+		public:
+		Vector3 position;
+
+		FLVER_VertexBoneWeights boneWeights;
+		FLVER_VertexBoneIndices boneIndices;
+
+		Vector3 normal;
+		int32_t normalW;
+
+		Vector3* UVs;
+
+		Vector4* tangents;
+
+		//vec pointing perpendicular to normal and tangent
+		Vector4 bitangent; 
+
+		FLVER_VertexColor* vertexColor;
+
+		//uvQueue;
+		//tangentQueue;
+		//colorQueue;
+
+		//n is the number of layoutmembers, REALLY needs to be its own file :/
+		FLVER_VertexData(BSReader* file, FLVER_LayoutMember* layout, uint32_t n, _Float32 uvFactor)
+		{
+			for(uint32_t i = 0; i < n; i++)
+			{
+				if(layout[i].semantic == 0)
+				{
+					if(layout[i].type == 0x02)
+					{
+						position = readVec3(file);
+					}
+					else if(layout[i].type == 0x04)
+					{
+						position = readVec3(file);
+						file->seek(file->readPos+4); //should push it 4 ahead?
+					}
+					else if(layout[i].type == 0xF0)
+					{
+						throw std::runtime_error("Edge compressed format not supported!\n");
+					}
+					else
+						throw std::runtime_error("Uknown vertex layout type...\n");
+				}
+				else if(layout[i].semantic = 1)
+				{
+					if(layout[i].type == 0x10)
+						boneWeights = FLVER_VertexBoneWeights(file,0,  127.0f);
+					else if(layout[i].type == 0x13)
+						boneWeights = FLVER_VertexBoneWeights(file,1,  255.0f);
+					else if(layout[i].type == 0x16)
+						boneWeights = FLVER_VertexBoneWeights(file,2,32767.0f);
+					else if(layout[i].type == 0x1A)
+						boneWeights = FLVER_VertexBoneWeights(file,2,32767.0f);
+					else
+						throw std::runtime_error(":fatdog:\n");
+				}
+				else if(layout[i].semantic == 2)
+				{
+					if(layout[i].type == 0x11)
+						boneIndices = FLVER_VertexBoneIndices(file,1);
+					else if(layout[i].type == 0x18)
+						boneIndices = FLVER_VertexBoneIndices(file,2);
+					else if(layout[i].type == 0x2F)
+						boneIndices = FLVER_VertexBoneIndices(file,1);
+					else
+						throw std::runtime_error(":fatdog:\n");
+				}
+				else if(layout[i].semantic == 3)
+				{
+					//NORMALS
+					/*if(layout[i].type == 0x02)
+					{
+						normal = readVec3(file);
+					}
+					else if(layout[i].type == 0x03)
+					{
+						normal = readVec3(file);
+						_Float32 w;
+						file->read(&w,4); 
+						normalW = (int32_t)w; //must convert, its stored as float
+					}
+					else if(layout[i].type == 0x10)
+					{
+						normal = readByteNormVec3(file);
+						file->read(&normalW,1); //confirm this works somehow
+					}
+					else if(layout[i].type == 0x11)
+					{
+						normal = readByteNormVec3(file);
+						file->read(&normalW,1); //confirm this works somehow
+					}
+					else if(layout[i].type == 0x12)
+					{
+						file->read(&normalW,1);
+						normal = readByteNormVec3(file);
+					}
+					else if(layout[i].type == 0x13)
+					{
+						normal = readByteNormVec3(file);
+						file->read(&normalW,1);
+					}
+					else if(layout[i].type == 0x1A)
+					{
+						normal = readByteNormVec3(file);
+						file->read(&normalW,2); //verify
+					}
+					else if(layout[i].type == 0x2E)
+					{
+						normal = readByteNormVec3(file);
+						file->read(&normalW,2); //verify
+					}*/
+				}
+			}
 		};
 	};
 };

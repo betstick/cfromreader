@@ -37,7 +37,7 @@ namespace cfr {
 		private:
 		void init(BSReader* file)
 		{
-			header = new FLVER_Header(file);//,offset);
+			header = new FLVER_Header(file);
 
 			//just init them all at once onto the heap
 			dummies = new FLVER_Dummy[header->dummyCount];
@@ -51,7 +51,7 @@ namespace cfr {
 
 			for(int32_t i = 0; i < header->dummyCount; i++)
 			{
-				dummies[i] = FLVER_Dummy(file);//,offset);
+				dummies[i] = FLVER_Dummy(file);
 			}
 
 			for(int32_t i = 0; i < header->materialCount; i++)
@@ -61,7 +61,7 @@ namespace cfr {
 
 			for(int32_t i = 0; i < header->boneCount; i++)
 			{
-				bones[i] = FLVER_Bone(file);//,offset);
+				bones[i] = FLVER_Bone(file);
 			}
 
 			for(int32_t i = 0; i < header->meshCount; i++)

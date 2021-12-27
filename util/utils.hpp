@@ -34,6 +34,14 @@ namespace cfr
 		_Float32 z;
 	};
 
+	struct Vector4
+	{
+		_Float32 w;
+		_Float32 x;
+		_Float32 y;
+		_Float32 z;
+	};
+
 	//this is ugly. make it better :/
 	struct OffsetString
 	{
@@ -89,4 +97,72 @@ namespace cfr
 		reader->read(&tempVec.z,4);
 		return tempVec;
 	};
+
+	Vector4 readVec4(BSReader* reader)
+	{
+		Vector4 tempVec;
+		reader->read(&tempVec.w,4);
+		reader->read(&tempVec.x,4);
+		reader->read(&tempVec.y,4);
+		reader->read(&tempVec.z,4);
+		return tempVec;
+	};
+
+	_Float32 readByteNorm(BSReader* reader)
+	{
+		char temp;
+		_Float32 out;
+
+		reader->read(&temp,1);
+
+		out = ((int32_t)temp - 127) / 127.0f;
+	};
+
+	Vector3 readByteNormVec3(BSReader* reader)
+	{
+		Vector3 temp;
+		temp.x = readByteNorm(reader);
+		temp.y = readByteNorm(reader);
+		temp.z = readByteNorm(reader);
+		return temp;
+	}
+
+	Vector4 readByteNormVec4(BSReader* reader)
+	{
+		Vector4 temp;
+		temp.w = readByteNorm(reader);
+		temp.x = readByteNorm(reader);
+		temp.y = readByteNorm(reader);
+		temp.z = readByteNorm(reader);
+		return temp;
+	}
+
+	_Float32 readShortNorm(BSReader* reader)
+	{
+		char temp;
+		_Float32 out;
+
+		reader->read(&temp,2);
+
+		out = (int32_t)temp / 32767.0f;
+	};
+
+	Vector3 readShortNormVec3(BSReader* reader)
+	{
+		Vector3 temp;
+		temp.x = readShortNorm(reader);
+		temp.y = readShortNorm(reader);
+		temp.z = readShortNorm(reader);
+		return temp;
+	}
+
+	Vector4 readShortNormVec4(BSReader* reader)
+	{
+		Vector4 temp;
+		temp.w = readShortNorm(reader);
+		temp.x = readShortNorm(reader);
+		temp.y = readShortNorm(reader);
+		temp.z = readShortNorm(reader);
+		return temp;
+	}
 };

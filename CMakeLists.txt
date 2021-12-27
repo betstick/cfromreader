@@ -57,4 +57,4 @@ unset(DEBUG CACHE)
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}__SOURCES} ${${PROJECT_NAME}__INCLUDES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PROJECT_NAME} )
+target_link_libraries(${PROJECT_NAME})
