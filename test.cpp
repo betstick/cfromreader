@@ -68,5 +68,9 @@ int main()
 	printf("isTriStrip:%d\n",flver->faceSets[0].triangleStrip);
 	printf("faceSets:%u\n",flver->faceSets[0].vertexIndices16[54]);
 
+	_Float32 vec3x = 0;
+	memcpy(&vec3x,&flver->vertexBuffers[0].vertices[0],4);
+	printf("vec3.x:%f\n",vec3x);
+
 	return 0;
 };

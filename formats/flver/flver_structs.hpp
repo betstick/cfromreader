@@ -448,7 +448,7 @@ namespace cfr
 			header.vertexIndexSize == 0 ? actualVertexIndexSize = vertexIndexSize : actualVertexIndexSize = header.vertexIndexSize;
 
 			file->stepIn(header.dataOffset + vertexIndicesOffset);
-			
+
 			if(actualVertexIndexSize == 8)
 			{
 				vertexIndices = FLVER_EdgeIndices();
@@ -495,7 +495,8 @@ namespace cfr
 		uint32_t verticesLength; //0 in version 20005, non 0 in 20008
 		uint32_t bufferOffset;
 
-		FLVER_Vertex* vertices; //size of vertexCount
+		//FLVER_Vertex* vertices; //size of vertexCount
+		char* vertices;
 
 		FLVER_VertexBuffer(){};
 
@@ -505,15 +506,29 @@ namespace cfr
 
 			if((unk10 == 0) && (unk14 == 0))
 			{
-				file->markPos();
-				file->seek(header.dataOffset + bufferOffset);
+				file->stepIn(header.dataOffset + bufferOffset);
 
-				vertices = new FLVER_Vertex[vertexCount];
+				//size i'm 99% sure it actually is
+				uint32_t trueSize = 0;
+				//size by doing the math manually
+				uint32_t calcSize = vertexSize * vertexCount;
+				//size the flver claims the buffer is
+				uint32_t claimedSize = verticesLength;
 
-				for(int32_t i = 0; i < vertexCount; i++)
-					vertices[i] = FLVER_Vertex(file,vertexSize);
+				//go with the bigger size cause bigger is better
+				if(calcSize > claimedSize)
+				{
+					trueSize = calcSize;
+				}
+				else
+				{
+					trueSize = claimedSize;
+				}
 
-				file->returnToMark();
+				vertices = new char[trueSize];
+				file->read(&vertices[0],trueSize);
+
+				file->stepOut();
 			}
 		};
 	};
