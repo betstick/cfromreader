@@ -414,8 +414,8 @@ namespace cfr
 	{
 		public:
 		uint32_t flags;
-		char triangleStrip;
-		char cullBackFaces;
+		bool triangleStrip;
+		bool cullBackFaces;
 		char unk06;
 		char unk07;
 		int32_t vertexIndexCount;
@@ -429,7 +429,8 @@ namespace cfr
 
 		//these have very specific conditions to be filled
 		FLVER_EdgeIndices vertexIndices;
-		uint32_t* vertexIndicesArr; //size of vertexIndexCount
+		uint16_t* vertexIndices16; //size of vertexIndexCount
+		uint32_t* vertexIndices32; //size of vertexIndexCount
 
 		FLVER_FaceSet(){};
 
@@ -442,27 +443,31 @@ namespace cfr
 				file->read(&vertexIndicesLength,16); //thru unk1C
 			}
 
-			int32_t actualVertexIndexSize = header.vertexIndexSize == 0 ? vertexIndexSize : header.vertexIndexSize;
+			int32_t actualVertexIndexSize;
+			//int32_t actualVertexIndexSize = header.vertexIndexSize == 0 ? vertexIndexSize : header.vertexIndexSize;
+			header.vertexIndexSize == 0 ? actualVertexIndexSize = vertexIndexSize : actualVertexIndexSize = header.vertexIndexSize;
 
-			file->markPos();
-
-			file->seek(header.dataOffset + vertexIndicesOffset);
+			//file->markPos();
+			file->stepIn(header.dataOffset + vertexIndicesOffset);
+			//file->seek(header.dataOffset + vertexIndicesOffset);
 
 			//TODO: improve this mess
 			if(actualVertexIndexSize == 8)
 			{
 				vertexIndices = FLVER_EdgeIndices();
 			}
-			else if(actualVertexIndexSize == 16)
+			else if(actualVertexIndexSize == 16) //this isn't supported yet
 			{
-				vertexIndicesArr = new uint32_t[vertexIndexCount];
+				vertexIndices16 = new uint16_t[vertexIndexCount];
+				file->read(vertexIndices16,vertexIndexCount*sizeof(uint16_t));
 			}
 			else if(actualVertexIndexSize == 32)
 			{
-				vertexIndicesArr = new uint32_t[vertexIndexCount];
+				vertexIndices32 = new uint32_t[vertexIndexCount];
+				file->read(vertexIndices32,vertexIndexCount*sizeof(uint32_t));
 			}
-
-			file->returnToMark();
+			file->stepOut();
+			//file->returnToMark();
 		};
 	};
 

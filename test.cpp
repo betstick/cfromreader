@@ -55,5 +55,18 @@ int main()
 		}
 	}
 
+	printf("vertexSize:%i\n",flver->vertexBuffers[1].vertexSize);
+	printf("vertexCount:%i\n",flver->vertexBuffers[1].vertexCount);
+	printf("vertBufferSize:%i\n",flver->vertexBuffers[1].verticesLength);
+	printf("layoutIndex:%i\n",flver->vertexBuffers[1].layoutIndex);
+
+	printf("dataoffset:%x\n",flver->header->dataOffset);
+	printf("indexSize:%i\n",flver->header->vertexIndexSize);
+	printf("vicount:%i\n",flver->faceSets[0].vertexIndexCount);
+
+	printf("FSoffset:%x\n",flver->faceSets[0].vertexIndicesOffset);
+	printf("isTriStrip:%d\n",flver->faceSets[0].triangleStrip);
+	printf("faceSets:%u\n",flver->faceSets[0].vertexIndices16[54]);
+
 	return 0;
 };
