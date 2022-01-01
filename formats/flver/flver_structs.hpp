@@ -447,11 +447,8 @@ namespace cfr
 			//int32_t actualVertexIndexSize = header.vertexIndexSize == 0 ? vertexIndexSize : header.vertexIndexSize;
 			header.vertexIndexSize == 0 ? actualVertexIndexSize = vertexIndexSize : actualVertexIndexSize = header.vertexIndexSize;
 
-			//file->markPos();
 			file->stepIn(header.dataOffset + vertexIndicesOffset);
-			//file->seek(header.dataOffset + vertexIndicesOffset);
-
-			//TODO: improve this mess
+			
 			if(actualVertexIndexSize == 8)
 			{
 				vertexIndices = FLVER_EdgeIndices();
@@ -467,7 +464,6 @@ namespace cfr
 				file->read(vertexIndices32,vertexIndexCount*sizeof(uint32_t));
 			}
 			file->stepOut();
-			//file->returnToMark();
 		};
 	};
 
