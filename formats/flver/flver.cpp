@@ -1,47 +1,7 @@
-#pragma once
-#include "stdafx.hpp"
-//welcome to FLVER-town
+#include "flver.hpp"
 
-//standard fromsoft model format from DSPTDE onwards
-//this is ONLY flver2 type files. flver0 is old and grody
-//as usual, built using SoulsTemplates! :)
-//to help shorten this for now, it won't support non souls games
-
-namespace cfr {
-	class FLVER
-	{
-		public:
-		FLVER_Header* header;
-
-		FLVER_Dummy* dummies;
-		FLVER_Material* materials;
-		FLVER_Bone* bones;
-		FLVER_Mesh* meshes;
-		FLVER_FaceSet* faceSets;
-		FLVER_VertexBuffer* vertexBuffers;
-		FLVER_BufferLayout* bufferLayouts;
-		FLVER_Texture* textures;
-
-		FLVER(BSReader* file) //read from already opened file
-		{
-			init(file);
-		};
-
-		FLVER(std::string path) //open file and create the reader
-		{
-			BSReader file = BSReader(path,4096);
-			init(&file); //this one is differet, its okay
-		};
-
-		private:
-		void init(BSReader* file);	
-
-		public:
-		//returns formatted list on how the vertex data is layed out
-		std::string getVertexStructure();	
-	};
-
-	//moved from the cpp file cause i don't feel like fixing compile issue right now
+namespace cfr
+{
 	void FLVER::init(BSReader* file)
 	{
 		header = new FLVER_Header(file);

@@ -116,6 +116,7 @@ namespace cfr
 		reader->read(&temp,1);
 
 		out = ((int32_t)temp - 127) / 127.0f;
+		return out;
 	};
 
 	Vector3 readByteNormVec3(BSReader* reader)
@@ -145,6 +146,7 @@ namespace cfr
 		reader->read(&temp,2);
 
 		out = (int32_t)temp / 32767.0f;
+		return out;
 	};
 
 	Vector3 readShortNormVec3(BSReader* reader)
@@ -164,5 +166,25 @@ namespace cfr
 		temp.y = readShortNorm(reader);
 		temp.z = readShortNorm(reader);
 		return temp;
+	}
+
+	std::string semanticToType(uint32_t semantic)
+	{
+		std::string output = "";
+
+		switch(semantic)
+		{
+			//spaces are for spacing :^)
+			case  0: output = "position";    break;
+			case  1: output = "boneWeights"; break;
+			case  2: output = "boneIndices"; break;
+			case  3: output = "normal";      break;
+			case  5: output = "UV";          break;
+			case  6: output = "tangent";     break;
+			case  7: output = "bitangent";   break;
+			case 10: output = "vertexColor"; break;
+		}
+
+		return output;
 	}
 };
