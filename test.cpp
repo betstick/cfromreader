@@ -66,11 +66,27 @@ int main()
 
 	printf("FSoffset:%x\n",flver->faceSets[0].vertexIndicesOffset);
 	printf("isTriStrip:%d\n",flver->faceSets[0].triangleStrip);
-	printf("faceSets:%u\n",flver->faceSets[0].vertexIndices16[54]);
+	//printf("faceSets:%u\n",flver->faceSets[0].vertexIndices16[54]);
 
-	_Float32 vec3x = 0;
-	memcpy(&vec3x,&flver->vertexBuffers[0].vertices[0],4);
-	printf("vec3.x:%f\n",vec3x);
+	//printf("vertexCount");
+
+	int16_t index = 0;
+
+	//YOU MUST SCALE THE VECTOR FIRST OR IT WILL SEGFAULT
+	std::vector<char> indices;// = std::vector<char>(flver->faceSets[0].trueSize);
+	indices.reserve(flver->faceSets[0].trueSize*flver->faceSets[0].vertexIndexCount);
+	flver->faceSets[0].copyFaceSet(reader,indices.data());
+
+	memcpy(&index,indices.data()+2,2);
+	printf("index:%i\n",index);
+
+	std::vector<char> fastIndices;// = std::vector<char>(flver->faceSets[0].trueSize);
+	fastIndices.reserve(flver->faceSets[0].trueSize*flver->faceSets[0].vertexIndexCount);
+
+	memcpy(fastIndices.data(),flver->faceSets[0].getFaceSet(reader),flver->faceSets[0].trueSize);
+
+	memcpy(&index,fastIndices.data()+2,2);
+	printf("index:%i\n",index);
 
 	return 0;
 };

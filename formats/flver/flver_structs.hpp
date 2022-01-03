@@ -428,9 +428,11 @@ namespace cfr
 		int32_t unk1C; //assert(0)
 
 		//these have very specific conditions to be filled
-		FLVER_EdgeIndices vertexIndices;
-		uint16_t* vertexIndices16; //size of vertexIndexCount
-		uint32_t* vertexIndices32; //size of vertexIndexCount
+		//FLVER_EdgeIndices vertexIndices;
+		//uint16_t* vertexIndices16; //size of vertexIndexCount
+		//uint32_t* vertexIndices32; //size of vertexIndexCount
+		uint32_t location;
+		int32_t trueSize; //actual size of the indices
 
 		FLVER_FaceSet(){};
 
@@ -443,11 +445,13 @@ namespace cfr
 				file->read(&vertexIndicesLength,16); //thru unk1C
 			}
 
-			int32_t actualVertexIndexSize;
+			//int32_t actualVertexIndexSize;
 			//int32_t actualVertexIndexSize = header.vertexIndexSize == 0 ? vertexIndexSize : header.vertexIndexSize;
-			header.vertexIndexSize == 0 ? actualVertexIndexSize = vertexIndexSize : actualVertexIndexSize = header.vertexIndexSize;
+			header.vertexIndexSize == 0 ? trueSize = vertexIndexSize : trueSize = header.vertexIndexSize;
 
-			file->stepIn(header.dataOffset + vertexIndicesOffset);
+			//printf("storing location: %u\n",header.dataOffset + vertexIndicesOffset);
+			location = header.dataOffset + vertexIndicesOffset;
+			/*file->stepIn(header.dataOffset + vertexIndicesOffset);
 
 			if(actualVertexIndexSize == 8)
 			{
@@ -463,21 +467,27 @@ namespace cfr
 				vertexIndices32 = new uint32_t[vertexIndexCount];
 				file->read(vertexIndices32,vertexIndexCount*sizeof(uint32_t));
 			}
+			file->stepOut();*/
+		};
+
+		//copies the faceset to the destination
+		void copyFaceSet(BSReader* file, char* dest)
+		{
+			file->stepIn(location);
+			//printf("stepped to: %lu\n",file->readPos);
+			file->read(dest,this->vertexIndexCount*trueSize);
 			file->stepOut();
 		};
-	};
 
-	class FLVER_Vertex
-	{
-		public:
-		char* data; //size of size input
-
-		FLVER_Vertex(){};
-
-		FLVER_Vertex(BSReader* file, int32_t size)
+		//returns the faceset itself
+		char* getFaceSet(BSReader* file)
 		{
-			data = new char[size];
-			file->read(&data[0],size); //TODO: make this work, it should
+			char* faceset = new char[vertexIndexCount*trueSize];
+			file->stepIn(location);
+			file->read(faceset,this->vertexIndexCount*trueSize);
+			file->stepOut();
+
+			return faceset;
 		};
 	};
 
@@ -496,7 +506,9 @@ namespace cfr
 		uint32_t bufferOffset;
 
 		//FLVER_Vertex* vertices; //size of vertexCount
-		char* vertices;
+		//char* vertices; depricated in favor of it being grabbed via function
+		uint64_t start; //position where the data starts
+		uint64_t trueSize; //how big it is
 
 		FLVER_VertexBuffer(){};
 
@@ -508,8 +520,6 @@ namespace cfr
 			{
 				file->stepIn(header.dataOffset + bufferOffset);
 
-				//size i'm 99% sure it actually is
-				uint32_t trueSize = 0;
 				//size by doing the math manually
 				uint32_t calcSize = vertexSize * vertexCount;
 				//size the flver claims the buffer is
@@ -525,12 +535,23 @@ namespace cfr
 					trueSize = claimedSize;
 				}
 
-				vertices = new char[trueSize];
-				file->read(&vertices[0],trueSize);
+				//vertices = new char[trueSize];
+				//printf("trueSize:%u readLoc:%lx\n",trueSize,file->readPos);
+				//file->read(&vertices[0],trueSize);
+				start = file->readPos;
+				file->seek(file->readPos + trueSize);
 
 				file->stepOut();
 			}
 		};
+
+		//copies vertbuffer into pointer location
+		void getVertexBuffer(BSReader* file, char* dest)
+		{
+			file->stepIn(start);
+			file->read(dest,trueSize);
+			file->stepOut();
+		}
 	};
 
 	class FLVER_LayoutMember
@@ -629,8 +650,6 @@ namespace cfr
 
 		FLVER_Texture(BSReader* file)
 		{
-			//file->read(&path.offset,4);
-			//file->read(&type.offset,4);
 			path = readOffsetString(file);
 			type = readOffsetString(file);
 
