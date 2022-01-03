@@ -509,6 +509,7 @@ namespace cfr
 		//char* vertices; depricated in favor of it being grabbed via function
 		uint64_t start; //position where the data starts
 		uint64_t trueSize; //how big it is
+		uint32_t location;
 
 		FLVER_VertexBuffer(){};
 
@@ -546,12 +547,23 @@ namespace cfr
 		};
 
 		//copies vertbuffer into pointer location
-		void getVertexBuffer(BSReader* file, char* dest)
+		void copyVertexBuffer(BSReader* file, char* dest)
 		{
 			file->stepIn(start);
 			file->read(dest,trueSize);
 			file->stepOut();
 		}
+
+		//returns the faceset itself
+		char* getVertexBuffer(BSReader* file)
+		{
+			char* faceset = new char[vertexCount*trueSize];
+			file->stepIn(location);
+			file->read(faceset,this->vertexCount*trueSize);
+			file->stepOut();
+
+			return faceset;
+		};
 	};
 
 	class FLVER_LayoutMember
