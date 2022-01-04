@@ -539,6 +539,7 @@ namespace cfr
 				//vertices = new char[trueSize];
 				//printf("trueSize:%u readLoc:%lx\n",trueSize,file->readPos);
 				//file->read(&vertices[0],trueSize);
+				location = file->readPos;
 				start = file->readPos;
 				file->seek(file->readPos + trueSize);
 
@@ -557,9 +558,9 @@ namespace cfr
 		//returns the faceset itself
 		char* getVertexBuffer(BSReader* file)
 		{
-			char* faceset = new char[trueSize];
+			char* faceset = new char[vertexSize * vertexCount];
 			file->stepIn(location);
-			file->read(faceset,this->trueSize);
+			file->read(faceset,this->vertexSize * vertexCount);
 			file->stepOut();
 
 			return faceset;
