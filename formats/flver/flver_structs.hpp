@@ -558,9 +558,9 @@ namespace cfr
 		//returns the faceset itself
 		char* getVertexBuffer(BSReader* file)
 		{
-			char* faceset = new char[vertexSize * vertexCount];
+			char* faceset = new char[trueSize];
 			file->stepIn(location);
-			file->read(faceset,this->vertexSize * vertexCount);
+			file->read(faceset,this->trueSize);
 			file->stepOut();
 
 			return faceset;
