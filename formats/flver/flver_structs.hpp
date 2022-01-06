@@ -418,21 +418,16 @@ namespace cfr
 		bool cullBackFaces;
 		char unk06;
 		char unk07;
-		int32_t vertexIndexCount;
+		int32_t vertexIndexCount; //number of indices
 		uint32_t vertexIndicesOffset;
 
 		//only if header.version >= 0x20009
-		int32_t vertexIndicesLength;
+		int32_t vertexIndicesLength; //i don't know
 		int32_t unk14; //assert(0)
-		int32_t vertexIndexSize;
+		int32_t vertexIndexSize; //byte size of indices
 		int32_t unk1C; //assert(0)
 
-		//these have very specific conditions to be filled
-		//FLVER_EdgeIndices vertexIndices;
-		//uint16_t* vertexIndices16; //size of vertexIndexCount
-		//uint32_t* vertexIndices32; //size of vertexIndexCount
 		uint32_t location;
-		int32_t trueSize; //actual size of the indices
 
 		FLVER_FaceSet(){};
 
@@ -445,46 +440,31 @@ namespace cfr
 				file->read(&vertexIndicesLength,16); //thru unk1C
 			}
 
-			//int32_t actualVertexIndexSize;
-			//int32_t actualVertexIndexSize = header.vertexIndexSize == 0 ? vertexIndexSize : header.vertexIndexSize;
-			header.vertexIndexSize == 0 ? trueSize = vertexIndexSize : trueSize = header.vertexIndexSize;
+			//just make vertexIndexSize correct :/
+			if(header.vertexIndexSize != 0)
+				vertexIndexSize = header.vertexIndexSize;
 
 			//printf("storing location: %u\n",header.dataOffset + vertexIndicesOffset);
 			location = header.dataOffset + vertexIndicesOffset;
-			/*file->stepIn(header.dataOffset + vertexIndicesOffset);
-
-			if(actualVertexIndexSize == 8)
-			{
-				vertexIndices = FLVER_EdgeIndices();
-			}
-			else if(actualVertexIndexSize == 16) //this isn't supported yet
-			{
-				vertexIndices16 = new uint16_t[vertexIndexCount];
-				file->read(vertexIndices16,vertexIndexCount*sizeof(uint16_t));
-			}
-			else if(actualVertexIndexSize == 32)
-			{
-				vertexIndices32 = new uint32_t[vertexIndexCount];
-				file->read(vertexIndices32,vertexIndexCount*sizeof(uint32_t));
-			}
-			file->stepOut();*/
 		};
 
 		//copies the faceset to the destination
-		void copyFaceSet(BSReader* file, char* dest)
+		//TODO: implement detangler
+		/*void copyFaceSet(BSReader* file, char* dest)
 		{
 			file->stepIn(location);
 			//printf("stepped to: %lu\n",file->readPos);
-			file->read(dest,this->vertexIndexCount*trueSize);
+			file->read(dest,this->vertexIndexCount*vertexIndexSize);
 			file->stepOut();
-		};
+		};*/
 
-		//returns the faceset itself
+		//TODO: there's gotta be a way to speed this up
+		//returns the triangulated faceset, uint32_t formatted
 		char* getFaceSet(BSReader* file)
 		{
-			char* faceset = new char[vertexIndexCount*trueSize];
+			char* faceset = new char[vertexIndexCount*vertexIndexSize];
 			file->stepIn(location);
-			file->read(faceset,this->vertexIndexCount*trueSize);
+			file->read(faceset,this->vertexIndexCount*vertexIndexSize);
 			file->stepOut();
 
 			return faceset;

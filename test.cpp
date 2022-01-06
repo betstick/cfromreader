@@ -70,23 +70,30 @@ int main()
 
 	//printf("vertexCount");
 
-	int16_t index = 0;
+	//uint32_t index = 0;
 
 	//YOU MUST SCALE THE VECTOR FIRST OR IT WILL SEGFAULT
-	std::vector<char> indices;// = std::vector<char>(flver->faceSets[0].trueSize);
-	indices.reserve(flver->faceSets[0].trueSize*flver->faceSets[0].vertexIndexCount);
-	flver->faceSets[0].copyFaceSet(reader,indices.data());
+	//std::vector<char> indices;// = std::vector<char>(flver->faceSets[0].trueSize);
+	//indices.reserve(flver->faceSets[0].trueSize*flver->faceSets[0].vertexIndexCount);
+	//flver->faceSets[0].copyFaceSet(reader,indices.data());
 
-	memcpy(&index,indices.data()+2,2);
-	printf("index:%i\n",index);
+	//memcpy(&index,indices.data()+2,2);
+	//printf("index:%i\n",index);
 
-	std::vector<char> fastIndices;// = std::vector<char>(flver->faceSets[0].trueSize);
-	fastIndices.reserve(flver->faceSets[0].trueSize*flver->faceSets[0].vertexIndexCount);
+	std::vector<int16_t> fastIndices = std::vector<int16_t>(flver->faceSets[0].vertexIndexCount);
 
-	memcpy(fastIndices.data(),flver->faceSets[0].getFaceSet(reader),flver->faceSets[0].trueSize);
+	memcpy(fastIndices.data(),flver->faceSets[0].getFaceSet(reader),
+		flver->faceSets[0].vertexIndexCount * (flver->faceSets[0].vertexIndexSize/8)
+	);
 
-	memcpy(&index,fastIndices.data()+2,2);
-	printf("index:%i\n",index);
+	printf("vic:%u\n",flver->faceSets[0].vertexIndexCount);
+	printf("vis:%u\n",flver->faceSets[0].vertexIndexSize/8);
+
+	//memcpy(&index,fastIndices.data()+4,4);
+	for(int32_t i = 0; i < 24; i++)
+	{
+		printf("index:%i\n",fastIndices[i]);
+	}
 
 	return 0;
 };
