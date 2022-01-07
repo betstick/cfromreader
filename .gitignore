@@ -6,4 +6,10 @@ bin/
 *.dcx
 *.anibnd*
 *.chrbnd*
-*.chrtpfbdt
+*.chrtpfbdt*
+*.tae*
+*.xml*
+*.hkx*
+*.flver*
+*.hkwpwv*
+*.tpf*
