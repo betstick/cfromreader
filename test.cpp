@@ -90,10 +90,31 @@ int main()
 	printf("vis:%u\n",flver->faceSets[0].vertexIndexSize/8);
 
 	//memcpy(&index,fastIndices.data()+4,4);
-	for(int32_t i = 0; i < 24; i++)
+	/*for(int32_t i = 0; i < 24; i++)
 	{
 		printf("index:%i\n",fastIndices[i]);
+	}*/
+
+	reader->open("../c5370.anibnd.dcx",4096);
+	DCX* dcx = new DCX(reader);
+	printf("dcx:\tuncompressedSize:\t %u bytes\n",dcx->header.uncompressedSize);
+	std::vector<char> output = std::vector<char>(3228420);
+	output.resize(3228420);
+	//reader->seek(dcx->header.dcsOffset);
+	reader->seek(0x4C); //beginning of the actual archive
+	//printf("size:%lu\n",reader->getSize());
+	dcx->deflate_zlib(reader,output.data(),3228420-0x4C,6000000);
+
+	//reader->read(&output[0],3228420);
+
+	printf("output[4]:%c\n",output[1]);
+
+	printf("\n");
+	for(int32_t i = 0; i < output.size(); i++)
+	{
+		printf("%c",output[i]);	
 	}
+	printf("\n");
 
 	return 0;
 };

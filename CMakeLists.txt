@@ -7,6 +7,10 @@ message(STATUS ${PROJECT_SOURCE_DIR})
 enable_language(CXX)
 include(GNUInstallDirs)
 
+find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIRS})
+link_libraries(${ZLIB_LIBRARIES})
+
 macro(add_dir DIRS)
     foreach (dir ${DIRS})
         message("adding  ${dir} to ${PROJECT_NAME}")
@@ -40,15 +44,15 @@ list(APPEND DIRS
 
 add_dir("${DIRS}")
 
-option(DEBUG "enable verbose stuff and GDB support" OFF)
+option(BUILD "enable verbose stuff and GDB support" OFF)
 
 if(BUILD STREQUAL "debug")
 	#enable GDB and disable all optimizations
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0")
 	#show all types of errors, but limit to 8 at a time
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall  -fmax-errors=8")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall  -fmax-errors=8")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror  -fmax-errors=8")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror  -fmax-errors=8")
 	#enable this for my debug code preprocessor stuff
 	add_compile_definitions(DEBUG)
 	#needed to prevent VMA werror stuff from stopping compile.

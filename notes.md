@@ -42,3 +42,8 @@ the structure *generally* goes (bdt+bhd)/bnd/(textures/meshes/animations)
 as mentioned before, this isn't always the case. sometimes From gets freaky.
 
 need to add in a failure for if trying to compile on big endian systems. i will not support them.
+
+
+the structures needed for DSR characters are as follows:
+dcx->bnd->tae,flver,hkx,hkpwv
+bdt->tpf->dds
