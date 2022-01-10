@@ -16,7 +16,7 @@ int main()
 {
 	BSReader* reader = new BSReader("../c5370.flver",4096);
 
-	FLVER* flver = new FLVER(reader);
+	FLVER2* flver = new FLVER2(reader);
 	testResults results;
 	printf("referenceId:%i\n",flver->dummies[1].referenceID);
 	printf("textureCount:%i\n",flver->materials[1].textureCount);
