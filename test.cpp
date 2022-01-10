@@ -89,12 +89,6 @@ int main()
 	printf("vic:%u\n",flver->faceSets[0].vertexIndexCount);
 	printf("vis:%u\n",flver->faceSets[0].vertexIndexSize/8);
 
-	//memcpy(&index,fastIndices.data()+4,4);
-	/*for(int32_t i = 0; i < 24; i++)
-	{
-		printf("index:%i\n",fastIndices[i]);
-	}*/
-
 	reader->open("../c5370.anibnd.dcx",4096);
 	DCX* dcx = new DCX(reader);
 	printf("dcx:\tuncompressedSize:\t %u bytes\n",dcx->header.uncompressedSize);
@@ -105,16 +99,11 @@ int main()
 	//printf("size:%lu\n",reader->getSize());
 	dcx->deflate_zlib(reader,output.data(),3228420-0x4C,6000000);
 
-	//reader->read(&output[0],3228420);
-
 	printf("output[4]:%c\n",output[1]);
 
-	printf("\n");
-	for(int32_t i = 0; i < output.size(); i++)
-	{
-		printf("%c",output[i]);	
-	}
-	printf("\n");
-
+	reader->open(output.data(),output.size());
+	BND3* bnd = new BND3(reader,0);
+	printf("\n||%c||\n",bnd->header.magic[0]);
+	printf("\n||%i||\n",bnd->header.fileCount);
 	return 0;
 };
