@@ -10,7 +10,7 @@ namespace cfr
         BNDv4
     };
 
-    struct _BND_File_
+    struct BND_File
     {
         uint64_t position; //location in mem relative to bnd start
         uint32_t id;
@@ -27,7 +27,7 @@ namespace cfr
         BNDVER version;
 
         public:
-        std::vector<_BND_File_> files;
+        std::vector<BND_File> files;
 
         BND(){};
 
@@ -55,7 +55,7 @@ namespace cfr
 
             for(int32_t i = 0; i < bnd3->fileHeaders.size(); i++)
             {
-				_BND_File_ bndFile;
+				BND_File bndFile;
 				bndFile.position = bnd3->fileHeaders[i].dataOffset;
 				memcpy(&bndFile.name[0],&bnd3->fileHeaders[i].name[0],256);
 				bndFile.id = bnd3->fileHeaders[i].id;
@@ -67,6 +67,7 @@ namespace cfr
 
         void initBND4(BSReader* file)
         {
+			//TOOD: write the bnd4 classes and structs
 			//BND4 bnd4 = new BND4(file);
         };
     };

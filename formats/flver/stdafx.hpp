@@ -2,6 +2,6 @@
 
 #include "../stdafx.hpp"
 
-#include "flver_structs.hpp"
+#include "flver2/flver2_structs.hpp"
 #include "vertex.hpp"
-#include "flver.hpp"
+#include "flver2/flver2.hpp"

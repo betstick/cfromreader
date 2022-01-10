@@ -53,16 +53,13 @@ namespace cfr {
 			init(file);//, offset);
 		};
 
-		/*bool validateBinderHeader()
+		bool validateBinderHeader()
 		{
 			assert(strncmp("BND3",header.magic,5)); //5th char is NUL
 			assert(header.unk0F == 0);
 			assert(header.unk1C == 0);
 			assert(header.bigEndian == 0);
 			assert(header.bitBigEndian == 0);
-
-			//printf("bigEndian: %i\n",byteToBinary(header.bigEndian));
-			//printf("bitBigEndian: %i\n",byteToBinary(header.bitBigEndian));
 			return true;
 		};
 
@@ -71,9 +68,8 @@ namespace cfr {
 			assert(file.unk01 == 0);
 			assert(file.unk02 == 0);
 			assert(file.unk03 == 0);
-			//printf("File header passed validation.\n");
 			return true;
-		};*/
+		};
 
 		private:
 		void init(BSReader* file) //, uint64_t offset)
@@ -84,9 +80,6 @@ namespace cfr {
 			{
 				initFileHeaders(file); //, offset);
 			}
-#ifdef DEBUG
-			printf("If you can see this message, all BND3 checks passed!\n");
-#endif
 			//initSubFiles(file); //, offset);
 		};
 
@@ -94,10 +87,6 @@ namespace cfr {
 		{
 			//needs to start at magic for some reason :/
 			file->read(&header.magic,sizeof(_BND3_Header_));
-
-#ifdef DEBUG
-			validateBinderHeader();
-#endif	
 		};
 
 		void initFileHeaders(BSReader* file)//, uint64_t offset)
@@ -146,10 +135,5 @@ namespace cfr {
 #endif
 			fileHeaders.push_back(bnd3File);
 		};
-	
-		/*(void initSubFiles(BSReader* file) //, uint64_t offset)
-		{
-
-		};*/
 	};
 };

@@ -104,11 +104,37 @@ namespace cfr
 
 		void open(){};
 
-		int deflate_zlib(BSReader* file, char* dest, size_t sizeIn, size_t uncompressedSize)
+		int decompress_dcp_edge(BSReader* file)
 		{
+
+		};
+
+		int decompress_dcp_dflt(BSReader* file)
+		{
+			//call read_zlib
+		};
+
+		int decompress_dcx_edge(BSReader* file)
+		{
+			file->read()
+		};
+
+		int decompress_dcx_dflt(BSReader* file)
+		{
+			//call read_zlib
+		};
+
+		int decompress_dcx_krak(BSReader* file)
+		{
+			
+		};
+
+		int read_zlib(BSReader* file, char* dest, size_t sizeIn, size_t uncompressedSize)
+		{
+			int32_t chunkSize = 16384; //figure out good value for this
 			uint32_t copied = 0; //amount of data copied
-			std::vector<Bytef>  inBuffer = std::vector<Bytef>(16384);
-			std::vector<Bytef> outBuffer = std::vector<Bytef>(16384);
+			std::vector<Bytef>  inBuffer = std::vector<Bytef>(chunkSize);
+			std::vector<Bytef> outBuffer = std::vector<Bytef>(chunkSize);
 
 			z_stream* stream = new z_stream;
 			stream->zalloc   = Z_NULL;
@@ -120,13 +146,13 @@ namespace cfr
 			inflateInit(stream);
 
 			int ret = 0;
-			while(copied + 16384 < sizeIn)
+			while(copied + chunkSize < sizeIn)
 			{
-				stream->avail_in  = file->read(&inBuffer[0],16384);
+				stream->avail_in  = file->read(&inBuffer[0],chunkSize);
 				stream->next_in   = &inBuffer[0];
 				do
 				{
-					stream->avail_out = 16384;
+					stream->avail_out = chunkSize;
 					stream->next_out  = &outBuffer[0];
 
 					ret = inflate(stream, Z_NO_FLUSH);
@@ -136,8 +162,8 @@ namespace cfr
 						throw std::runtime_error("failed to inflate\n");
 					}
 
-					memcpy(&dest[copied],&outBuffer[0],16384);
-					copied += 16384;
+					memcpy(&dest[copied],&outBuffer[0],chunkSize);
+					copied += chunkSize;
 				} while(stream->avail_out == 0);
 			}
 

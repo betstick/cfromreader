@@ -93,12 +93,12 @@ int main()
 	DCX* dcx = new DCX(reader);
 	printf("dcx:\tuncompressedSize:\t %u bytes\n",dcx->header.uncompressedSize);
 	printf("dcx:\t  compressedSize:\t %u bytes\n",dcx->header.compressedSize  );
-	std::vector<char> output = std::vector<char>(3228420);
-	output.resize(3228420);
+	std::vector<char> output = std::vector<char>(dcx->header.compressedSize);
+	output.resize(dcx->header.compressedSize);
 	//reader->seek(dcx->header.dcsOffset);
 	reader->seek(0x4C); //beginning of the actual archive
 	//printf("size:%lu\n",reader->getSize());
-	dcx->deflate_zlib(reader,output.data(),dcx->header.compressedSize-0x4C,6000000);
+	dcx->read_zlib(reader,output.data(),dcx->header.compressedSize-0x4C,6000000);
 
 	printf("output[4]:%c\n",output[1]);
 

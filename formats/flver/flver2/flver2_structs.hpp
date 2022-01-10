@@ -1,9 +1,9 @@
 #pragma once
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 namespace cfr 
 {
-	class FLVER_Header
+	class FLVER2_Header
 	{
 		public:
 		char magic[4];
@@ -50,15 +50,15 @@ namespace cfr
 		int32_t unk78; //assert(0)
 		int32_t unk7C; //assert(0)
 
-		FLVER_Header(){};
+		FLVER2_Header(){};
 
-		FLVER_Header(BSReader* file)//, uint64_t offset)
+		FLVER2_Header(BSReader* file)//, uint64_t offset)
 		{
-			file->read(&magic[0],sizeof(FLVER_Header)); //i refuse to read one at a time!
+			file->read(&magic[0],sizeof(FLVER2_Header)); //i refuse to read one at a time!
 		};
 	};
 
-	class FLVER_Dummy
+	class FLVER2_Dummy
 	{
 		public:
 		Vector3 position;
@@ -76,16 +76,16 @@ namespace cfr
 		int32_t unk38; //assert(0)
 		int32_t unk3C; //assert(0)
 
-		FLVER_Dummy(){};
+		FLVER2_Dummy(){};
 
-		FLVER_Dummy(BSReader* file)//, uint64_t offset)
+		FLVER2_Dummy(BSReader* file)//, uint64_t offset)
 		{
 			//file->seek(offset);
-			file->read(&position, sizeof(FLVER_Dummy));
+			file->read(&position, sizeof(FLVER2_Dummy));
 		};
 	};
 
-	class FLVER_GXItem
+	class FLVER2_GXItem
 	{
 		public:
 		uint32_t id;
@@ -93,9 +93,9 @@ namespace cfr
 		int32_t length;
 		char* data; //size of (length - 0xC)
 
-		FLVER_GXItem(){};
+		FLVER2_GXItem(){};
 
-		FLVER_GXItem(BSReader* file)//, uint64_t offset)
+		FLVER2_GXItem(BSReader* file)//, uint64_t offset)
 		{
 			//file->seek(offset);
 			file->read(&id,12); //id thru length
@@ -113,7 +113,7 @@ namespace cfr
 		};
 	};
 
-	class FLVER_Material
+	class FLVER2_Material
 	{
 		public:
 		OffsetString name; //offsets to the actual values?
@@ -128,11 +128,11 @@ namespace cfr
 		int32_t unk18;
 		int32_t unk1C; //assert(0)
 
-		FLVER_GXItem* items;
+		FLVER2_GXItem* items;
 
-		FLVER_Material(){};
+		FLVER2_Material(){};
 
-		FLVER_Material(BSReader* file, FLVER_Header header)
+		FLVER2_Material(BSReader* file, FLVER2_Header header)
 		{
 			//file->read(&name.offset,4);
 			//file->read(&mtd.offset,4);
@@ -152,7 +152,7 @@ namespace cfr
 
 				while(valid)
 				{
-					items[i] = FLVER_GXItem(file);//,offset);
+					items[i] = FLVER2_GXItem(file);//,offset);
 
 					if(header.version >= 0x20010 && items[i].id != 0x7FFFFFFF && items[i].id != 0xFFFFFFFF)
 						valid = true;
@@ -172,7 +172,7 @@ namespace cfr
 	};
 
 	//bonezone :^)
-	class FLVER_Bone
+	class FLVER2_Bone
 	{
 		public:
 		Vector3 translation;
@@ -188,9 +188,9 @@ namespace cfr
 		Vector3 boundingBoxMax;
 		char* emptyJunk[52]; //potentially needed for spacing :/
 
-		FLVER_Bone(){};
+		FLVER2_Bone(){};
 
-		FLVER_Bone(BSReader* file)//, uint64_t offset)
+		FLVER2_Bone(BSReader* file)//, uint64_t offset)
 		{
 			//this has to be read in one element at a time.
 			//the vectors cause segfaults if you try to lump them together.
@@ -222,7 +222,7 @@ namespace cfr
 		};
 	};
 
-	class FLVER_Mesh
+	class FLVER2_Mesh
 	{
 		public:
 		bool dynamic; 
@@ -257,9 +257,9 @@ namespace cfr
 		int32_t* faceSetIndices; //size of faceSetCount
 		int32_t* vertexBufferIndices; //size of vertexBufferCount
 
-		FLVER_Mesh(){};
+		FLVER2_Mesh(){};
 
-		FLVER_Mesh(BSReader* file, FLVER_Header header)
+		FLVER2_Mesh(BSReader* file, FLVER2_Header header)
 		{
 			//file->read(&dynamic,48); //dynamic thru vertexBufferIndicesOffset
 			file->read(&dynamic,1);
@@ -334,7 +334,7 @@ namespace cfr
 	};
 
 	//quad start??? position i think, maybe use offset?
-	class FLVER_Member
+	class FLVER2_Member
 	{
 		public:
 		int32_t dataLength;
@@ -368,11 +368,11 @@ namespace cfr
 
 		uint8_t* data; //size of dataLength
 
-		FLVER_Member(){}; //default
+		FLVER2_Member(){}; //default
 
-		FLVER_Member(BSReader* file, uint64_t start)
+		FLVER2_Member(BSReader* file, uint64_t start)
 		{
-			file->read(&dataLength,sizeof(FLVER_Member)-1); //dataLength thru unk3C
+			file->read(&dataLength,sizeof(FLVER2_Member)-1); //dataLength thru unk3C
 			
 			file->markPos();
 
@@ -383,7 +383,7 @@ namespace cfr
 		};
 	};
 
-	class FLVER_EdgeIndices
+	class FLVER2_EdgeIndices
 	{
 		public:
 		int16_t memberCount;
@@ -391,26 +391,26 @@ namespace cfr
 		int32_t unk04;
 		int32_t unk08; //assert(0)
 		int32_t unk0C;
-		FLVER_Member* members; //size of memberCount
+		FLVER2_Member* members; //size of memberCount
 
-		FLVER_EdgeIndices(){};
+		FLVER2_EdgeIndices(){};
 
-		FLVER_EdgeIndices(BSReader* file)//, uint64_t offset)
+		FLVER2_EdgeIndices(BSReader* file)//, uint64_t offset)
 		{
 			uint64_t start = file->readPos;
 
 			file->read(&memberCount,16); //memberCount thru unk0C
 
-			members = new FLVER_Member[memberCount];
+			members = new FLVER2_Member[memberCount];
 
 			for(int16_t i = 0; i < memberCount; i++)
 			{
-				members[i] = FLVER_Member(file,start);
+				members[i] = FLVER2_Member(file,start);
 			}
 		};
 	};
 
-	class FLVER_FaceSet
+	class FLVER2_FaceSet
 	{
 		public:
 		uint32_t flags;
@@ -429,9 +429,9 @@ namespace cfr
 
 		uint32_t location;
 
-		FLVER_FaceSet(){};
+		FLVER2_FaceSet(){};
 
-		FLVER_FaceSet(BSReader* file, FLVER_Header header)
+		FLVER2_FaceSet(BSReader* file, FLVER2_Header header)
 		{
 			file->read(&flags,16); //flags thru vertexIndicesOffset
 
@@ -471,7 +471,7 @@ namespace cfr
 		};
 	};
 
-	class FLVER_VertexBuffer
+	class FLVER2_VertexBuffer
 	{
 		public:
 		int32_t bufferIndex;
@@ -491,9 +491,9 @@ namespace cfr
 		uint64_t trueSize; //how big it is
 		uint32_t location;
 
-		FLVER_VertexBuffer(){};
+		FLVER2_VertexBuffer(){};
 
-		FLVER_VertexBuffer(BSReader* file, FLVER_Header header)
+		FLVER2_VertexBuffer(BSReader* file, FLVER2_Header header)
 		{
 			file->read(&bufferIndex,32);
 
@@ -547,7 +547,7 @@ namespace cfr
 		};
 	};
 
-	class FLVER_LayoutMember
+	class FLVER2_LayoutMember
 	{
 		public:
 		int32_t unk00; //0, 1, or 2
@@ -557,10 +557,10 @@ namespace cfr
 		int32_t index;
 		int32_t size; //calc'd via type
 
-		FLVER_LayoutMember(){};
+		FLVER2_LayoutMember(){};
 
 		//finish this!
-		FLVER_LayoutMember(BSReader* file) //, int32_t offset)
+		FLVER2_LayoutMember(BSReader* file) //, int32_t offset)
 		{
 			file->read(&unk00,4);
 			file->read(&structOffset,4);
@@ -597,7 +597,7 @@ namespace cfr
 		};
 	};
 
-	class FLVER_BufferLayout
+	class FLVER2_BufferLayout
 	{
 		public:
 		int32_t memberCount;
@@ -606,24 +606,24 @@ namespace cfr
 		int32_t unk08; //assert(0)
 
 		uint32_t membersOffset;
-		FLVER_LayoutMember* members; //size of memberCount
+		FLVER2_LayoutMember* members; //size of memberCount
 
-		FLVER_BufferLayout(){};
+		FLVER2_BufferLayout(){};
 
-		FLVER_BufferLayout(BSReader *file)
+		FLVER2_BufferLayout(BSReader *file)
 		{
 			file->read(&memberCount,16); //memberCount thru memberOffset
 			file->stepIn(membersOffset);
-			members = new FLVER_LayoutMember[memberCount];
+			members = new FLVER2_LayoutMember[memberCount];
 			for(int32_t i = 0; i < memberCount; i++)
 			{
-				members[i] = FLVER_LayoutMember(file);
+				members[i] = FLVER2_LayoutMember(file);
 			}
 			file->stepOut();
 		};
 	};
 
-	class FLVER_Texture
+	class FLVER2_Texture
 	{
 		public:
 		OffsetString path;
@@ -639,9 +639,9 @@ namespace cfr
 		_Float32 unk18;
 		_Float32 unk1C;
 
-		FLVER_Texture(){};
+		FLVER2_Texture(){};
 
-		FLVER_Texture(BSReader* file)
+		FLVER2_Texture(BSReader* file)
 		{
 			path = readOffsetString(file);
 			type = readOffsetString(file);
@@ -655,15 +655,15 @@ namespace cfr
 
 	//weight of the four potential bones, 0 means no bone
 	//format for this class is for what type of data to read
-	class FLVER_VertexBoneWeights
+	class FLVER2_VertexBoneWeights
 	{
 		public:
 		_Float32 a,b,c,d;
 		int32_t length; //always 4
 
-		FLVER_VertexBoneWeights(){};
+		FLVER2_VertexBoneWeights(){};
 
-		FLVER_VertexBoneWeights(BSReader* file, uint32_t format, _Float32 divisor)
+		FLVER2_VertexBoneWeights(BSReader* file, uint32_t format, _Float32 divisor)
 		{
 			a = getValue(file,format,divisor);
 			b = getValue(file,format,divisor);
@@ -700,15 +700,15 @@ namespace cfr
 
 	//index of which bone (if any) a vert is bound to
 	//0 means no bone :(
-	class FLVER_VertexBoneIndices
+	class FLVER2_VertexBoneIndices
 	{
 		public:
 		int32_t a,b,c,d;
 		int32_t length; //always 4
 
-		FLVER_VertexBoneIndices(){};
+		FLVER2_VertexBoneIndices(){};
 
-		FLVER_VertexBoneIndices(BSReader* file, uint32_t format)
+		FLVER2_VertexBoneIndices(BSReader* file, uint32_t format)
 		{
 			a = getValue(file,format);
 			b = getValue(file,format);
@@ -743,12 +743,12 @@ namespace cfr
 		};
 	};
 
-	class FLVER_VertexColor
+	class FLVER2_VertexColor
 	{
 		public:
 		_Float32 a,r,g,b;
 
-		FLVER_VertexColor(BSReader* file)
+		FLVER2_VertexColor(BSReader* file)
 		{
 			file->read(&a,4);
 			file->read(&r,4);

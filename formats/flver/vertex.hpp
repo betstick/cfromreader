@@ -8,8 +8,8 @@ namespace cfr {
 		public:
 		Vector3 position;
 
-		FLVER_VertexBoneWeights boneWeights;
-		FLVER_VertexBoneIndices boneIndices;
+		FLVER2_VertexBoneWeights boneWeights;
+		FLVER2_VertexBoneIndices boneIndices;
 
 		Vector3 normal;
 		int32_t normalW;
@@ -21,7 +21,7 @@ namespace cfr {
 		//vec pointing perpendicular to normal and tangent
 		Vector4 bitangent; 
 
-		FLVER_VertexColor* vertexColor;
+		FLVER2_VertexColor* vertexColor;
 
 		//uvQueue;
 		//tangentQueue;
@@ -29,7 +29,7 @@ namespace cfr {
 
 		//n is the number of layoutmembers. this REALLY needs to be its own file :/
 		//uvfactor is needed, finish this maybe later if this function is even needed
-		FLVER_VertexData(BSReader* file, FLVER_LayoutMember* layout, uint32_t n) //, _Float32 uvFactor)
+		FLVER_VertexData(BSReader* file, FLVER2_LayoutMember* layout, uint32_t n) //, _Float32 uvFactor)
 		{
 			for(uint32_t i = 0; i < n; i++)
 			{
@@ -54,24 +54,24 @@ namespace cfr {
 				else if(layout[i].semantic == 1)
 				{
 					if(layout[i].type == 0x10)
-						boneWeights = FLVER_VertexBoneWeights(file,0,  127.0f);
+						boneWeights = FLVER2_VertexBoneWeights(file,0,  127.0f);
 					else if(layout[i].type == 0x13)
-						boneWeights = FLVER_VertexBoneWeights(file,1,  255.0f);
+						boneWeights = FLVER2_VertexBoneWeights(file,1,  255.0f);
 					else if(layout[i].type == 0x16)
-						boneWeights = FLVER_VertexBoneWeights(file,2,32767.0f);
+						boneWeights = FLVER2_VertexBoneWeights(file,2,32767.0f);
 					else if(layout[i].type == 0x1A)
-						boneWeights = FLVER_VertexBoneWeights(file,2,32767.0f);
+						boneWeights = FLVER2_VertexBoneWeights(file,2,32767.0f);
 					else
 						throw std::runtime_error(":fatdog:\n");
 				}
 				else if(layout[i].semantic == 2)
 				{
 					if(layout[i].type == 0x11)
-						boneIndices = FLVER_VertexBoneIndices(file,1);
+						boneIndices = FLVER2_VertexBoneIndices(file,1);
 					else if(layout[i].type == 0x18)
-						boneIndices = FLVER_VertexBoneIndices(file,2);
+						boneIndices = FLVER2_VertexBoneIndices(file,2);
 					else if(layout[i].type == 0x2F)
-						boneIndices = FLVER_VertexBoneIndices(file,1);
+						boneIndices = FLVER2_VertexBoneIndices(file,1);
 					else
 						throw std::runtime_error(":fatdog:\n");
 				}

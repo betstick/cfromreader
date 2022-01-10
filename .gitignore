@@ -13,3 +13,4 @@ bin/
 *.flver*
 *.hkwpwv*
 *.tpf*
+.vscode/
