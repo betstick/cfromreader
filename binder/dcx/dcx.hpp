@@ -106,33 +106,36 @@ namespace cfr
 
 		int decompress_dcp_edge(BSReader* file)
 		{
-
+			return 0;
 		};
 
 		int decompress_dcp_dflt(BSReader* file)
 		{
 			//call read_zlib
+			return 0;
 		};
 
 		int decompress_dcx_edge(BSReader* file)
 		{
-			file->read()
+			//similar to readzlib.. but not quite.
+			return 0;
 		};
 
 		int decompress_dcx_dflt(BSReader* file)
 		{
 			//call read_zlib
+			return 0;
 		};
 
 		int decompress_dcx_krak(BSReader* file)
 		{
-			
+			return 0;
 		};
 
 		int read_zlib(BSReader* file, char* dest, size_t sizeIn, size_t uncompressedSize)
 		{
-			int32_t chunkSize = 16384; //figure out good value for this
-			uint32_t copied = 0; //amount of data copied
+			int32_t chunkSize = 16384; //figure out good value for this?
+			uint64_t copied = 0; //amount of data copied
 			std::vector<Bytef>  inBuffer = std::vector<Bytef>(chunkSize);
 			std::vector<Bytef> outBuffer = std::vector<Bytef>(chunkSize);
 

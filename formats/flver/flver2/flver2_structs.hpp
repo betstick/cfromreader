@@ -6,7 +6,7 @@ namespace cfr
 	class FLVER2_Header
 	{
 		public:
-		char magic[4];
+		char magic[6]; //this was working with size 4 somehow. it shouldn't
 		char endian[2];
 		uint32_t version;
 

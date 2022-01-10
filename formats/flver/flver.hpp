@@ -2,8 +2,7 @@
 #include "stdafx.hpp"
 //welcome to FLVER-town
 
-//abstracted FLVER0/FLVER2 class for easier data access.
-
+//unified FLVER0/FLVER2 class for easier data access.
 
 namespace cfr {
 	struct FLVER_Mesh
@@ -15,11 +14,24 @@ namespace cfr {
 	class FLVER
 	{
 		public:
-		//lods
-		//textures?
-		//skeleton
+		//vertex buffers
+		//vertex layouts
+		//textures
+		//face sets
 
+		FLVER(){};
 
-		//might just let this class grow more naturally.
+		FLVER(BSReader* file)
+		{
+
+		};
+
+		//done without copying any data
+		FLVER(BSReader* file, uint64_t startLocation)
+		{
+			file->seek(startLocation);
+			//figure out some way to determine 0 vs 2
+			
+		};
 	};
 };
