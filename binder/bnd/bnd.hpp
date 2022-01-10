@@ -23,7 +23,7 @@ namespace cfr
     {
         private:
         _BND3_Header_ bnd3header;
-        _BND4_Header_ bnd4header;
+        //_BND4_Header_ bnd4header;
         BNDVER version;
 
         public:
@@ -37,7 +37,7 @@ namespace cfr
             file->read(&magic,4);
             file->seek(0); //back to start
 
-            switch magic[3]
+            switch(magic[3])
             {
                 default:
                     throw std::runtime_error("Unkown BND format!\n");
@@ -51,22 +51,23 @@ namespace cfr
         private:
         void initBND3(BSReader* file)
         {
-            BND3 bnd3 = new BND4(file);
+            BND3* bnd3 = new BND3(file,0);
 
-            for(int32_t i = 0; i < bnd3.fileHeaders.size(); i++)
+            for(int32_t i = 0; i < bnd3->fileHeaders.size(); i++)
             {
-                _BND_File_ file;
-                file.position = bnd3.fileHeaders[i].dataOffset();
-                memcpy(&file.name[0],&file.fileHeaders[i].name[0]);
-                file.id = bnd3.fileHeaders[i].id;
-                file.compressedSize = bnd3.fileHeaders[i].compressedSize;
-                file.uncompressedSize = bnd3.fileHeaders[i].uncompressedSize;
+				_BND_File_ bndFile;
+				bndFile.position = bnd3->fileHeaders[i].dataOffset;
+				memcpy(&bndFile.name[0],&bnd3->fileHeaders[i].name[0],256);
+				bndFile.id = bnd3->fileHeaders[i].id;
+				bndFile.compressedSize = bnd3->fileHeaders[i].compressedSize;
+				bndFile.uncompressedSize = bnd3->fileHeaders[i].uncompressedSize;
+				files.push_back(bndFile);
             }
         };
 
         void initBND4(BSReader* file)
         {
-            BND4 bnd4 = new BND4(file);
+			//BND4 bnd4 = new BND4(file);
         };
     };
 };

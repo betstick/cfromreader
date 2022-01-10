@@ -102,8 +102,10 @@ int main()
 	printf("output[4]:%c\n",output[1]);
 
 	reader->open(output.data(),output.size());
-	BND3* bnd = new BND3(reader,0);
-	printf("\n||%c||\n",bnd->header.magic[0]);
-	printf("\n||%i||\n",bnd->header.fileCount);
+	BND* bnd = new BND(reader);
+	//printf("\n||%c||\n",bnd3->header.magic[0]);
+	printf("\n||%i||\n",bnd->files.size());
+
+	
 	return 0;
 };
