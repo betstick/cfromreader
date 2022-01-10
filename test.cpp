@@ -89,23 +89,27 @@ int main()
 	printf("vic:%u\n",flver->faceSets[0].vertexIndexCount);
 	printf("vis:%u\n",flver->faceSets[0].vertexIndexSize/8);
 
-	reader->open("../c5370.anibnd.dcx",4096);
+	reader->open("../c5370.chrbnd.dcx",4096);
 	DCX* dcx = new DCX(reader);
 	printf("dcx:\tuncompressedSize:\t %u bytes\n",dcx->header.uncompressedSize);
+	printf("dcx:\t  compressedSize:\t %u bytes\n",dcx->header.compressedSize  );
 	std::vector<char> output = std::vector<char>(3228420);
 	output.resize(3228420);
 	//reader->seek(dcx->header.dcsOffset);
 	reader->seek(0x4C); //beginning of the actual archive
 	//printf("size:%lu\n",reader->getSize());
-	dcx->deflate_zlib(reader,output.data(),3228420-0x4C,6000000);
+	dcx->deflate_zlib(reader,output.data(),dcx->header.compressedSize-0x4C,6000000);
 
 	printf("output[4]:%c\n",output[1]);
 
 	reader->open(output.data(),output.size());
 	BND* bnd = new BND(reader);
-	//printf("\n||%c||\n",bnd3->header.magic[0]);
-	printf("\n||%i||\n",bnd->files.size());
+	printf("bnd->files.size: %i\n",bnd->files.size());
 
-	
+	for(uint32_t i = 0; i < bnd->files.size(); i++)
+	{
+		printf("FileName: %s\n",bnd->files[i].name);
+	}
+
 	return 0;
 };

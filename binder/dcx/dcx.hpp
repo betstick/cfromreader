@@ -1,5 +1,6 @@
 #pragma once
 #include "../stdafx.hpp"
+//#include <bits/stdc++.h> //bit flipping
 
 namespace cfr
 {
@@ -83,6 +84,10 @@ namespace cfr
 					this->header.blocks.push_back(block);
 				}
 			}
+
+			//this only works in GCC i think :^), fixed endian issues
+			this->header.compressedSize   = __builtin_bswap32(this->header.compressedSize  );
+			this->header.uncompressedSize = __builtin_bswap32(this->header.uncompressedSize);
 		};
 
 		//loads the entire file into memory :^)
