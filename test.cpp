@@ -89,30 +89,76 @@ int main()
 	printf("vic:%u\n",flver->faceSets[0].vertexIndexCount);
 	printf("vis:%u\n",flver->faceSets[0].vertexIndexSize/8);
 
-	reader->open("../c5370.anibnd.dcx",4096);
+	reader->open("../c5370.chrbnd.dcx",4096);
 	DCX* dcx = new DCX(reader);
 	printf("dcx:\tuncompressedSize:\t %u bytes\n",dcx->header.uncompressedSize);
 	printf("dcx:\t  compressedSize:\t %u bytes\n",dcx->header.compressedSize  );
 
 	reader->seek(0x4C); //beginning of the actual archive
 
-	dcx->read_zlib(
+	printf("dcxSize:%i\tdcxCap:%i\n",dcx->data.size(),dcx->data.capacity());
+
+	dcx->mem_read_zlib(
 		reader,
 		&dcx->data[0],
-		dcx->header.compressedSize-0x4C,
+		dcx->header.compressedSize,
 		dcx->header.uncompressedSize);
+	
+	//FILE* dcxFile = fopen("../c5370.chrbnd.dcx","rb");
+	//fseek(dcxFile,0x4C,SEEK_SET);
+	//FILE* dcxData = fmemopen(&dcx->data[0],dcx->data.capacity(),"rwb");
+	//int ret = dcx->inflate_zlib(dcxFile,dcxData);
+	//printf("ret:%i\n",ret);
+
+	printf("dcxdata:%i\n",dcx->data[0]);
 
 	printf("output[4]:%c\n",&dcx->data[1]);
+	printf("dcxSize:%x\n",dcx->data.capacity());
 
-	reader->open(&dcx->data[0],dcx->data.size());
+	reader->open(&dcx->data[0],dcx->data.capacity());
 	BND* bnd = new BND(reader);
-	printf("bnd->files.size: %i\n",bnd->files.size());
+	printf("bnd->files.size(): %i\n",bnd->files.size());
 
 	for(uint32_t i = 0; i < bnd->files.size(); i++)
 	{
 		printf("FileName: %s\t",bnd->files[i].name);
-		printf("Position: %i\n",bnd->files[i].position);
+		printf("Position: 0x%8x\t",bnd->files[i].position);
+		printf("Size: 0x%8x\n",bnd->files[i].uncompressedSize);
 	}
+
+	reader->seek(bnd->files[0].position);
+	FLVER2* flver2 = new FLVER2(reader);
+	printf("memFlverVertIndCount:%i\n",flver2->faceSets[0].vertexIndexCount);
+	printf("memFlverSize:%i\n",bnd->files[0].uncompressedSize);
+	printf("memFlverSize:%i\n",bnd->files[0].compressedSize);
+
+	reader->seek(bnd->files[3].position);
+	_BHF3_* bhf3 = new _BHF3_(reader);
+
+	printf("uncompressedSize:%u\n",bnd->files[1].uncompressedSize);
+	printf("  compressedSize:%u\n",bnd->files[1].compressedSize);
+
+	for(uint64_t i = 0; i < dcx->data.size(); i++)
+	{
+		char tempchar;
+		reader->read(&tempchar,1);
+		if(tempchar == 'B')
+		{
+			reader->markPos();
+			char temp2;
+			char temp3;
+			char temp4;
+			reader->read(&temp2,1);
+			reader->read(&temp3,1);
+			reader->read(&temp4,1);
+			reader->returnToMark();
+			if(temp2 == 'D')
+				printf("%c%c%c%c\n",tempchar,temp2,temp3,temp4);
+		}
+	}
+
+	printf("File 0 name: %c\n",bhf3->header.magic[0]);
+	printf("File 0 name: %i\n",bhf3->header.fileCount);
 
 	return 0;
 };

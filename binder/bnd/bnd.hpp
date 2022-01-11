@@ -60,8 +60,10 @@ namespace cfr
 				bndFile.position = bnd3->fileHeaders[i].dataOffset;
 				memcpy(&bndFile.name[0],&bnd3->fileHeaders[i].name[0],256);
 				bndFile.id = bnd3->fileHeaders[i].id;
-				bndFile.compressedSize   = __builtin_bswap32(bnd3->fileHeaders[i].compressedSize  );
-				bndFile.uncompressedSize = __builtin_bswap32(bnd3->fileHeaders[i].uncompressedSize);
+				//bndFile.compressedSize   = __builtin_bswap32(bnd3->fileHeaders[i].compressedSize  );
+				//bndFile.uncompressedSize = __builtin_bswap32(bnd3->fileHeaders[i].uncompressedSize);
+				bndFile.compressedSize   = (bnd3->fileHeaders[i].compressedSize  );
+				bndFile.uncompressedSize = (bnd3->fileHeaders[i].uncompressedSize);
 				files.push_back(bndFile);
             }
         };
