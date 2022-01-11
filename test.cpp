@@ -48,7 +48,7 @@ int main()
 		for(int32_t l = 0; l < flver->bufferLayouts[i].memberCount; l++)
 		{
 			//printf("semantic:%u\n",flver->bufferLayouts[i].members[l].semantic);
-			printf("semantic: %s\tbytes: %i\n",
+			printf("\tsemantic: %16s\tbytes: %2i\n",
 				semanticToType(flver->bufferLayouts[i].members[l].semantic).c_str(),
 				flver->bufferLayouts[i].members[l].size
 			);
@@ -89,30 +89,29 @@ int main()
 	printf("vic:%u\n",flver->faceSets[0].vertexIndexCount);
 	printf("vis:%u\n",flver->faceSets[0].vertexIndexSize/8);
 
-	reader->open("../c5370.chrbnd.dcx",4096);
+	reader->open("../c5370.anibnd.dcx",4096);
 	DCX* dcx = new DCX(reader);
 	printf("dcx:\tuncompressedSize:\t %u bytes\n",dcx->header.uncompressedSize);
 	printf("dcx:\t  compressedSize:\t %u bytes\n",dcx->header.compressedSize  );
-	std::vector<char> output = std::vector<char>(dcx->header.compressedSize);
-	output.resize(dcx->header.uncompressedSize);
-	//reader->seek(dcx->header.dcsOffset);
+
 	reader->seek(0x4C); //beginning of the actual archive
-	//printf("size:%lu\n",reader->getSize());
+
 	dcx->read_zlib(
 		reader,
-		output.data(),
+		&dcx->data[0],
 		dcx->header.compressedSize-0x4C,
 		dcx->header.uncompressedSize);
 
-	printf("output[4]:%c\n",output[1]);
+	printf("output[4]:%c\n",&dcx->data[1]);
 
-	reader->open(output.data(),output.size());
+	reader->open(&dcx->data[0],dcx->data.size());
 	BND* bnd = new BND(reader);
 	printf("bnd->files.size: %i\n",bnd->files.size());
 
 	for(uint32_t i = 0; i < bnd->files.size(); i++)
 	{
-		printf("FileName: %s\n",bnd->files[i].name);
+		printf("FileName: %s\t",bnd->files[i].name);
+		printf("Position: %i\n",bnd->files[i].position);
 	}
 
 	return 0;

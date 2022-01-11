@@ -47,3 +47,38 @@ need to add in a failure for if trying to compile on big endian systems. i will 
 the structures needed for DSR characters are as follows:
 dcx->bnd->tae,flver,hkx,hkpwv
 bdt->tpf->dds
+
+on initialization, DCX files must load their entire contents into memory. wether they release the memory after creating their file map is up to the progammer/application.
+
+DCX files can have their file maps checked for data. if the data is found, the dcx can be loaded into memory again and the files needed will be taken. the DCX MUST be closed manually after each intial open. this way one file can be requested and multiple can be pulled at a time. this should work well given DCX files typically contain a single character or npc and thus all files would be needed at once. also don't wanna have too many open at once since the data is non trivial when you add it all up and it cannot be loaded piecemeal.
+
+open DCX to a block of memory -> take the sections needed and put them into a cache -> mark the files as being loaded in the asset manager
+
+things hiding in DCX files:
+bnd
+emeld
+emedf
+emevd
+drb
+flver
+tpf
+
+mostly flver and bnd
+
+might need node based system to keep track of chains
+
+file vs container: 
+flver is file, dcx and bnd are containers
+
+files have parent containers or are orphans. containers too.
+eg:
+struct node
+{
+	parent:
+	child:
+	data:
+}
+
+worst case: bnd -> dcx -> bnd -> lots of data files
+
+honestly load whatever is in the DCX if one is found. cache its headers and be done with it. find some way to store a chain of vnodes to get the actual files if they are needed?

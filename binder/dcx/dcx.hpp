@@ -55,9 +55,11 @@ namespace cfr
 		public:
 		_DCX_HEADER_ header;
 		std::vector<char> data; //bytes of uncompressed data
+		std::vector<void*> child; //pointer to whatever is in the DCX (most likely a bnd)
 
 		DCX(){};
 
+		//DO NOT USE THIS OUTSIDE OF TESTING
 		DCX(const char* filePath)
 		{
 			BSReader* file = new BSReader(filePath,4096);
@@ -88,12 +90,14 @@ namespace cfr
 			//this only works in GCC i think :^), fixed endian issues
 			this->header.compressedSize   = __builtin_bswap32(this->header.compressedSize  );
 			this->header.uncompressedSize = __builtin_bswap32(this->header.uncompressedSize);
+
+			this->data.resize(this->header.uncompressedSize);
 		};
 
 		//loads the entire file into memory :^)
 		void load()
 		{
-			data = std::vector<char>(this->header.uncompressedSize);
+			//call correct decompression util and copy output into data member
 		};
 
 		//clear the data to save memory

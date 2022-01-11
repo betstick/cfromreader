@@ -17,6 +17,7 @@ namespace cfr
         char name[256]; //supports up to win32 path limit
         uint64_t compressedSize;
         uint64_t uncompressedSize;
+		//might need to create a file type enum
     };
 
 	class BND
