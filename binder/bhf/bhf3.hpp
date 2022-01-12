@@ -48,7 +48,8 @@ namespace cfr
 
 		_BHF3_(BSReader* file)
 		{
-			file->read(&this->header.magic[0],32); //magic thru unk1C
+			uint64_t startPos = file->readPos;
+			file->read(&this->header.magic[0],sizeof(_BHF3_Header_)); //magic thru unk1C
 
 			for(int32_t i = 0; i < this->header.fileCount; i++)
 			{
@@ -63,7 +64,8 @@ namespace cfr
 					file->read(&tempFile.nameOffset,4);
 
 					file->markPos();
-					file->seek(tempFile.nameOffset);
+					file->seek(tempFile.nameOffset+startPos);
+					
 					int32_t i = 0;
 					//this while condition is gross but it works. idk why
 					while(tempFile.name[i-1] != 0 || i == 0)
@@ -75,7 +77,7 @@ namespace cfr
 					file->returnToMark();
 				}
 
-				if(this->header.rawFormat & 0b00100000)
+				if(this->header.rawFormat & 0b00000100)
 					file->read(&tempFile.uncompressedSize,4);
 
 				this->files.push_back(tempFile);
