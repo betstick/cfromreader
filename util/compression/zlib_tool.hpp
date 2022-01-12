@@ -26,8 +26,6 @@ int inflate_zlib(BSReader* file, char* dest, size_t d_size)
 	/* decompress until deflate stream ends or end of file */
 	do {
 		strm.avail_in = file->read(in,CHUNK);
-		//printf("input:%i\n",strm.avail_in);
-		//offset += strm.avail_in;
 
 		if (strm.avail_in == 0)
 			break;
@@ -61,7 +59,6 @@ int inflate_zlib(BSReader* file, char* dest, size_t d_size)
 
 		/* done when inflate() says it's done */
 	} while (ret != Z_STREAM_END);
-	//} while(offset < file->fileSize);
 
 	/* clean up and return */
 	(void)inflateEnd(&strm);

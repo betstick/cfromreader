@@ -4,6 +4,22 @@
 
 namespace cfr
 {
+	//i'm 99% sure this code is somewhere else as well. can't find it.
+	enum _DCX_TYPE_
+	{
+		unkown,
+		none,
+		zlib,
+		dcp_edge,
+		dcp_dflt,
+		dcx_edge,
+		dcx_dflt_10000_24_9,
+		dcx_dflt_10000_44_9,
+		dcx_dflt_11000_44_8,
+		dcx_dflt_11000_44_9,
+		dcx_krak
+	};
+
 	struct _DCX_BLOCK_
 	{
 		int32_t unk00; //assert 0
@@ -54,6 +70,7 @@ namespace cfr
 	{
 		public:
 		_DCX_HEADER_ header;
+		_DCX_TYPE_ type;
 		std::vector<char> data; //bytes of uncompressed data
 		std::vector<void*> child; //pointer to whatever is in the DCX (most likely a bnd)
 
@@ -102,15 +119,69 @@ namespace cfr
 		{
 			//call correct decompression util and copy output into data member
 			file->read(this->data.data(),this->header.compressedSize);
+
+			if(strcmp(this->header.magic,"DCP") == 0)
+			{
+				printf("DCP\n");
+				//fill this out later when i get around to needing it
+			}
+			else if(strcmp(this->header.magic,"DCX") == 0)
+			{
+				printf("DCX\n");
+				if(strncmp(this->header.format,"EDGE",4) == 0)
+				{
+					if(this->header.unk10 == 0x24)
+					{
+						this->type = dcx_dflt_10000_24_9;
+					}
+					else if(this->header.unk10 == 0x44)
+					{
+						if(this->header.unk04 == 0x10000)
+						{
+							this->type = dcx_dflt_10000_44_9;
+						}
+						else if(this->header.unk04 == 0x11000)
+						{
+							if(this->header.unk30 == 0x8000000)
+							{
+								this->type = dcx_dflt_11000_44_8;
+							}
+							else if(this->header.unk30 == 0x9000000)
+							{
+								this->type = dcx_dflt_11000_44_9;
+							}
+						}
+					}
+					decompress_dcx_edge(file,this->type);
+				}
+				else if(strncmp(this->header.format,"DFLT",4) == 0)
+				{
+					decompress_dcx_dflt(file);
+				}
+				else if(strncmp(this->header.format,"KRAK",4) == 0)
+				{
+					decompress_dcx_krak(file);
+				}
+			}
+			else
+			{
+				decompress_zlib(file);
+			}
 		};
 
 		//clear the data to save memory
 		void clear()
 		{
-			//what is this even supposed to do???
+			//delete whatever is in the data vector.
 		};
 
 		void open(){};
+
+		int decompress_zlib(BSReader* file)
+		{
+			//call inflate_zlib
+			return 0;
+		};
 
 		int decompress_dcp_edge(BSReader* file)
 		{
@@ -119,19 +190,19 @@ namespace cfr
 
 		int decompress_dcp_dflt(BSReader* file)
 		{
-			//call read_zlib
+			//call inflate_zlib
 			return 0;
 		};
 
-		int decompress_dcx_edge(BSReader* file)
+		int decompress_dcx_edge(BSReader* file, _DCX_TYPE_ type)
 		{
-			//similar to readzlib.. but not quite.
+			//similar to inflate_zlib.. but not quite.
 			return 0;
 		};
 
 		int decompress_dcx_dflt(BSReader* file)
 		{
-			//call read_zlib
+			//call inflate_zlib
 			return 0;
 		};
 
