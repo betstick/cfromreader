@@ -53,11 +53,15 @@ namespace cfr
 
 		if(strncmp(magicBytes,"BDF3",4) == 0 || strncmp(magicBytes,"BDF4",4) == 0)
 		{
-			return FROM_BDT;
+			return FROM_BDF;
+		}
+		else if(strncmp(magicBytes,"BHD5",4) == 0)
+		{
+			return FROM_BHD;
 		}
 		else if(strncmp(magicBytes,"BHF3",4) == 0 || strncmp(magicBytes,"BHF4",4) == 0)
 		{
-			return FROM_BHD;
+			return FROM_BHF;
 		}
 		else if(strncmp(magicBytes,"BND3",4) == 0 || strncmp(magicBytes,"BND4",4) == 0)
 		{
@@ -176,6 +180,6 @@ namespace cfr
 			throw std::runtime_error("Unkown File Type!\n");
 		}
 
-		return FROM_BDT;
+		//return UNKOWN;
 	};
 };
