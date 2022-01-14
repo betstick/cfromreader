@@ -31,7 +31,7 @@ namespace cfr {
 		int32_t id; //if(header.format & 0b00000010)//???
 		int32_t nameOffset = -1; //if(header.format & 0b00000100 | header.format & 0b00001000)
 		int32_t uncompressedSize; //if(header.format & 0b00100000)
-		char name[256]; //only if nameOffset exists per its conditions, located at the offset
+		std::string name; //only if nameOffset exists per its conditions, located at the offset
 		char* bytes; //supposed to be an array the size of compressedSize, may not be needed
 	};
 
@@ -114,12 +114,12 @@ namespace cfr {
 			{
 				file->seek(bnd3File.nameOffset);
 
-				int32_t i = 0;
-				//this while condition is gross but it works. idk why
-				while(bnd3File.name[i-1] != 0 || i == 0)
+				char temp = '0';
+
+				while(temp != '\0')
 				{
-					file->read(&bnd3File.name[i],1);
-					i++;
+					file->read(&temp,1);
+					bnd3File.name.push_back(temp);
 				}
 			}
 

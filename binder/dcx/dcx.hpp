@@ -1,6 +1,7 @@
 #pragma once
 #include "../stdafx.hpp"
-//#include <bits/stdc++.h> //bit flipping
+
+//only the children of DCX files are needed in memory?
 
 namespace cfr
 {

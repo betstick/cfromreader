@@ -14,10 +14,10 @@ namespace cfr
     {
         uint64_t position; //location in mem relative to bnd start
         uint32_t id;
-        char name[256]; //supports up to win32 path limit
+        std::string name; //supports up to win32 path limit
         uint64_t compressedSize;
         uint64_t uncompressedSize;
-		//might need to create a file type enum
+		CfrFileType format;
     };
 
 	class BND
@@ -58,12 +58,20 @@ namespace cfr
             {
 				BND_File bndFile;
 				bndFile.position = bnd3->fileHeaders[i].dataOffset;
-				memcpy(&bndFile.name[0],&bnd3->fileHeaders[i].name[0],256);
+				bndFile.name = bnd3->fileHeaders[i].name;
 				bndFile.id = bnd3->fileHeaders[i].id;
-				//bndFile.compressedSize   = __builtin_bswap32(bnd3->fileHeaders[i].compressedSize  );
-				//bndFile.uncompressedSize = __builtin_bswap32(bnd3->fileHeaders[i].uncompressedSize);
 				bndFile.compressedSize   = (bnd3->fileHeaders[i].compressedSize  );
 				bndFile.uncompressedSize = (bnd3->fileHeaders[i].uncompressedSize);
+				
+				//harrable!
+				char magicBytes[8];
+
+				file->markPos();
+				file->seek(bnd3->fileHeaders[i].dataOffset);
+				file->read(&magicBytes,8);
+				file->returnToMark();
+
+				bndFile.format = determineFormat(magicBytes);
 				files.push_back(bndFile);
             }
         };

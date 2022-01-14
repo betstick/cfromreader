@@ -37,7 +37,7 @@ int main()
 
 	for(int32_t i = 0; i < bnd->files.size(); i++)
 	{
-		printf("fileName:%s\n",bnd->files[i].name);
+		printf("fileName:%s\n",bnd->files[i].name.c_str());
 	}
 
 	reader->seek(bnd->files[0].position);
@@ -53,12 +53,12 @@ int main()
 		printf("bhf3 fileName:%s\n",bhf3->files[i].name);
 	}
 
-	printf("halfway char: %i %c\n",out[663872],out[663872]); //b
-	printf("3/4 char: %i %c\n",out[945056] ,out[945056] ); //-41
-	printf("4/5 char: %i %c\n",out[1123920],out[1123920]); //P
-	printf("5/6 char: %i %c\n",out[1232488],out[1232488]); //P
-	printf("6/7 char: %i %c\n",out[1283008],out[1283008]); //R
-	printf("7/8 char: %i %c\n",out[1324896],out[1324896]); //B
-	printf("8/9 char: %i %c\n",out[1326119],out[1326119]); //f
-	printf("9/9 char: %i %c\n",out[1326420],out[1326420]); //x
+	//printf("halfway char: %i %c\n",out[663872],out[663872]); //b
+	//printf("3/4 char: %i %c\n",out[945056] ,out[945056] ); //-41
+	//printf("4/5 char: %i %c\n",out[1123920],out[1123920]); //P
+	//printf("5/6 char: %i %c\n",out[1232488],out[1232488]); //P
+	//printf("6/7 char: %i %c\n",out[1283008],out[1283008]); //R
+	//printf("7/8 char: %i %c\n",out[1324896],out[1324896]); //B
+	//printf("8/9 char: %i %c\n",out[1326119],out[1326119]); //f
+	//printf("9/9 char: %i %c\n",out[1326420],out[1326420]); //x
 };

@@ -1,6 +1,10 @@
 #pragma once
 #include "../stdafx.hpp"
 
+//adapted from Mark Adler's zpipe.c from 2005, originally public domain
+//converted to use my custom reader to hopefully improve performance
+//TODO: setup chunk size so it can be overriden via CMAKE
+
 int inflate_zlib(BSReader* file, char* dest, size_t d_size)
 {
 	#define CHUNK 16384
