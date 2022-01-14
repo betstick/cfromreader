@@ -13,7 +13,7 @@ namespace cfr
     struct BND_File
     {
         uint64_t position; //location in mem relative to bnd start
-        uint32_t id;
+        uint32_t id; //if there is one, ie 5370 
         std::string name; //supports up to win32 path limit
         uint64_t compressedSize;
         uint64_t uncompressedSize;
@@ -66,10 +66,9 @@ namespace cfr
 				//harrable!
 				char magicBytes[8];
 
-				file->markPos();
-				file->seek(bnd3->fileHeaders[i].dataOffset);
+				file->stepIn(bnd3->fileHeaders[i].dataOffset);
 				file->read(&magicBytes,8);
-				file->returnToMark();
+				file->stepOut();
 
 				bndFile.format = determineFormat(magicBytes);
 				files.push_back(bndFile);

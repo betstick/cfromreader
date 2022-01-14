@@ -29,7 +29,6 @@ int main()
 	printf("data:%c%c%c%c%c\n",out[0],out[1],out[2],out[3],out[4]);
 	printf("dcx size: %i\n",dcx->header.uncompressedSize);
 	printf("out size: %i\n",out.size());
-	//printf("dcx data off: %i\n",dcx->da);
 
 	reader->open(&out[0],out.size());
 	BND* bnd = new BND(reader);

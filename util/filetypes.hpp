@@ -7,8 +7,9 @@ namespace cfr
 	enum CfrFileType
 	{
 		UNKOWN,
-		FROM_BDT,
+		FROM_BDF,
 		FROM_BHD,
+		FROM_BHF,
 		FROM_BND,
 		FROM_BTL,
 		FROM_DCX,

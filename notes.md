@@ -7,7 +7,7 @@ this file is for general scrawlings and information i've gathered from the games
 | BDF4   | bdt  |    |     |     |     |
 |xxxxxxxx|xxxxxx|xxxx|xxxxx|xxxxx|xxxxx|
 | BHD5_1 | bhd5 |    |     |     |     |
-| BHD5_2 | bhd  |    |     |     |     |
+| BHD5_2 | bhd5 |    |     |     |     |
 | BHF3   | bhd  |    |     |     |     |
 | BHF4   | bhd  |    |     |     |     |
 |xxxxxxxx|xxxxxx|xxxx|xxxxx|xxxxx|xxxxx|
