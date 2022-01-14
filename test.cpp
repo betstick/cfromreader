@@ -21,7 +21,8 @@ int main()
 
 	std::vector<char> out = std::vector<char>(dcx->header.uncompressedSize);
 
-	reader->seek(0x4C); //no sure start location, have to go by header init :(
+	printf("dcx offset: %x\n",dcx->header.offset);
+	reader->seek(dcx->header.offset);
 
 	int ret = inflate_zlib(reader,&out[0],dcx->header.uncompressedSize);
 	printf("ret:%i\n",ret);

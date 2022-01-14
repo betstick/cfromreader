@@ -65,6 +65,8 @@ namespace cfr
 		int32_t blockCount;
 		int32_t unk6C; //assert 0x100000
 		std::vector<_DCX_BLOCK_> blocks; //size of blockCount
+
+		uint64_t offset; //where the archive begins, my own addition
 	};
 
 	class DCX
@@ -92,7 +94,9 @@ namespace cfr
 		//abstracted for multiple instantiation methods
 		void init(BSReader* file)
 		{
-			file->read(this->header.magic,72); //magic to dcaSize
+			uint64_t startPos = file->readPos;
+
+			file->read(this->header.magic,76); //magic to dcaSize
 			if(this->header.format[0] == 'E') //EDGE
 			{
 				file->read(this->header.egdt,36);
@@ -113,6 +117,10 @@ namespace cfr
 				this->data.resize(this->header.compressedSize  );
 			else
 				this->data.resize(this->header.uncompressedSize);
+
+			uint64_t endPos = file->readPos;
+
+			this->header.offset = endPos - startPos;
 		};
 
 		//loads the entire file into memory :^)

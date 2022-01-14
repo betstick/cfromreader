@@ -163,11 +163,25 @@ namespace cfr
 		{
 			return HAVOK_HKS;
 		}
-		else if(false)
+		else if(
+			(magicBytes[4] == 'T') && 
+			(magicBytes[5] == 'A') && 
+			(magicBytes[6] == 'G') &&
+			(magicBytes[7] == '0')
+		)
 		{
 			return HAVOK_HKX;
 		}
-		else if(false)
+		else if(
+			(magicBytes[0] == 1) && 
+			(magicBytes[1] == 0) && 
+			(magicBytes[2] == 0) &&
+			(magicBytes[3] == 0) &&
+			(magicBytes[4] == 0) &&
+			(magicBytes[5] == 0) &&
+			(magicBytes[6] != 0) &&
+			(magicBytes[7] == 0)
+		)
 		{
 			return HAVOK_HKXPWV;
 		}

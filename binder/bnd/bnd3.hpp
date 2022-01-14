@@ -53,7 +53,7 @@ namespace cfr {
 			init(file);//, offset);
 		};
 
-		bool validateBinderHeader()
+		/*bool validateBinderHeader()
 		{
 			assert(strncmp("BND3",header.magic,5)); //5th char is NUL
 			assert(header.unk0F == 0);
@@ -69,7 +69,7 @@ namespace cfr {
 			assert(file.unk02 == 0);
 			assert(file.unk03 == 0);
 			return true;
-		};
+		};*/
 
 		private:
 		void init(BSReader* file) //, uint64_t offset)
@@ -131,7 +131,7 @@ namespace cfr {
 
 			file->returnToMark();
 #ifdef DEBUG
-			validateFileHeader(bnd3File);
+			//validateFileHeader(bnd3File);
 #endif
 			fileHeaders.push_back(bnd3File);
 		};
