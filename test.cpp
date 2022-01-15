@@ -14,7 +14,8 @@ struct testResults
 
 int main()
 {
-	BSReader* reader = new BSReader("../c5370.chrbnd.dcx",4096);
+	BSReader* reader = new BSReader();
+	reader->open("../c5370.chrbnd.dcx",4096);
 	reader->getSize();
 	DCX* dcx = new DCX(reader);
 	dcx->load(reader);
