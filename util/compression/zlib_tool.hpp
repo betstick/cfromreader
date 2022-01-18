@@ -7,11 +7,12 @@
 	#define CHUNK 16384
 #endif
 
+#define SET_BINARY_MODE(file)
+
 namespace cfr
 {
-	int inflate_zlib(BSReader* file, char* dest, size_t d_size)
+	int inflate_zlib(BSReader* file, FILE* dest)
 	{
-		int offset = 0;
 		int ret;
 		unsigned have;
 		z_stream strm;
@@ -33,7 +34,10 @@ namespace cfr
 		/* decompress until deflate stream ends or end of file */
 		do {
 			strm.avail_in = file->read(in,CHUNK);
-
+			if (file->err) {
+				(void)inflateEnd(&strm);
+				return Z_ERRNO;
+			}
 			if (strm.avail_in == 0)
 				break;
 			strm.next_in = in;
@@ -58,10 +62,10 @@ namespace cfr
 				}
 
 				have = CHUNK - strm.avail_out;
-				//printf("data[0]:%c\n",out[0]);
-				memcpy(&dest[0]+offset,out,have);
-
-				offset += have;
+				if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
+					(void)inflateEnd(&strm);
+					return Z_ERRNO;
+				}
 			} while (strm.avail_out == 0);
 
 			/* done when inflate() says it's done */

@@ -37,7 +37,7 @@ namespace cfr
 		int32_t nameOffset;
 		int32_t uncompressedSize;
 
-		char name[256];
+		std::string name;
 	};
 
 	class _BHF3_
@@ -63,18 +63,11 @@ namespace cfr
 				{
 					file->read(&tempFile.nameOffset,4);
 
-					file->markPos();
-					file->seek(tempFile.nameOffset+startPos);
-					
-					int32_t i = 0;
-					//this while condition is gross but it works. idk why
-					while(tempFile.name[i-1] != 0 || i == 0)
-					{
-						file->read(&tempFile.name[i],1);
-						i++;
-					}
+					file->stepIn(tempFile.nameOffset+startPos);
 
-					file->returnToMark();
+					file->readString(&tempFile.name);
+
+					file->stepOut();
 				}
 
 				if(this->header.rawFormat & 0b00000100)

@@ -34,9 +34,10 @@ namespace cfr
 
         BND(BSReader* file)
         {
+			file->markPos();
             char magic[4];
             file->read(&magic,4);
-            file->seek(0); //back to start
+			file->returnToMark();
 
             switch(magic[3])
             {
@@ -52,7 +53,7 @@ namespace cfr
         private:
         void initBND3(BSReader* file)
         {
-            BND3* bnd3 = new BND3(file,0);
+            BND3* bnd3 = new BND3(file,file->readPos);
 
             for(int32_t i = 0; i < bnd3->fileHeaders.size(); i++)
             {

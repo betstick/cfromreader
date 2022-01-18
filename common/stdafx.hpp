@@ -9,9 +9,11 @@
 #include <stdlib.h>
 #include <vector>
 #include <cstdlib>
+#include <bits/stdc++.h> //queues
 
 //memory manipulation
 #include <memory>
+#include <wchar.h>
 
 //testing and verification
 #include <assert.h>

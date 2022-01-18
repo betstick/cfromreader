@@ -3,6 +3,7 @@
 
 namespace cfr 
 {
+	#pragma pack(push, 1)
 	class FLVER2_Header
 	{
 		public:
@@ -10,7 +11,7 @@ namespace cfr
 		char endian[2];
 		uint32_t version;
 
-		uint32_t dataOffset;
+		uint32_t dataOffset = 0;
 		uint32_t dataLength;
 
 		int32_t dummyCount;
@@ -54,9 +55,36 @@ namespace cfr
 
 		FLVER2_Header(BSReader* file)//, uint64_t offset)
 		{
-			file->read(&magic[0],sizeof(FLVER2_Header)); //i refuse to read one at a time!
+			if(file->isFile)
+			{
+				file->read(&magic[0],sizeof(FLVER2_Header)); //i refuse to read one at a time!
+				if(file->err || file->eof)
+					throw std::runtime_error("failed to read FLVER2 header!\n");
+				/*file->seek(0);
+				fread(&magic[0],sizeof(FLVER2_Header),1,file->file);
+				fseek(file->file,0,SEEK_SET);
+				printf("magic:%s\n",magic);
+				file->readPos+=sizeof(FLVER2_Header);
+				file->seek(sizeof(FLVER2_Header));*/
+			}
+			else
+			{
+				printf("using fread directly like a stupid idiot!\n");
+				fread(&magic,6,1,file->file);
+				fread(&endian,2,1,file->file);
+				fread(&version,4,1,file->file);
+				fread(&dataOffset,4,1,file->file);
+				throw std::runtime_error("wooo");
+				/*fread(&magic[0],sizeof(FLVER2_Header),1,file->file);
+				fread(&magic[0],sizeof(FLVER2_Header),1,file->file);
+				fread(&magic[0],sizeof(FLVER2_Header),1,file->file);*/
+				
+				printf("dataOffset:%i\n",dataOffset);
+				file->readPos+=sizeof(FLVER2_Header);
+			}
 		};
 	};
+	#pragma pack(pop)
 
 	class FLVER2_Dummy
 	{
@@ -116,8 +144,8 @@ namespace cfr
 	class FLVER2_Material
 	{
 		public:
-		OffsetString name; //offsets to the actual values?
-		OffsetString mtd; 
+		uint32_t nameOffset = 0;
+		uint32_t mtdOffset = 0;
 
 		int32_t textureCount;
 		int32_t textureIndex;
@@ -130,22 +158,36 @@ namespace cfr
 
 		FLVER2_GXItem* items;
 
+		std::string name;
+		std::string mtd;
+
 		FLVER2_Material(){};
 
-		FLVER2_Material(BSReader* file, FLVER2_Header header)
+		FLVER2_Material(BSReader* file, uint64_t offset, FLVER2_Header header)
 		{
-			//file->read(&name.offset,4);
-			//file->read(&mtd.offset,4);
-			name = readOffsetString(file);
-			mtd = readOffsetString(file);
+			//printf("material start (adjusted):%x\n",file->readPos-offset);
+			//printf("material start (true)    :%x\n",file->readPos       );
+			
+			file->read(&nameOffset,4);
+			//printf("nameOffset: 0x%x\t| %i\n",nameOffset,nameOffset);
+			file->stepIn(nameOffset);
+			file->readString(&name);
+			file->stepOut();
+
+			file->read(&mtdOffset,4);
+			//printf("mtdOffset:  0x%x\t| %i\n",mtdOffset,mtdOffset);
+			file->stepIn(mtdOffset);
+			file->readString(&mtd);
+			file->stepOut();
 
 			file->read(&textureCount,24); //texCount thru unk1C
+			//printf("textureCount:%i\n",textureCount);
 
 			if(gxOffset != 0)
 			{
 				file->stepIn(gxOffset);
-				printf("gxOffset:%i\treadPos:%lu\n",gxOffset,file->readPos);
-				printf("textureCount:%i\textureIndex:%i\n",textureCount,textureIndex);
+				//printf("gxOffset:%i\treadPos:%lu\n",gxOffset,file->readPos);
+				//printf("textureCount:%i\textureIndex:%i\n",textureCount,textureIndex);
 
 				uint32_t i = 0;
 				bool valid = true;

@@ -23,17 +23,17 @@ namespace cfr {
 
 		FLVER2(BSReader* file) //read from already opened file
 		{
-			init(file);
+			init(file, file->readPos);
 		};
 
 		FLVER2(std::string path) //open file and create the reader
 		{
 			BSReader file = BSReader(path,4096);
-			init(&file); //this one is differet, its okay
+			init(&file, 0); //this one is differet, its okay
 		};
 
 		private:
-		void init(BSReader* file);	
+		void init(BSReader* file, uint64_t offset);	
 
 		public:
 		//returns formatted list on how the vertex data is layed out
@@ -41,8 +41,9 @@ namespace cfr {
 	};
 
 	//moved from the cpp file cause i don't feel like fixing compile issue right now
-	void FLVER2::init(BSReader* file)
+	void FLVER2::init(BSReader* file, uint64_t offset)
 	{
+		//printf("offset is: 0x%x\n",offset);
 		header = new FLVER2_Header(file);
 
 		//just init them all at once onto the heap in order
@@ -55,6 +56,8 @@ namespace cfr {
 		bufferLayouts = new FLVER2_BufferLayout[header->bufferLayoutCount];
 		textures = new FLVER2_Texture[header->textureCount];
 
+		//printf("reading flver data at: %x\n",file->readPos);
+
 		for(int32_t i = 0; i < header->dummyCount; i++)
 		{
 			dummies[i] = FLVER2_Dummy(file);
@@ -62,7 +65,7 @@ namespace cfr {
 
 		for(int32_t i = 0; i < header->materialCount; i++)
 		{
-			materials[i] = FLVER2_Material(file,*header);
+			materials[i] = FLVER2_Material(file,offset,*header);
 		}
 
 		for(int32_t i = 0; i < header->boneCount; i++)

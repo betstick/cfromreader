@@ -1,0 +1,111 @@
+#include "cfromreader.hpp"
+#include <ctime> //needed only for testing!
+using namespace cfr;
+
+struct testResults 
+{
+	int64_t a;
+	int64_t b;
+	int64_t c;
+	int64_t d;
+	int64_t e;
+	int64_t f;
+};
+
+void compareFlverHeader(FLVER2_Header* header1, FLVER2_Header* header2)
+{
+	printf("magic:\t\t%s\t%s\n",header1->magic,header2->magic);
+	printf("version:\t\t%i\t%i\n",header1->version,header2->version);
+	printf("dataOffset:\t\t%i\t%i\n",header1->dataOffset,header2->dataOffset);
+	printf("dataLength:\t\t%i\t%i\n",header1->dataLength,header2->dataLength);
+	printf("dummyCount:\t\t%i\t%i\n",header1->dummyCount,header2->dummyCount);
+	printf("materialCount:\t\t%i\t%i\n",header1->materialCount,header2->materialCount);
+	printf("boneCount:\t\t%i\t%i\n",header1->boneCount,header2->boneCount);
+	printf("meshCount:\t\t%i\t%i\n",header1->meshCount,header2->meshCount);
+	printf("vertexBufferCount:\t\t%i\t%i\n",header1->vertexBufferCount,header2->vertexBufferCount);
+	printf("trueFaceCount:\t\t%i\t%i\n",header1->trueFaceCount,header2->trueFaceCount);
+	printf("totalFaceCount:\t\t%i\t%i\n",header1->totalFaceCount,header2->totalFaceCount);
+	printf("primitiveRestartConstant:\t\t%i\t%i\n",header1->primitiveRestartConstant,header2->primitiveRestartConstant);
+	printf("faceSetCount:\t\t%i\t%i\n",header1->faceSetCount,header2->faceSetCount);
+	printf("bufferLayoutCount:\t\t%i\t%i\n",header1->bufferLayoutCount,header2->bufferLayoutCount);
+	printf("textureCount:\t\t%i\t%i\n",header1->textureCount,header2->textureCount);
+}
+
+int main()
+{
+	BSReader* reader = new BSReader("../c5370.chrbnd.dcx",4096);
+	DCX* dcx = new DCX(reader);
+	dcx->load(reader);
+
+	std::vector<char> out = std::vector<char>(dcx->header.uncompressedSize);
+	FILE* outFile = fmemopen(out.data(),out.size(),"w");
+
+	printf("dcx offset: %x\n",dcx->header.offset);
+	reader->seek(dcx->header.offset);
+
+	//int ret = inflate_zlib(reader,&out[0],dcx->header.uncompressedSize);
+	int ret = inflate_zlib(reader,outFile);
+	fclose(outFile);
+	printf("ret:%i\n",ret);
+
+	printf("data:%c%c%c%c%c\n",out[0],out[1],out[2],out[3],out[4]);
+	printf("dcx size: %i\n",dcx->header.uncompressedSize);
+	printf("out size: %i\n",out.size());
+
+	reader->open(&out[0],out.size());
+	BND* bnd = new BND(reader);
+	printf("bnd file count:%i\n",bnd->files.size());
+
+	for(int32_t i = 0; i < bnd->files.size(); i++)
+	{
+		//printf("fileName:%s\n",bnd->files[i].name.c_str());
+	}
+
+	reader->seek(bnd->files[0].position);
+	printf("beginning flver read at: %x\n",bnd->files[0].position);
+	FLVER2* flver2 = new FLVER2(reader);
+	printf("flverMeshes:%i\n",flver2->header->meshCount);
+
+	for(int32_t i = 0; i < flver2->header->materialCount; i++)
+	{
+		//printf("flverMaterial[%i] name:%s\n",i,flver2->materials[i].name.c_str());
+		//printf("flverMaterial[%i]  mtd:%s\n",i,flver2->materials[i].mtd.c_str() );
+	}
+
+	reader->seek(bnd->files[3].position);
+	_BHF3_* bhf3 = new _BHF3_(reader);
+	printf("bhf3 file count:%i\n",bhf3->files.size());
+
+	for(int32_t i = 0; i < bhf3->header.fileCount; i++)
+	{
+		//printf("bhf3 fileName:%s\n",bhf3->files[i].name.c_str());
+	}
+
+	BSReader* bndFile = new BSReader("../c5370.chrbnd",4096);
+	printf("bndSize:%i\n",bndFile->fileSize);
+	for(uint32_t i = 0; i < (out.size()/8); i++)
+	{
+		uint64_t output1; 
+		uint64_t output2; 
+		int ret = bndFile->read(&output1,8);
+		memcpy(&output2,&out[i*8],8);
+		if(bndFile->err || output1 != output2)
+		{
+			printf("row[%2.i]ret:[%i]eof[%i]err[%i]:%8.x|%8.x\n",i,ret,bndFile->eof,bndFile->err,output1,output2);
+		}
+	}
+
+	FLVER2* testFlver = new FLVER2("../c5370.flver");
+	printf("testFlverMeshes:%i\n",testFlver->header->meshCount);
+
+	compareFlverHeader(testFlver->header,flver2->header);
+
+	//printf("halfway char: %i %c\n",out[663872],out[663872]); //b
+	//printf("3/4 char: %i %c\n",out[945056] ,out[945056] ); //-41
+	//printf("4/5 char: %i %c\n",out[1123920],out[1123920]); //P
+	//printf("5/6 char: %i %c\n",out[1232488],out[1232488]); //P
+	//printf("6/7 char: %i %c\n",out[1283008],out[1283008]); //R
+	//printf("7/8 char: %i %c\n",out[1324896],out[1324896]); //B
+	//printf("8/9 char: %i %c\n",out[1326119],out[1326119]); //f
+	//printf("9/9 char: %i %c\n",out[1326420],out[1326420]); //x
+};
