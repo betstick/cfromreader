@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-set(CMAKE_INSTALL_PREFIX /usr) #needed?
+set(CMAKE_INSTALL_PREFIX /usr)
 project(CFRTEST)
 
 message(STATUS ${PROJECT_SOURCE_DIR})
@@ -43,32 +43,6 @@ list(APPEND DIRS
     )
 
 add_dir("${DIRS}")
+add_dir("src/")
 
-option(BUILD "enable verbose stuff and GDB support" OFF)
-
-if(BUILD STREQUAL "debug")
-	#enable GDB and disable all optimizations
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0")
-	#show all types of errors, but limit to 8 at a time
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror  -fmax-errors=8")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror  -fmax-errors=8")
-	#enable this for my debug code preprocessor stuff
-	add_compile_definitions(DEBUG)
-	#needed to prevent VMA werror stuff from stopping compile.
-	add_compile_definitions(VMA_DEBUG_DETECT_CORRUPTION)
-	add_compile_definitions(VMA_DEBUG_MARGIN=1)
-	message(STATUS "Using debug mode...")
-else()
-	set(BUILD "release")
-	#optimize aggressively
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-	message(STATUS "Using release mode...")
-endif()
-unset(BUILD CACHE)
-
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}__SOURCES} ${${PROJECT_NAME}__INCLUDES})
-
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PROJECT_NAME})
+add_subdirectory(src)
