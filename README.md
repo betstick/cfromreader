@@ -16,7 +16,7 @@ I have not tested it in Clang. I use GCC. It may only work in GCC for the moment
 I have also not tested this in Windows but you will need CygWin and MingW most likely.
 
 ## Misc
-This doesn't support console files nor does it support Sekiro or the Steel Batallion series or Kings Field. For now it is limited to Dark Souls Remastered, Bloodborne(?), and Dark Souls 3. More may get added later. This code is primarily for my personal use in another project, and was initially abstracted for licensing reasons, but now its like this for organizational purposes.
+This project currently is targetting Dark Souls PTDE due to Havok issues with the Remaster. More games/support may get added later. This code is primarily for my personal use in another project, and was initially abstracted for licensing reasons, but now its like this for organizational purposes.
 
 ## Credits
 JKAndarson's [SoulsTemplates](https://github.com/JKAnderson/SoulsTemplates) and [SoulsFormats](https://github.com/JKAnderson/SoulsFormats)<br/>
