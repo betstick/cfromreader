@@ -19,13 +19,13 @@ namespace cfr
 		int32_t meshCount;
 		int32_t vertexBufferCount;
 
-		_Float32 boundingBoxMin_x;
-		_Float32 boundingBoxMin_y;
-		_Float32 boundingBoxMin_z;
+		float boundingBoxMin_x;
+		float boundingBoxMin_y;
+		float boundingBoxMin_z;
 
-		_Float32 boundingBoxMax_x;
-		_Float32 boundingBoxMax_y;
-		_Float32 boundingBoxMax_z;
+		float boundingBoxMax_x;
+		float boundingBoxMax_y;
+		float boundingBoxMax_z;
 
 		int32_t trueFaceCount; // Does not include shadow meshes or degenerate faces
 		int32_t totalFaceCount;
@@ -67,22 +67,22 @@ namespace cfr
 	class FLVER2_Dummy
 	{
 		public:
-		_Float32 pos_x;
-		_Float32 pos_y;
-		_Float32 pos_z;
+		float pos_x;
+		float pos_y;
+		float pos_z;
 
 		uint8_t color[4];
 
-		_Float32 forward_x;
-		_Float32 forward_y;
-		_Float32 forward_z;
+		float forward_x;
+		float forward_y;
+		float forward_z;
 
 		int16_t referenceID;
 		int16_t dummyBoneIndex;
 
-		_Float32 upward_x;
-		_Float32 upward_y;
-		_Float32 upward_z;
+		float upward_x;
+		float upward_y;
+		float upward_z;
 
 		int16_t attachBoneIndex;
 		char unk2E;
@@ -193,35 +193,35 @@ namespace cfr
 	class FLVER2_Bone
 	{
 		public:
-		_Float32 translation_x;
-		_Float32 translation_y;
-		_Float32 translation_z;
+		float translation_x;
+		float translation_y;
+		float translation_z;
 
 		uint64_t nameOffset;
 
-		_Float32 rot_x;
-		_Float32 rot_y;
-		_Float32 rot_z;
+		float rot_x;
+		float rot_y;
+		float rot_z;
 
 		int16_t parentIndex;
 		int16_t childIndex;
 
-		_Float32 scale_x;
-		_Float32 scale_y;
-		_Float32 scale_z;
+		float scale_x;
+		float scale_y;
+		float scale_z;
 
 		int16_t nextSiblingIndex;
 		int16_t previousSiblingIndex;
 
-		_Float32 boundingBoxMin_x;
-		_Float32 boundingBoxMin_y;
-		_Float32 boundingBoxMin_z;
+		float boundingBoxMin_x;
+		float boundingBoxMin_y;
+		float boundingBoxMin_z;
 		
 		int32_t unk3C;
 
-		_Float32 boundingBoxMax_x;
-		_Float32 boundingBoxMax_y;
-		_Float32 boundingBoxMax_z;
+		float boundingBoxMax_x;
+		float boundingBoxMax_y;
+		float boundingBoxMax_z;
 		
 		char* emptyJunk[52]; //potentially needed for spacing :/
 
@@ -261,15 +261,15 @@ namespace cfr
 		uint32_t vertexBufferIndicesOffset;
 
 		//only if boundingBoxOffset != 0
-		_Float32 boundingBoxMin_x;
-		_Float32 boundingBoxMin_y;
-		_Float32 boundingBoxMin_z;
-		_Float32 boundingBoxMax_x;
-		_Float32 boundingBoxMax_y;
-		_Float32 boundingBoxMax_z;
-		_Float32 boundingBoxUnk_x; //only if header.version >= 0x2001A
-		_Float32 boundingBoxUnk_y; //only if header.version >= 0x2001A
-		_Float32 boundingBoxUnk_z; //only if header.version >= 0x2001A
+		float boundingBoxMin_x;
+		float boundingBoxMin_y;
+		float boundingBoxMin_z;
+		float boundingBoxMax_x;
+		float boundingBoxMax_y;
+		float boundingBoxMax_z;
+		float boundingBoxUnk_x; //only if header.version >= 0x2001A
+		float boundingBoxUnk_y; //only if header.version >= 0x2001A
+		float boundingBoxUnk_z; //only if header.version >= 0x2001A
 
 		//only if boneCount > 0
 		int32_t* boneIndices; //size of boneCount
@@ -559,16 +559,16 @@ namespace cfr
 		uint64_t pathOffset;
 		uint64_t typeOffset;
 
-		_Float32 scale_x;
-		_Float32 scale_y;
+		float scale_x;
+		float scale_y;
 
 		char unk10;
 		char unk11;
 		int16_t unk12; //assert(0)
 
-		_Float32 unk14;
-		_Float32 unk18;
-		_Float32 unk1C;
+		float unk14;
+		float unk18;
+		float unk1C;
 
 		FLVER2_Texture(){};
 
@@ -586,12 +586,12 @@ namespace cfr
 	class FLVER2_VertexBoneWeights
 	{
 		public:
-		_Float32 a,b,c,d;
+		float a,b,c,d;
 		int32_t length; //always 4
 
 		FLVER2_VertexBoneWeights(){};
 
-		FLVER2_VertexBoneWeights(FILE* src, uint32_t format, _Float32 divisor)
+		FLVER2_VertexBoneWeights(FILE* src, uint32_t format, float divisor)
 		{
 			a = getValue(src,format,divisor);
 			b = getValue(src,format,divisor);
@@ -602,9 +602,9 @@ namespace cfr
 		};
 
 		private:
-		_Float32 getValue(FILE* src, uint32_t format, _Float32 divisor)
+		float getValue(FILE* src, uint32_t format, float divisor)
 		{
-			_Float32 value = 0;
+			float value = 0;
 			//char temp[2];
 
 			//this is ugly but should be "safe"
@@ -674,7 +674,7 @@ namespace cfr
 	class FLVER2_VertexColor
 	{
 		public:
-		_Float32 a,r,g,b;
+		float a,r,g,b;
 
 		FLVER2_VertexColor(FILE* src)
 		{

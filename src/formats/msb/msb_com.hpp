@@ -85,7 +85,7 @@ namespace cfr
 
 	struct MSB_ShapeCircle
 	{
-		_Float32 radius;
+		float radius;
 
 		void(*MSB_ShapeRect)(MSB_ShapeCircle* temp, FILE* src);
 	};
@@ -97,7 +97,7 @@ namespace cfr
 
 	struct MSB_ShapeShpere
 	{
-		_Float32 radius;
+		float radius;
 
 		void(*MSB_ShapeRect)(MSB_ShapeShpere* temp, FILE* src);
 	};
@@ -109,8 +109,8 @@ namespace cfr
 
 	struct MSB_ShapeCylinder
 	{
-		_Float32 radius;
-		_Float32 height;
+		float radius;
+		float height;
 
 		void(*MSB_ShapeRect)(MSB_ShapeCylinder* temp, FILE* src);
 	};
@@ -122,8 +122,8 @@ namespace cfr
 
 	struct MSB_ShapeRect
 	{
-		_Float32 width;
-		_Float32 height;
+		float width;
+		float height;
 
 		void(*MSB_ShapeRect)(MSB_ShapeRect* temp, FILE* src);
 	};
@@ -135,9 +135,9 @@ namespace cfr
 
 	struct MSB_ShapeBox
 	{
-		_Float32 width;
-		_Float32 depth;
-		_Float32 height;
+		float width;
+		float depth;
+		float height;
 
 		void(*MSB_ShapeBox)(MSB_ShapeBox* temp, FILE* src);
 	};

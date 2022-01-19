@@ -18,13 +18,13 @@ namespace cfr
 		int32_t meshCount;
 		int32_t vertexBufferCount;
 
-		_Float32 boundingBoxMin_x;
-		_Float32 boundingBoxMin_y;
-		_Float32 boundingBoxMin_z;
+		float boundingBoxMin_x;
+		float boundingBoxMin_y;
+		float boundingBoxMin_z;
 
-		_Float32 boundingBoxMax_x;
-		_Float32 boundingBoxMax_y;
-		_Float32 boundingBoxMax_z;
+		float boundingBoxMax_x;
+		float boundingBoxMax_y;
+		float boundingBoxMax_z;
 
 		int32_t trueFaceCount; // Does not include shadow meshes or degenerate faces
 		int32_t totalFaceCount;
