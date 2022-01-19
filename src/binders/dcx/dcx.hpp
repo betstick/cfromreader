@@ -196,7 +196,7 @@ namespace cfr
 
 	char* openDCX(const char* path, size_t* size)
 	{
-		FILE* dcx = fopen(path,"rb");		
+		FILE* dcx = fopen(path,"rb");
 		return openDCX(dcx,size);
 	};
 };

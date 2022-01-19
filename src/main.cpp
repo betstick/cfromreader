@@ -7,6 +7,9 @@ int main()
 	size_t size;
 	char* bndArr = openDCX("../c5370.chrbnd.dcx",&size);
 
+	if(bndArr == NULL)
+		throw std::runtime_error("Failed to open file!\n");
+
 	FILE* bndPtr = fmemopen(bndArr,size,"r");
 
 	int bnd3count;
