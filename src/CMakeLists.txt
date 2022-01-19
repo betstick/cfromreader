@@ -7,8 +7,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
 if(BUILD STREQUAL "debug")
 	#enable GDB and disable all optimizations
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -g")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -g")
 	#show all types of errors, but limit to 8 at a time
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -fmax-errors=8")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -fmax-errors=8")
@@ -29,5 +29,6 @@ unset(BUILD CACHE)
 
 set_property(TARGET CFRTEST PROPERTY "$<TARGET_FILE_DIR:CFRTEST>")
 set(COMPILE_OUTPUT_FOLDER ${CMAKE_SOURCE_DIR}/bin/release/)
-target_include_directories(CFRTEST PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(CFRTEST PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_options(CFRTEST PRIVATE -static-libgcc -static-libstdc++)
 target_link_libraries(CFRTEST)
