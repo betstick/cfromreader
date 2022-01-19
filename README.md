@@ -2,18 +2,27 @@
 A read only library for Souls game file formats. The scope for the library is limited to being read only, little endian, and Souls games only. It is intended for use as a layer for/like Assimp. For more fleshed out and featureful tools, check out the credits. There's read/write support, map editors, full libraries, and more. The code here wouldn't have been possible without those other tools and libraries.
 
 ## Validation
-This repo comes with a test.cpp file that you can build and use to test files.
+This repo comes with a main.cpp file that you can build and use to test files.
 Make a bin directory in the root of the repo, cd into it, then run: cmake..
 From there you can then run ./release/CFRTEST to run it. Be aware of where you execute FROM and also where you path to the files you want to test with. Relative pathing wasted over an hour of my time.
 If you're getting segfaults, try executing the binary from the directory where it is located and put the files you want to validate in the same directory. Then you can just directly access them without worrying about relative pathing.
 Run `cmake .. -DDEBUG=true` to get a more verbose output. Off by default. Also enables GDB debugging support.
 
 ## How to Use
-You should be able to clone this repo onto your computer then include the cfromreader.hpp file I suppose.
-You do need GLM but otherwise this is all standard libraries (on Linux). I think. I'm on Arch btw.
-This repo is set up for CMAKE. 
-I have not tested it in Clang. I use GCC. It may only work in GCC for the moment.
-I have also not tested this in Windows but you will need CygWin and MingW most likely.
+You should be able to clone this repo onto your computer then include the cfromreader.hpp header file into your project.
+
+## Building on Linux
+You'll probably be able to figure it out. Steps should be similar to the Windows instructions, just, in your terminal.
+
+## Buidling on Windows
+Install Cygwin, install the base and devel categories. From the Cygwin terminal in the project root, run the following:
+```
+mkdir bin && cd bin
+cmake ..
+make
+./release/CFRTEST.exe
+```
+If you run into issues, it's possible Cygwin isn't in your path variable in Windows. Otherwise, let me know!
 
 ## Misc
 This project currently is targetting Dark Souls PTDE due to Havok issues with the Remaster. More games/support may get added later. This code is primarily for my personal use in another project, and was initially abstracted for licensing reasons, but now its like this for organizational purposes.
