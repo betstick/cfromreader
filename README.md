@@ -9,7 +9,7 @@ If you're getting segfaults, try executing the binary from the directory where i
 Run `cmake .. -DDEBUG=true` to get a more verbose output. Off by default. Also enables GDB debugging support.
 
 ## How to Use
-You should be able to clone this repo onto your computer then include the cfromreader.hpp header file into your project.
+You should be able to clone this repo onto your computer then include the cfromreader.hpp header file into your project. Note: by default you'll need the res/ folder from src/ in your binary directory for now. The res/ folder contains the file lists for hashing in order to access DVDBND data.
 
 ## Building on Linux
 You'll probably be able to figure it out. Steps should be similar to the Windows instructions, just, in your terminal.
