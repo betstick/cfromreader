@@ -71,6 +71,9 @@ namespace cfr
 
 			std::string filePath = line;
 
+			if(filePath.back() == '\n')
+				filePath.pop_back();
+
 			paths.push_back(filePath);
 		}
 
@@ -79,25 +82,15 @@ namespace cfr
 		return paths;
 	}
 
-
 	uint32_t hashFilePath(std::string path)
 	{
 		uint32_t hash = 0;
 
-		//minus 1 to account for newline char? null char won't affect hash
 		for(int i = 0; i < path.size(); i++)
 		{
-			switch(path[i])
-			{
-				case '\n': break;
-				//case '\0': break;
-				default:
-				{
-					hash *= (uint32_t)37;
-					hash += (uint32_t)path[i];
-					//printf("h:%12.u 0x%12.x\n",hash,hash);
-				}
-			}
+			hash *= (uint32_t)37;
+			hash += (uint32_t)path[i];
+			//printf("h:%12.u 0x%12.x\n",hash,hash);
 		}
 
 		return hash;
