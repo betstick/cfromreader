@@ -31,6 +31,7 @@ This project currently is targetting Dark Souls PTDE due to Havok issues with th
 JKAndarson's [SoulsTemplates](https://github.com/JKAnderson/SoulsTemplates) and [SoulsFormats](https://github.com/JKAnderson/SoulsFormats)<br/>
 Katalash's [HavokLib](https://github.com/katalash/HavokLib) and [DSMapStudio](https://github.com/katalash/DSMapStudio)<br/>
 Meowmaritus' [SoulsAssetPipeline](https://github.com/Meowmaritus/SoulsAssetPipeline)<br/>
+HotPocketRemix's [UnpackDarkSoulsForModding](https://github.com/HotPocketRemix/UnpackDarkSoulsForModding)<br/>
 ?ServerName? for help with programming and advice in general<br/>
 If your name is/or is not on here and you want that changed, please let me know.<br/>
 
