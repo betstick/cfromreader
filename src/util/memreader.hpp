@@ -5,11 +5,13 @@
 //with my other data streams. so i'm switching to this. its a better FILE
 //system than the native C one intended entirely for reading from memory.
 
+//Not sure if I'm gonna keep this. Might be useful, but also might be too complex.
+
 namespace cfr
 {
 	struct MEM
 	{
-		FILE* file;
+		FILE** file;
 		std::queue<int> stepStack[64];
 		std::queue<int> markStack[64];
 	};
@@ -17,14 +19,14 @@ namespace cfr
 	MEM* mOpen(void* stream, size_t len, const char* modes)
 	{
 		MEM* mem;
-		mem->file = fmemopen(stream,len,modes);
+		*mem->file = fmemopen(stream,len,modes);
 		return mem;
 	};
 
 	MEM* mOpen(const char* path, const char* modes)
 	{
 		MEM* mem;
-		mem->file = fopen(path,modes);
+		*mem->file = fopen(path,modes);
 		return mem;
 	};
 
@@ -45,12 +47,12 @@ namespace cfr
 
 	size_t mRead(void* dest, size_t size, size_t n, MEM* mem)
 	{
-		return fread(dest,size,n,mem->file);
+		return fread(dest,size,n,*mem->file);
 	};
 
 	int mSeek(MEM* mem, long off, int whence)
 	{
-		return fseek(mem->file,off,whence);
+		return fseek(*mem->file,off,whence);
 	}
 
 	void mStepIn(MEM* mem, long off)
@@ -67,7 +69,7 @@ namespace cfr
 
 	void mMarkPos(MEM* mem)
 	{
-		mem->markStack->push(ftell(mem->file));
+		mem->markStack->push(ftell(*mem->file));
 	};
 
 	void mReturnToMark(MEM* mem)
@@ -78,11 +80,11 @@ namespace cfr
 
 	int mTell(MEM* mem)
 	{
-		return ftell(mem->file);
+		return ftell(*mem->file);
 	}
 
 	int mClose(MEM* mem)
 	{
-		return fclose(mem->file);
+		return fclose(*mem->file);
 	};
 }

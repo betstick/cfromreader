@@ -15,7 +15,7 @@ You should be able to clone this repo onto your computer then include the cfromr
 You'll probably be able to figure it out. Steps should be similar to the Windows instructions, just, in your terminal.
 
 ## Buidling on Windows
-Install Cygwin, install the base and devel categories. From the Cygwin terminal in the project root, run the following:
+Install Cygwin, install the base and devel categories. You will also need everything with zlib in its name. From the Cygwin terminal in the project root, run the following:
 ```
 mkdir bin && cd bin
 cmake ..

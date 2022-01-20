@@ -17,8 +17,6 @@
 
 //testing and verification
 #include <assert.h>
-#include <random>
-#include <time.h>
 
 //compression libraries
 #include <zlib.h>
