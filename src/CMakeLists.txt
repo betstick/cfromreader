@@ -28,7 +28,6 @@ endif()
 unset(BUILD CACHE)
 
 set_property(TARGET CFRTEST PROPERTY "$<TARGET_FILE_DIR:CFRTEST>")
-set(COMPILE_OUTPUT_FOLDER ${CMAKE_SOURCE_DIR}/bin/release/)
 target_include_directories(CFRTEST PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_options(CFRTEST PRIVATE -static-libgcc -static-libstdc++)
 target_link_libraries(CFRTEST)
