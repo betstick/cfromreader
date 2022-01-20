@@ -1,10 +1,12 @@
 #include "cfromreader.hpp"
 
+#include "util/hash_util.hpp"
+
 using namespace cfr;
 
 int main()
 {
-	size_t size;
+	/*size_t size;
 	char* bndArr = openDCX("../c5370.chrbnd.dcx",&size);
 
 	if(bndArr == NULL)
@@ -28,7 +30,16 @@ int main()
 	printf("flver.header.magic:%s\n",flver->header->magic);
 	printf("flver.meshes:%i\n",flver->header->meshCount);
 	printf("flver.textures[63].scale.x:%8.f\n",flver->textures[63].scale_x);
-	printf("flver.textures[63].scale.y:%8.f\n",flver->textures[63].scale_y);
+	printf("flver.textures[63].scale.y:%8.f\n",flver->textures[63].scale_y);*/
+
+	std::vector<std::string> paths = getFileList(ds_ptde);
+
+	
+	for(int i = 0; i < paths.size(); i++)
+	{
+		printf("path[%i]:%s\n",i,paths[i].c_str());
+		printf("hash[%i]:%x\n",i,hashFilePath(paths[i].c_str()));
+	}
 
 	return 0;
 };
