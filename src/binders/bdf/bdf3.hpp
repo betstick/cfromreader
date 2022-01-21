@@ -6,12 +6,12 @@ namespace cfr
     class BDF3
     {
         char version[8];
-        FILE* data;
+        FILE** data;
         int size;
 
         BDF3(FILE* src)
         {
-            this->data = src;
+            this->data = &src;
 
             char magic[4];
             fread(magic,1,4,src);

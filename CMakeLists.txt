@@ -1,48 +1,45 @@
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_INSTALL_PREFIX /usr)
-project(CFRTEST)
 
-message(STATUS ${PROJECT_SOURCE_DIR})
+project(cfr)
 
 enable_language(CXX)
+
 include(GNUInstallDirs)
 
 find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIRS})
 link_libraries(${ZLIB_LIBRARIES})
 
-macro(add_dir DIRS)
-    foreach (dir ${DIRS})
-        message("adding  ${dir} to ${PROJECT_NAME}")
-        include_directories(${dir})
-        file(GLOB ${dir}__INCLUDES_H ${dir} ${dir}/*.h)
-        file(GLOB ${dir}__INCLUDES_HPP ${dir} ${dir}/*.hpp)
-        list(APPEND ${PROJECT_NAME}__INCLUDES ${${dir}__INCLUDES_H} ${${dir}__INCLUDES_HPP})
-        file(GLOB ${dir}__SOURCES_CPP ${dir} ${dir}/*.cpp ${dir}/*.cxx)
-        file(GLOB ${dir}__SOURCES_C ${dir} ${dir}/*.c)
-        list(APPEND ${PROJECT_NAME}__SOURCES ${${dir}__SOURCES_C} ${${dir}__SOURCES_CPP})
-    endforeach()
-endmacro()
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(ARCH_TYPE x64)
-else (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(ARCH_TYPE x86)
-endif()
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/release/)
-
 #copy the filelists needed for dvdbnds
 file(COPY "src/res/" DESTINATION "release/res/")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
-list(APPEND DIRS
-    "."
-    )
+if(WIN32)
+	add_compile_definitions(WIN32)
+endif()
 
-add_dir("${DIRS}")
-add_dir("src/")
+if(BUILD STREQUAL "debug")
+	#enable GDB and disable all optimizations
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -g")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -g")
+	#show all types of errors, but limit to 8 at a time
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -fmax-errors=8")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -fmax-errors=8")
+	#enable this for my debug code preprocessor stuff
+	add_compile_definitions(DEBUG)
+	#needed to prevent VMA werror stuff from stopping compile.
+	add_compile_definitions(VMA_DEBUG_DETECT_CORRUPTION)
+	add_compile_definitions(VMA_DEBUG_MARGIN=1)
+	message(STATUS "Using debug mode...")
+else()
+	set(BUILD "release")
+	#optimize aggressively
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+	message(STATUS "Using release mode...")
+endif()
+unset(BUILD CACHE)
 
 add_subdirectory(src)

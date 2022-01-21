@@ -1,33 +1,12 @@
-add_executable(CFRTEST
-	main.cpp
-	)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-
-if(BUILD STREQUAL "debug")
-	#enable GDB and disable all optimizations
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0 -g")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -g")
-	#show all types of errors, but limit to 8 at a time
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -fmax-errors=8")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -fmax-errors=8")
-	#enable this for my debug code preprocessor stuff
-	add_compile_definitions(DEBUG)
-	#needed to prevent VMA werror stuff from stopping compile.
-	add_compile_definitions(VMA_DEBUG_DETECT_CORRUPTION)
-	add_compile_definitions(VMA_DEBUG_MARGIN=1)
-	message(STATUS "Using debug mode...")
-else()
-	set(BUILD "release")
-	#optimize aggressively
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-	message(STATUS "Using release mode...")
+if(BUILD_TEST STREQUAL "true")
+	project(cfr_test)
+	add_executable(cfr_test test/test.cpp)
 endif()
-unset(BUILD CACHE)
+unset(BUILD_TEST CACHE)
 
-set_property(TARGET CFRTEST PROPERTY "$<TARGET_FILE_DIR:CFRTEST>")
-target_include_directories(CFRTEST PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_options(CFRTEST PRIVATE -static-libgcc -static-libstdc++)
-target_link_libraries(CFRTEST)
+add_library(cfr SHARED cfromreader.cpp)
+set_target_properties(cfr PROPERTIES PUBLIC_HEADER cfromreader.hpp)
+
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} PERMISSIONS OWNER_READ OWNER_WRITE 
+    GROUP_READ 
+    WORLD_READ )

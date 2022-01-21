@@ -11,7 +11,7 @@ namespace cfr
 	{
 		des,
 		ds_ptde,
-		ds_r,
+		ds_r, //doesn't need it, unpacked by default
 		ds_2,
 		ds_2_sotfs,
 		ds_3,
@@ -35,7 +35,7 @@ namespace cfr
 				//TODO: fix this so it tells you what you input
 				char* listChar;
 				//char* thing = itoa((int)list,listChar,10);
-				throw std::invalid_argument("getHashList Unsupported argument: \n");
+				throw std::invalid_argument("getFileList Unsupported argument: \n");
 			}
 		}
 
@@ -82,17 +82,28 @@ namespace cfr
 		return paths;
 	}
 
-	uint32_t hashFilePath(std::string path)
+	int32_t hashFilePath(std::string path)
 	{
-		uint32_t hash = 0;
+		int32_t hash = 0;
 
 		for(int i = 0; i < path.size(); i++)
 		{
-			hash *= (uint32_t)37;
-			hash += (uint32_t)path[i];
+			hash *= (int32_t)37;
+			hash += (int32_t)path[i];
 			//printf("h:%12.u 0x%12.x\n",hash,hash);
 		}
 
 		return hash;
+	};
+
+	//generates path key'd map of hashses for dvdbnd access.
+	std::unordered_map<std::string, int32_t> createPathMap(std::vector<std::string> paths)
+	{
+		std::unordered_map<std::string, int32_t> hashTable;
+
+		for(int i = 0; i < paths.size(); i++)
+			hashTable.insert({paths[i],hashFilePath(paths[i].c_str())});
+
+		return hashTable;
 	};
 };
