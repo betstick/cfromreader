@@ -1,3 +1,6 @@
+#ifndef CFR_ZLIB_INF__
+#define CFR_ZLIB_INF__
+
 #pragma once
 #include "../stdafx.hpp"
 
@@ -64,3 +67,5 @@ int inf(FILE *source, FILE *dest)
     (void)inflateEnd(&strm);
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
+
+#endif

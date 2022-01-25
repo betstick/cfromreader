@@ -190,40 +190,11 @@ namespace cfr
 	};
 
 	//bonezone :^)
-	class FLVER2_Bone
+	class FLVER2_Bone //132 bytes total
 	{
 		public:
-		float translation_x;
-		float translation_y;
-		float translation_z;
-
-		uint64_t nameOffset;
-
-		float rot_x;
-		float rot_y;
-		float rot_z;
-
-		int16_t parentIndex;
-		int16_t childIndex;
-
-		float scale_x;
-		float scale_y;
-		float scale_z;
-
-		int16_t nextSiblingIndex;
-		int16_t previousSiblingIndex;
-
-		float boundingBoxMin_x;
-		float boundingBoxMin_y;
-		float boundingBoxMin_z;
-		
-		int32_t unk3C;
-
-		float boundingBoxMax_x;
-		float boundingBoxMax_y;
-		float boundingBoxMax_z;
-		
-		char* emptyJunk[52]; //potentially needed for spacing :/
+		int64_t offset;
+		int32_t count;
 
 		FLVER2_Bone(){};
 

@@ -1,3 +1,6 @@
+#ifndef CFR_FILE_TYPES__
+#define CFR_FILE_TYPES__
+
 #pragma once
 #include "stdafx.hpp"
 
@@ -195,3 +198,5 @@ namespace cfr
 		//return UNKOWN;
 	};
 };
+
+#endif
