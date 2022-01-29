@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(cfr)
+project(cfr VERSION 0.0.1 DESCRIPTION "cfr 001")
 
 enable_language(CXX)
 
@@ -10,15 +10,13 @@ find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIRS})
 link_libraries(${ZLIB_LIBRARIES})
 
+set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin")
+
 #copy the filelists needed for dvdbnds
-file(COPY "src/res/" DESTINATION "release/res/")
+file(COPY "res/" DESTINATION "release/res/")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-
-if(WIN32)
-	add_compile_definitions(WIN32)
-endif()
 
 if(BUILD STREQUAL "debug")
 	#enable GDB and disable all optimizations
@@ -42,4 +40,43 @@ else()
 endif()
 unset(BUILD CACHE)
 
-add_subdirectory(src)
+include_directories(src)
+
+#file(GLOB_RECURSE SOURCES "*.cpp")
+set(SOURCES 
+	"util/zlib_inf.cpp"
+	"util/memr.cpp"
+	"binders/bdf/bdf3.cpp"
+	"binders/bhd/bhd5_1.cpp"
+	"binders/bnd/bnd3.cpp"
+	"binders/dcx/dcx.cpp"
+	"formats/flver/flver2.cpp"
+	"util/hash_util.cpp"
+	"util/filetypes.cpp"
+)
+
+add_library(cfr SHARED ${SOURCES})
+
+
+set(MY_LIB_HEADER "cfr.hpp" "formats/flver/flver2.hpp")
+set(PUBLIC_HEADERS "cfr.hpp" )
+
+set_target_properties(cfr PROPERTIES 
+	PUBLIC_HEADER ${PUBLIC_HEADERS}
+	RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
+
+
+#set_target_properties(cfr PROPERTIES PUBLIC_HEADER cfr.hpp)
+#target_include_directories(cfr PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+#target_include_directories(cfr PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+#target_include_directories(cfr PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+install(TARGETS cfr LIBRARY DESTINATION /usr/lib)
+install(FILES cfr.hpp DESTINATION include)
+
+install(TARGETS ${PROJECT_NAME}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	PERMISSIONS 
+	OWNER_READ OWNER_WRITE 
+	GROUP_READ WORLD_READ )

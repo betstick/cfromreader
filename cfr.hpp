@@ -2,6 +2,9 @@
 #define cfr_h__
 
 #pragma once
-#include "src/common/stdafx.hpp"
+
+#include "util/stdafx.hpp"
+#include "binders/stdafx.hpp"
+#include "formats/stdafx.hpp"
 
 #endif

@@ -1,4 +1,8 @@
+//#ifndef CFR_FLVER2__
+//#define CFR_FLVER2__
+
 #pragma once
+#include "../../util/stdafx.hpp"
 #include "../stdafx.hpp"
 //#include "flver2_structs.hpp"
 //welcome to FLVER-town
@@ -224,45 +228,54 @@ namespace cfr {
 
 		struct Member
 		{
-			int32_t dataLength;
-			int32_t dataOffset;
+			struct Header
+			{
+				int32_t dataLength;
+				int32_t dataOffset;
 
-			int32_t unk08; //assert(0)
-			int32_t unk0C; //assert(0)
-			int16_t unk10;
-			int16_t unk12;
+				int32_t unk08; //assert(0)
+				int32_t unk0C; //assert(0)
+				int16_t unk10;
+				int16_t unk12;
 
-			int16_t baseIndex;
+				int16_t baseIndex;
 
-			int16_t unk16;
-			int32_t unk18;
-			int32_t unk1C;
-			int32_t unk20; //assert(0)
-			int32_t unk24; //assert(0)
-			int32_t unk28; //assert(0)
-			int32_t unk2C; //assert(0)
+				int16_t unk16;
+				int32_t unk18;
+				int32_t unk1C;
+				int32_t unk20; //assert(0)
+				int32_t unk24; //assert(0)
+				int32_t unk28; //assert(0)
+				int32_t unk2C; //assert(0)
 
-			//edgeGeomSpuConfigInfo? not sure what this means
-			int16_t unk30;
-			int16_t unk32;
-			int16_t unk34;
-			int16_t unk36;
-			int16_t unk38;
+				//edgeGeomSpuConfigInfo? not sure what this means
+				int16_t unk30;
+				int16_t unk32;
+				int16_t unk34;
+				int16_t unk36;
+				int16_t unk38;
 
-			int16_t indexCount;
+				int16_t indexCount;
 
-			int32_t unk3C; //assert(-1)
+				int32_t unk3C; //assert(-1)
+			};
 
+			Header* header;
 			uint8_t* data; //size of dataLength
 		};
 
 		struct EdgeIndices
 		{
-			int16_t memberCount;
-			int16_t unk02;
-			int32_t unk04;
-			int32_t unk08; //assert(0)
-			int32_t unk0C;
+			struct Header
+			{
+				int16_t memberCount;
+				int16_t unk02;
+				int32_t unk04;
+				int32_t unk08; //assert(0)
+				int32_t unk0C;
+			};
+
+			Header* header;
 			Member* members; //size of memberCount
 		};
 
@@ -315,12 +328,17 @@ namespace cfr {
 
 		struct BufferLayout
 		{
-			int32_t memberCount;
+			struct Header
+			{
+				int32_t memberCount;
 
-			int32_t unk04; //assert(0)
-			int32_t unk08; //assert(0)
+				int32_t unk04; //assert(0)
+				int32_t unk08; //assert(0)
 
-			uint32_t membersOffset;
+				uint32_t membersOffset;
+			};
+
+			Header* header;
 			LayoutMember* members; //size of memberCount
 		};
 
@@ -358,16 +376,16 @@ namespace cfr {
 			float a,r,g,b;
 		};
 
-		private:
+		public:
 		Header* headerInit(MEM* src, int startOffset);
 
 		Dummy* dummyInit(MEM* src, int startOffset);
 
-		Material* materialInit(MEM* src, int startOffset, int i);
+		Material* materialInit(MEM* src, int startOffset, FLVER2::Header* hdr, int i);
 
 		Bone* boneInit(MEM* src, int startOffset);
 
-		Mesh* meshInit(MEM* src, int startOffset);
+		Mesh* meshInit(MEM* src, int startOffset, FLVER2::Header* hdr);
 
 		Member* memberInit(MEM* src, int startOffset);
 
@@ -401,7 +419,7 @@ namespace cfr {
 		Texture* textures;
 
 		int startOffset = 0;
-		MEM** src;
+		MEM* src;
 
 		//read from already opened file
 		FLVER2(MEM* src);
@@ -410,3 +428,4 @@ namespace cfr {
 		FLVER2(const char* path);
 	};
 };
+//#endif

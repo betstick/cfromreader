@@ -1,6 +1,5 @@
 #pragma once
 #include "../stdafx.hpp"
-#include "stdio.h"
 
 namespace cfr
 {
@@ -20,28 +19,27 @@ namespace cfr
 		dcx_krak
 	};
 
-	int decompress_zlib(FILE* src, FILE* dest);
+	int decompress_zlib(MEM* src, MEM* dest);
 
-	int decompress_dcp_edge(FILE* dest);
+	int decompress_dcp_edge(MEM* dest);
 
-	int decompress_dcp_dflt(FILE* src, FILE* dest);
+	int decompress_dcp_dflt(MEM* src, MEM* dest);
 
-	int decompress_dcx_edge(FILE* dest, _DCX_TYPE_ type);
+	int decompress_dcx_edge(MEM* dest, _DCX_TYPE_ type);
 
-	int decompress_dcx_dflt(FILE* src, FILE* dest, _DCX_TYPE_ type);
+	int decompress_dcx_dflt(MEM* src, MEM* dest, _DCX_TYPE_ type);
 
-	int decompress_dcx_krak(FILE* dest);
+	int decompress_dcx_krak(MEM* dest);
 	
 	//char* setupDCX(FILE* data, size_t* size);
 
 	//Returns a char* array of a decompressed DCX file.
 	//src: FILE* to the DCX
 	//size: is set to the size of the array
-	char* openDCX(FILE* src, size_t* size);
+	char* openDCX(MEM* src, size_t* size);
 
 	//Returns a char* array of a decompressed DCX file.
 	//path: const char* file path of the DCX
 	//size: is set to the size of the array
 	char* openDCX(const char* path, size_t* size);
-	
 };

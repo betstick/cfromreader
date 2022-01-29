@@ -5,44 +5,55 @@ namespace cfr
 	char* openDCX(const char* path, size_t* size)
 	{
 		FILE* dcx = fopen(path,"rb");
-		return openDCX(dcx,size);
+		
+		//load entire file into memory
+		fseek(dcx,0,SEEK_END);
+		size_t fileSize = ftell(dcx);
+		char* dcxMem = (char*)malloc(fileSize*sizeof(char));
+		fseek(dcx,0,SEEK_SET);
+		fread(dcxMem,fileSize,1,dcx);
+		fclose(dcx);
+
+		mopen(dcxMem,fileSize);
+
+		return openDCX(dcxMem,size);
 	};
 
-	char* openDCX(FILE* src, size_t* size)
+	char* openDCX(MEM* src, size_t* size)
 	{
 		char magic[4];
 
-		fread(magic,4,1,src);
+		mread(magic,4,1,src);
 		if(memcmp(magic,"DCX\0",4) != 0){return NULL;}
 
 		int32_t unk04;
-		fread(&unk04,4,1,src);
+		mread(&unk04,4,1,src);
 		unk04 = __builtin_bswap32(unk04);
 
-		fseek(src,8,SEEK_CUR);
+		mseek(src,8,SEEK_CUR);
 
 		int32_t unk10;
-		fread(&unk10,4,1,src);
+		mread(&unk10,4,1,src);
 		unk10 = __builtin_bswap32(unk10);
 
-		fseek(src,8,SEEK_CUR);
+		mseek(src,8,SEEK_CUR);
 
 		uint32_t uncompressedSize = 0;
-		fread(&uncompressedSize,4,1,src);
+		mread(&uncompressedSize,4,1,src);
 		uncompressedSize = __builtin_bswap32(uncompressedSize);
 
-		fseek(src,8,SEEK_CUR);
+		mseek(src,8,SEEK_CUR);
 
 		char format[4];
-		fread(format,4,1,src); //format
+		mread(format,4,1,src); //format
 
-		fseek(src,4,SEEK_CUR);
+		mseek(src,4,SEEK_CUR);
 
 		int8_t unk30;
-		fread(&unk30,1,1,src);
+		mread(&unk30,1,1,src);
 		unk30 = __builtin_bswap32(unk30);
 
-		fseek(src,23,SEEK_CUR); //race to end
+		mseek(src,23,SEEK_CUR); //race to end
 		if(memcmp(format,"EDGE",4) == 0)
 		{
 			//do edge stuff
@@ -52,7 +63,7 @@ namespace cfr
 		//alloc and set up the output buffer
 		char* buff = (char*)malloc(uncompressedSize);
 		*size = (uncompressedSize);
-		FILE* dest = fmemopen(buff,uncompressedSize,"r+");
+		MEM* dest = mopen(buff,uncompressedSize);
 
 		//call correct decompression util and copy output into dest
 		_DCX_TYPE_ type;
@@ -124,46 +135,46 @@ namespace cfr
 		else
 		{
 			printf("Using standard ZLIB!\n");
-			decompress_zlib(src,fmemopen(dest,uncompressedSize,"w"));
+			decompress_zlib(src,dest);
 		}
 
 		//clean up!!!
-		fclose(src);
-		fclose(dest);
+		mclose(src);
+		mclose(dest);
 		return buff;
 	};
 
-	int decompress_zlib(FILE* src, FILE* dest)
+	int decompress_zlib(MEM* src, MEM* dest)
 	{
 		//call inflate_zlib
 		
 		return inf(src,dest);
 	};
 
-	int decompress_dcp_edge(FILE* dest)
+	int decompress_dcp_edge(MEM* dest)
 	{
 		return 0;
 	};
 
-	int decompress_dcp_dflt(FILE* src, FILE* dest)
+	int decompress_dcp_dflt(MEM* src, MEM* dest)
 	{
-		printf("current location:%x\n",ftell(src));
+		printf("current location:%x\n",mtell(src));
 		//call inflate_zlib
 		return 0;
 	};
 
-	int decompress_dcx_edge(FILE* dest, _DCX_TYPE_ type)
+	int decompress_dcx_edge(MEM* dest, _DCX_TYPE_ type)
 	{
 		//similar to inflate_zlib.. but not quite.
 		return 0;
 	};
 
-	int decompress_dcx_dflt(FILE* src, FILE* dest, _DCX_TYPE_ type)
+	int decompress_dcx_dflt(MEM* src, MEM* dest, _DCX_TYPE_ type)
 	{
-		fseek(src,4,SEEK_CUR); //skip to beginning of dlft data
+		mseek(src,4,SEEK_CUR); //skip to beginning of dlft data
 		int ret = inf(src,dest);
 
-		if(ferror(src))
+		if(merror(src))
 			throw std::runtime_error("Source file errored during inflation!\n");
 
 		if(ret != 0)
@@ -175,7 +186,7 @@ namespace cfr
 		return 0;
 	};
 
-	int decompress_dcx_krak(FILE* dest)
+	int decompress_dcx_krak(MEM* dest)
 	{
 		return 0;
 	};

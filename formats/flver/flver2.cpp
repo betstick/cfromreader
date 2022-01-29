@@ -5,31 +5,32 @@
 
 namespace cfr
 {
-	FLVER2::Header* headerInit(MEM* src, int startOffset)
+	FLVER2::Header* FLVER2::headerInit(MEM* src, int startOffset)
 	{
 		//cast initial position as a header and return its address
-		FLVER2::Header* ptr = (FLVER2::Header*)&src->data[src->position+startOffset];
+		FLVER2::Header* ptr = (FLVER2::Header*)((char*)mtellptr(src) + startOffset);
+		
 		mseek(src,sizeof(FLVER2::Header),SEEK_CUR);
 		return ptr;
 	};
 
-	FLVER2::Dummy* dummyInit(MEM* src, int startOffset)
+	FLVER2::Dummy* FLVER2::dummyInit(MEM* src, int startOffset)
 	{
-		FLVER2::Dummy* ptr = (FLVER2::Dummy*)&src->data[src->position+startOffset];
+		FLVER2::Dummy* ptr = (FLVER2::Dummy*)((char*)mtellptr(src) + startOffset);
 		mseek(src,sizeof(FLVER2::Dummy),SEEK_CUR);
 		return ptr;
 	};
 
 	FLVER2::Material::GxItem* gxItemInit(MEM* src, int startOffset)
 	{
-		FLVER2::Material::GxItem* ptr = (FLVER2::Material::GxItem*)&src->data[src->position+startOffset];
+		FLVER2::Material::GxItem* ptr = (FLVER2::Material::GxItem*)((char*)mtellptr(src) + startOffset);
 		mseek(src,ptr->length,SEEK_CUR); //length accounts for entire struct and data
 		return ptr;
 	};
 
-	FLVER2::Material* materialInit(MEM* src, int startOffset, FLVER2::Header* hdr, int i)
+	FLVER2::Material* FLVER2::materialInit(MEM* src, int startOffset, FLVER2::Header* hdr, int i)
 	{
-		FLVER2::Material* ptr = (FLVER2::Material*)&src->data[src->position+startOffset];
+		FLVER2::Material* ptr = (FLVER2::Material*)((char*)mtellptr(src) + startOffset);
 		mseek(src,sizeof(FLVER2::Material),SEEK_CUR);
 
 		//return here after the gxitems
@@ -51,85 +52,85 @@ namespace cfr
 		return ptr;
 	};
 
-	FLVER2::Bone* boneInit(MEM* src, int startOffset)
+	FLVER2::Bone* FLVER2::boneInit(MEM* src, int startOffset)
 	{
-		FLVER2::Bone* ptr = (FLVER2::Bone*)&src->data[src->position+startOffset];
+		FLVER2::Bone* ptr = (FLVER2::Bone*)((char*)mtellptr(src) + startOffset);
 		mseek(src,sizeof(FLVER2::Bone),SEEK_CUR);
 		return ptr;
 	};
 
-	FLVER2::Mesh* meshInit(MEM* src, int startOffset, FLVER2::Header* hdr)
+	FLVER2::Mesh* FLVER2::meshInit(MEM* src, int startOffset, FLVER2::Header* hdr)
 	{
 		FLVER2::Mesh* mesh;
 
-		mesh->header = (FLVER2::Mesh::Header*)&src->data[src->position+startOffset];
+		mesh->header = (FLVER2::Mesh::Header*)((char*)mtellptr(src) + startOffset);
 		mseek(src,sizeof(FLVER2::Mesh::Header),SEEK_CUR);
 
 		if(mesh->header->boundingBoxOffset != 0)
 		{
-			mesh->boundingBoxData = (FLVER2::Mesh::BoundingBoxData*)&src->data[src->position+startOffset];
+			mesh->boundingBoxData = (FLVER2::Mesh::BoundingBoxData*)((char*)mtellptr(src) + startOffset);
 			mseek(src,sizeof(FLVER2::Mesh::BoundingBoxData),SEEK_CUR);
 		}
 
 		if(hdr->version >= 0x2001A)
 		{
-			mesh->boundingBoxDataUnk = (FLVER2::Mesh::BoundingBoxDataUnk*)&src->data[src->position+startOffset];
+			mesh->boundingBoxDataUnk = (FLVER2::Mesh::BoundingBoxDataUnk*)((char*)mtellptr(src) + startOffset);
 			mseek(src,sizeof(FLVER2::Mesh::BoundingBoxDataUnk),SEEK_CUR);
 		}
 
 		if(mesh->header->boneCount > 0)
 		{
-			mesh->boneIndexData->boneIndices = (int32_t*)&src->data[src->position+startOffset];
+			mesh->boneIndexData->boneIndices = (int32_t*)((char*)mtellptr(src) + startOffset);
 			mseek(src,sizeof(int32_t)*mesh->header->boneCount,SEEK_CUR);
 		}
 	};
 
-	FLVER2::Member* memberInit(MEM* src, int startOffset)
+	FLVER2::Member* FLVER2::memberInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::EdgeIndices* edgeIndicesInit(MEM* src, int startOffset)
+	FLVER2::EdgeIndices* FLVER2::edgeIndicesInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::FaceSet* faceSetInit(FILE* src, int startOffset)
+	FLVER2::FaceSet* FLVER2::faceSetInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::VertexBuffer* vertexBufferInit(FILE* src, int startOffset)
+	FLVER2::VertexBuffer* FLVER2::vertexBufferInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::LayoutMember* layoutMemberInit(FILE* src, int startOffset)
+	FLVER2::LayoutMember* layoutMemberInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::BufferLayout* bufferLayoutInit(FILE* src, int startOffset)
+	FLVER2::BufferLayout* bufferLayoutInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::Texture* textureInit(FILE* src, int startOffset)
+	FLVER2::Texture* textureInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::VertexBoneWeights* vertexBoneWeightsInit(FILE* src, int startOffset)
+	FLVER2::VertexBoneWeights* vertexBoneWeightsInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::VertexBoneIndices* vertexBoneIndicesInit(FILE* src, int startOffset)
+	FLVER2::VertexBoneIndices* vertexBoneIndicesInit(MEM* src, int startOffset)
 	{
 		
 	};
 
-	FLVER2::VertexColor* vertexColorInit(FILE* src, int startOffset)
+	FLVER2::VertexColor* vertexColorInit(MEM* src, int startOffset)
 	{
 		
 	};
@@ -171,7 +172,7 @@ namespace cfr
 			this->dummies[i] = *dummyInit(src,this->startOffset);
 
 		for(int32_t i = 0; i < header->materialCount; i++)
-			this->materials[i] = *materialInit(src,this->startOffset,i);
+			this->materials[i] = *materialInit(src,this->startOffset,this->header,i);
 	};
 
 

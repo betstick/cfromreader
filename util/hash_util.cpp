@@ -1,25 +1,7 @@
-#pragma once
-#include "stdafx.hpp"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include "hash_util.hpp"
 
 namespace cfr
 {
-	enum GameHashList
-	{
-		des,
-		ds_ptde,
-		ds_r, //doesn't need it, unpacked by default
-		ds_2,
-		ds_2_sotfs,
-		ds_3,
-		bb,
-		sek,
-		er
-	};
-	
 	//opens file list for specific game and hashes on the fly for DVDBND support
 	std::vector<std::string> getFileList(GameHashList list)
 	{

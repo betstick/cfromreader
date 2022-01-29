@@ -28,8 +28,3 @@
 //error handling
 #include <exception>
 #include <stdexcept>
-
-//stuff from this project
-#include "../util/stdafx.hpp"
-#include "../binders/stdafx.hpp"
-#include "../formats/stdafx.hpp"
