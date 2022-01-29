@@ -1,6 +1,4 @@
 #include "zlib_inf.hpp"
-#include "memr.hpp"
-#include <assert.h>
 
 namespace cfr
 {

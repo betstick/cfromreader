@@ -1,8 +1,9 @@
 #pragma once
 
+#include <assert.h>
 #include "stdio.h"
 #include "zlib.h"
-#include "memr.hpp"
+#include "../memr/memr.hpp"
 
 #ifndef CHUNK
 #	define CHUNK 16384

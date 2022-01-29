@@ -1,8 +1,8 @@
 #pragma once
 #include "../common/stdafx.hpp"
 
-#include "memr.hpp"
+#include "memr/memr.hpp"
+#include "compression/zlib_inf.hpp"
 
 #include "hash_util.hpp"
-#include "zlib_inf.hpp"
 #include "filetypes.hpp"

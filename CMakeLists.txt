@@ -44,8 +44,8 @@ include_directories(src)
 
 #file(GLOB_RECURSE SOURCES "*.cpp")
 set(SOURCES 
-	"util/zlib_inf.cpp"
-	"util/memr.cpp"
+	"util/compression/zlib_inf.cpp"
+	"util/memr/memr.cpp"
 	"binders/bdf/bdf3.cpp"
 	"binders/bhd/bhd5_1.cpp"
 	"binders/bnd/bnd3.cpp"
