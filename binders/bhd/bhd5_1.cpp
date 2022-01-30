@@ -16,7 +16,7 @@ namespace cfr
 		Header header;
 		fread(&header,sizeof(Header),1,headerSrc);
 
-		printf("bucket count: %i\n", header.bucketCount);
+		//printf("bucket count: %i\n", header.bucketCount);
 
 		if(memcmp(header.magic,"BHD5",4) != 0)
 			throw std::runtime_error("File is not a BHD5!\n");
@@ -44,7 +44,7 @@ namespace cfr
 			for(int i = 0; i < fhc; i++)
 			{
 				fread(&hash,sizeof(int32_t),1,headerSrc);
-				printf("\thash:%x\n",hash);
+				//printf("\thash:%x\n",hash);
 
 				//not sure why, but these needed to be separated?
 				fread(&fh.fileSize,sizeof(int32_t),1,headerSrc);
