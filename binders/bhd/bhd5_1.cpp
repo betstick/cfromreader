@@ -26,20 +26,25 @@ namespace cfr
 		//read *all* the buckets in one supermassive dump!
 		fread(&buckets[0],sizeof(Bucket),header.bucketCount,headerSrc);
 
-		printf("bucket[0].count: %i\n",buckets[0].fileHeaderCount);
+		//printf("bucket[0].count: %i\n",buckets[0].fileHeaderCount);
 
 		//declared out of loop to hopefully improve speed
 		int32_t hash;
 		FileHeader fh;
+		int fhc;
 
 		//go to each bucket and add its fileheaders to the hashMap
 		for(int i = 0; i < header.bucketCount; i++)
 		{
 			fseek(headerSrc,buckets[i].fileHeadersOffset,SEEK_SET);
 
-			for(int i = 0; i < buckets[i].fileHeaderCount; i++)
+			//no idea why, but this is necessary :/, otherwise it is 7
+			fhc = buckets[i].fileHeaderCount;
+
+			for(int i = 0; i < fhc; i++)
 			{
 				fread(&hash,sizeof(int32_t),1,headerSrc);
+				printf("\thash:%x\n",hash);
 
 				//not sure why, but these needed to be separated?
 				fread(&fh.fileSize,sizeof(int32_t),1,headerSrc);

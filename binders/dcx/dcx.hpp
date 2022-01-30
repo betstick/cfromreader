@@ -19,15 +19,15 @@ namespace cfr
 		dcx_krak
 	};
 
-	int decompress_zlib(MEM* src, MEM* dest);
+	int decompress_zlib(FILE* src, MEM* dest);
 
 	int decompress_dcp_edge(MEM* dest);
 
-	int decompress_dcp_dflt(MEM* src, MEM* dest);
+	int decompress_dcp_dflt(FILE* src, MEM* dest);
 
 	int decompress_dcx_edge(MEM* dest, _DCX_TYPE_ type);
 
-	int decompress_dcx_dflt(MEM* src, MEM* dest, _DCX_TYPE_ type);
+	int decompress_dcx_dflt(FILE* src, MEM* dest, _DCX_TYPE_ type);
 
 	int decompress_dcx_krak(MEM* dest);
 	
@@ -42,4 +42,8 @@ namespace cfr
 	//path: const char* file path of the DCX
 	//size: is set to the size of the array
 	char* openDCX(const char* path, size_t* size);
+
+	//Returns a char* array of a decompressed DCX file.
+	//pulls a known size DCX, and blah blah blah
+	char* openDCX(FILE* file, size_t compressedSize, size_t* uncompressedSize);
 };

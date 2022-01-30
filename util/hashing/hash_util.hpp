@@ -1,10 +1,15 @@
 #ifndef CFR_HASH_UTIL__
 #define CFR_HASH_UTIL__
+
+#pragma once
+
 #include <stdio.h>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <stdexcept>
+
+//#include "ds_ptde.hpp"
 
 ; //i have no idea why this is needed
 
@@ -24,7 +29,7 @@ namespace cfr
 	};
 	
 	//opens file list for specific game and hashes on the fly for DVDBND support
-	std::vector<std::string> getFileList(GameHashList list);
+	std::vector<std::string> getFileList(const char* path, GameHashList list);
 
 	int32_t hashFilePath(std::string path);
 

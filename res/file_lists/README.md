@@ -5,3 +5,6 @@ Example:
 ```
 /this/is/a/good/path.ext
 ```
+
+## Reasoning
+Putting these files into headers slows the compiler to a crawl. Having them as raw text is faster

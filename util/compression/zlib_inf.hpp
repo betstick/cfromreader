@@ -11,5 +11,5 @@
 
 namespace cfr
 {
-	int inf(MEM *source, MEM *dest);
+	int inf(FILE *source, MEM *dest);
 };

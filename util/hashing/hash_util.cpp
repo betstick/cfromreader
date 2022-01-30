@@ -3,15 +3,13 @@
 namespace cfr
 {
 	//opens file list for specific game and hashes on the fly for DVDBND support
-	std::vector<std::string> getFileList(GameHashList list)
+	std::vector<std::string> getFileList(const char* path, GameHashList list)
 	{
 		std::vector<std::string> paths;
-		std::string path = "res/file_lists/";
 
 		switch(list)
 		{
-			case ds_ptde:
-				path.append("ds_ptde.text"); break;
+			case ds_ptde: break;
 			default:
 			{
 				//TODO: fix this so it tells you what you input
@@ -22,7 +20,7 @@ namespace cfr
 		}
 
 		//open file and read to memory for performance
-		FILE* listFile = fopen(path.c_str(),"rb");
+		FILE* listFile = fopen(path,"rb");
 
 		if(listFile == NULL)
 			throw std::runtime_error("Failed to open file list.\n");

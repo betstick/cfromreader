@@ -83,56 +83,60 @@ namespace cfr
 			mesh->boneIndexData->boneIndices = (int32_t*)((char*)mtellptr(src) + startOffset);
 			mseek(src,sizeof(int32_t)*mesh->header->boneCount,SEEK_CUR);
 		}
+
+		//THIS MAY NOT BE FINISHED
+
+		return mesh;
 	};
 
 	FLVER2::Member* FLVER2::memberInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::EdgeIndices* FLVER2::edgeIndicesInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::FaceSet* FLVER2::faceSetInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::VertexBuffer* FLVER2::vertexBufferInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::LayoutMember* layoutMemberInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::BufferLayout* bufferLayoutInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::Texture* textureInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::VertexBoneWeights* vertexBoneWeightsInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::VertexBoneIndices* vertexBoneIndicesInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	FLVER2::VertexColor* vertexColorInit(MEM* src, int startOffset)
 	{
-		
+		return nullptr;
 	};
 
 	//Don't use this outside of testing!

@@ -2,9 +2,9 @@
 
 namespace cfr
 {
-	int inf(MEM *source, MEM *dest)
+	int inf(FILE *source, MEM *dest)
 	{
-		printf("Beginning inflation at position: %x\n", mtell(source));
+		printf("Beginning inflation at position: %x\n", ftell(source));
 
 		int ret;
 		unsigned have;
@@ -24,8 +24,8 @@ namespace cfr
 
 		/* decompress until deflate stream ends or end of file */
 		do {
-			strm.avail_in = mread((char*)in, 1, CHUNK, source);
-			if (merror(source)) {
+			strm.avail_in = fread((char*)in, 1, CHUNK, source);
+			if (ferror(source)) {
 				(void)inflateEnd(&strm);
 				return Z_ERRNO;
 			}

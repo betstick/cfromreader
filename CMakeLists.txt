@@ -44,6 +44,8 @@ include_directories(src)
 
 #file(GLOB_RECURSE SOURCES "*.cpp")
 set(SOURCES 
+	"util/hashing/hash_util.cpp"
+	"util/filetypes.cpp"
 	"util/compression/zlib_inf.cpp"
 	"util/memr/memr.cpp"
 	"binders/bdf/bdf3.cpp"
@@ -51,14 +53,12 @@ set(SOURCES
 	"binders/bnd/bnd3.cpp"
 	"binders/dcx/dcx.cpp"
 	"formats/flver/flver2.cpp"
-	"util/hash_util.cpp"
-	"util/filetypes.cpp"
 )
 
 add_library(cfr SHARED ${SOURCES})
 
 
-set(MY_LIB_HEADER "cfr.hpp" "formats/flver/flver2.hpp")
+set(MY_LIB_HEADER "cfr.hpp")
 set(PUBLIC_HEADERS "cfr.hpp" )
 
 set_target_properties(cfr PROPERTIES 

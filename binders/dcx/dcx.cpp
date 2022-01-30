@@ -19,41 +19,41 @@ namespace cfr
 		return openDCX(dcxMem,size);
 	};
 
-	char* openDCX(MEM* src, size_t* size)
+	char* openDCX(FILE* src, size_t compressedSize, size_t* uncompressedSizeOut)
 	{
 		char magic[4];
 
-		mread(magic,4,1,src);
+		fread(magic,4,1,src);
 		if(memcmp(magic,"DCX\0",4) != 0){return NULL;}
 
 		int32_t unk04;
-		mread(&unk04,4,1,src);
+		fread(&unk04,4,1,src);
 		unk04 = __builtin_bswap32(unk04);
 
-		mseek(src,8,SEEK_CUR);
+		fseek(src,8,SEEK_CUR);
 
 		int32_t unk10;
-		mread(&unk10,4,1,src);
+		fread(&unk10,4,1,src);
 		unk10 = __builtin_bswap32(unk10);
 
-		mseek(src,8,SEEK_CUR);
+		fseek(src,8,SEEK_CUR);
 
 		uint32_t uncompressedSize = 0;
-		mread(&uncompressedSize,4,1,src);
+		fread(&uncompressedSize,4,1,src);
 		uncompressedSize = __builtin_bswap32(uncompressedSize);
 
-		mseek(src,8,SEEK_CUR);
+		fseek(src,8,SEEK_CUR);
 
 		char format[4];
-		mread(format,4,1,src); //format
+		fread(format,4,1,src); //format
 
-		mseek(src,4,SEEK_CUR);
+		fseek(src,4,SEEK_CUR);
 
 		int8_t unk30;
-		mread(&unk30,1,1,src);
+		fread(&unk30,1,1,src);
 		unk30 = __builtin_bswap32(unk30);
 
-		mseek(src,23,SEEK_CUR); //race to end
+		fseek(src,23,SEEK_CUR); //race to end
 		if(memcmp(format,"EDGE",4) == 0)
 		{
 			//do edge stuff
@@ -62,7 +62,7 @@ namespace cfr
 
 		//alloc and set up the output buffer
 		char* buff = (char*)malloc(uncompressedSize);
-		*size = (uncompressedSize);
+		*uncompressedSizeOut = (uncompressedSize);
 		MEM* dest = mopen(buff,uncompressedSize);
 
 		//call correct decompression util and copy output into dest
@@ -139,12 +139,12 @@ namespace cfr
 		}
 
 		//clean up!!!
-		mclose(src);
+		fclose(src);
 		mclose(dest);
 		return buff;
 	};
 
-	int decompress_zlib(MEM* src, MEM* dest)
+	int decompress_zlib(FILE* src, MEM* dest)
 	{
 		//call inflate_zlib
 		
@@ -156,9 +156,9 @@ namespace cfr
 		return 0;
 	};
 
-	int decompress_dcp_dflt(MEM* src, MEM* dest)
+	int decompress_dcp_dflt(FILE* src, MEM* dest)
 	{
-		printf("current location:%x\n",mtell(src));
+		printf("current location:%x\n",ftell(src));
 		//call inflate_zlib
 		return 0;
 	};
@@ -169,12 +169,12 @@ namespace cfr
 		return 0;
 	};
 
-	int decompress_dcx_dflt(MEM* src, MEM* dest, _DCX_TYPE_ type)
+	int decompress_dcx_dflt(FILE* src, MEM* dest, _DCX_TYPE_ type)
 	{
-		mseek(src,4,SEEK_CUR); //skip to beginning of dlft data
+		fseek(src,4,SEEK_CUR); //skip to beginning of dlft data
 		int ret = inf(src,dest);
 
-		if(merror(src))
+		if(ferror(src))
 			throw std::runtime_error("Source file errored during inflation!\n");
 
 		if(ret != 0)

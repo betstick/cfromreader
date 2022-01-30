@@ -9,7 +9,7 @@ namespace cfr
 {
 	MEM* mopen(char* src, size_t size)
 	{
-		MEM* mem;
+		MEM* mem = (MEM*)malloc(sizeof(MEM));
 
 		mem->src = src;
 		mem->size = size;
@@ -92,7 +92,7 @@ namespace cfr
 	//Returns pointer to memory at the position  
 	char* mtellptr(MEM* mem)
 	{
-		return (char*)&mem->src[mem->position];
+		return &mem->src[mem->position];
 	};
 
 	int meod(MEM* mem)
