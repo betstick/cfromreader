@@ -12,9 +12,8 @@
 //to help shorten this for now, it won't support non souls games
 
 namespace cfr {
-	class FLVER2
+	struct FLVER2
 	{
-		public:
 		struct Header
 		{
 			char magic[6]; //this was working with size 4 somehow. it shouldn't
@@ -107,7 +106,7 @@ namespace cfr {
 				int32_t textureIndex;
 
 				uint32_t flags;
-				uint32_t gxOffset;
+				uint32_t gxOffset = 0;
 
 				int32_t unk18;
 				int32_t unk1C; //assert(0)
@@ -376,38 +375,6 @@ namespace cfr {
 			float a,r,g,b;
 		};
 
-		public:
-		Header* headerInit(MEM* src, int startOffset);
-
-		Dummy* dummyInit(MEM* src, int startOffset);
-
-		Material* materialInit(MEM* src, int startOffset, FLVER2::Header* hdr, int i);
-
-		Bone* boneInit(MEM* src, int startOffset);
-
-		Mesh* meshInit(MEM* src, int startOffset, FLVER2::Header* hdr);
-
-		Member* memberInit(MEM* src, int startOffset);
-
-		EdgeIndices* edgeIndicesInit(MEM* src, int startOffset);
-
-		FaceSet* faceSetInit(MEM* src, int startOffset);
-
-		VertexBuffer* vertexBufferInit(MEM* src, int startOffset);
-
-		LayoutMember* layoutMemberInit(MEM* src, int startOffset);
-
-		BufferLayout* bufferLayoutInit(MEM* src, int startOffset);
-
-		Texture* textureInit(MEM* src, int startOffset);
-
-		VertexBoneWeights* vertexBoneWeightsInit(MEM* src, int startOffset);
-
-		VertexBoneIndices* vertexBoneIndicesInit(MEM* src, int startOffset);
-
-		VertexColor* vertexColorInit(MEM* src, int startOffset);
-
-		public:
 		Header* header;
 		Dummy* dummies;
 		Material* materials;
@@ -418,14 +385,16 @@ namespace cfr {
 		BufferLayout* bufferLayouts;
 		Texture* textures;
 
-		int startOffset = 0;
-		MEM* src;
+		/*int startOffset = 0;
+		MEM* src;*/
 
 		//read from already opened file
-		FLVER2(MEM* src);
+		//FLVER2(MEM* src);
 
 		//open file and read
-		FLVER2(const char* path);
+		//FLVER2(const char* path);
 	};
+
+	FLVER2* openFLVER2(MEM* src);
 };
 //#endif

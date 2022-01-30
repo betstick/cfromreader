@@ -47,15 +47,6 @@ namespace cfr
 		File* files;
 	};
 
-	/*struct BND3File
-	{
-		MEM* parent;
-		unsigned int offset;
-		int size;
-		int id;
-		CfrFileType type;
-	};*/
-
 	//Init array of BND3 from current pos in file, count is set to array size
 	BND3* openBnd3(FILE* src, int* count);
 
