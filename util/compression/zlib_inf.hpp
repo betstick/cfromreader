@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../memr/memr.hpp"
 #include <assert.h>
 #include "stdio.h"
-#include "zlib.h"
-#include "../memr/memr.hpp"
+#include <zlib.h>
 
 //TODO: is this needed?
 #ifdef _WIN32
