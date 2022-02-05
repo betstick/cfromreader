@@ -6,3 +6,5 @@
 
 //#include "hashing/hash_util.hpp"
 #include "filetypes.hpp"
+
+#include "compat/compat.hpp"

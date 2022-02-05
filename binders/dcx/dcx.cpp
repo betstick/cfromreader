@@ -28,19 +28,19 @@ namespace cfr
 
 		int32_t unk04;
 		fread(&unk04,4,1,src);
-		unk04 = __builtin_bswap32(unk04);
+		unk04 = bitswap(unk04);
 
 		fseek(src,8,SEEK_CUR);
 
 		int32_t unk10;
 		fread(&unk10,4,1,src);
-		unk10 = __builtin_bswap32(unk10);
+		unk10 = bitswap(unk10);
 
 		fseek(src,8,SEEK_CUR);
 
 		uint32_t uncompressedSize = 0;
 		fread(&uncompressedSize,4,1,src);
-		uncompressedSize = __builtin_bswap32(uncompressedSize);
+		uncompressedSize = bitswap(uncompressedSize);
 
 		fseek(src,8,SEEK_CUR);
 
@@ -51,7 +51,7 @@ namespace cfr
 
 		int8_t unk30;
 		fread(&unk30,1,1,src);
-		unk30 = __builtin_bswap32(unk30);
+		unk30 = bitswap(unk30);
 
 		fseek(src,23,SEEK_CUR); //race to end
 		if(memcmp(format,"EDGE",4) == 0)

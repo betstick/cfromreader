@@ -6,9 +6,31 @@ enable_language(CXX)
 
 include(GNUInstallDirs)
 
-find_package(ZLIB REQUIRED)
-include_directories(${ZLIB_INCLUDE_DIRS})
-link_libraries(${ZLIB_LIBRARIES})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # using Clang
+  add_compile_definitions(_CLANG)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+  add_compile_definitions(_GNU)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  # using Intel C++
+  add_compile_definitions(_INTEL)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # using Visual Studio C++
+  add_compile_definitions(_MSCV)
+endif()
+
+
+if(WIN32)
+	add_compile_definitions(_WIN32)
+	set(ZLIB_INCLUDE_DIRS "external/zlib/")
+	set(ZLIB_LIBRARIES "external/zlib/")
+	include_directories(external/zlib/)
+else()
+	find_package(ZLIB REQUIRED)
+	include_directories(${ZLIB_INCLUDE_DIRS})
+	link_libraries(${ZLIB_LIBRARIES})
+endif()
 
 set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin")
 
@@ -46,6 +68,7 @@ include_directories(src)
 set(SOURCES 
 	"util/hashing/hash_util.cpp"
 	"util/filetypes.cpp"
+	"util/compat/compat.cpp"
 	"util/compression/zlib_inf.cpp"
 	"util/memr/memr.cpp"
 	"binders/bdf/bdf3.cpp"

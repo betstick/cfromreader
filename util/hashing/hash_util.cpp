@@ -37,7 +37,7 @@ namespace cfr
 
 		while(feof(listFile) != 1 || ferror(listFile) != 0)
 		{
-			characters = getline(&line,&lineSize,listFile);
+			fgets(line,listFileSize,listFile);
 
 			std::string filePath = line;
 
