@@ -12,17 +12,21 @@ Run `cmake .. -DDEBUG=true` to get a more verbose output. Off by default. Also e
 You should be able to clone this repo onto your computer then include the cfromreader.hpp header file into your project. Note: by default you'll need the res/ folder from src/ in your binary directory for now. The res/ folder contains the file lists for hashing in order to access DVDBND data.
 
 ## Building on Linux
-You'll probably be able to figure it out. Steps should be similar to the Windows instructions, just, in your terminal.
+You'll probably be able to figure it out. git clone -> mkdir bin -> cd bin -> cmake .. -> make, etc the usual.
 
 ## Buidling on Windows
-Install Cygwin, install the base and devel categories. You will also need everything with zlib in its name. From the Cygwin terminal in the project root, run the following:
+First you'll need VCPKG, Git, CMake, and a recent version of Visual Studio. I'm running 2019. Install VCPKG to a location of your choice with the following commands:
 ```
-mkdir bin && cd bin
-cmake ..
-make
-./release/CFRTEST.exe
+git clone https://github.com/Microsoft/vcpkg.git
+.\vcpkg\bootstrap-vcpkg.bat
+cd vcpkg
+vcpkg integrate install
 ```
-If you run into issues, it's possible Cygwin isn't in your path variable in Windows. Otherwise, let me know!
+After you've done this add the location you chose to your PATH variable. Next, install the ZLIB package.
+```
+vcpkg install zlib
+```
+From here, you should be good to clone this project and build it via the cmake stuffs. It compiles on my machine, I have no clue if it even works yet. I don't really understand VS, its a mess to me. Just install Linux.
 
 ## Misc
 This project currently is targetting Dark Souls PTDE due to Havok issues with the Remaster. More games/support may get added later. This code is primarily for my personal use in another project, and was initially abstracted for licensing reasons, but now its like this for organizational purposes.
