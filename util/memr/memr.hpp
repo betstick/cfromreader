@@ -1,6 +1,9 @@
 #ifndef CFR_MEMR_H__
 #define CFR_MEMR_H__
 
+//this is insecure on windows :^)
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdlib.h> //free
 #include <string.h> //memcpy
 #include <stdbool.h> //bools
