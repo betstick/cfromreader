@@ -20,17 +20,13 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_definitions(_MSCV)
 endif()
 
-
 if(WIN32)
 	add_compile_definitions(_WIN32)
-	set(ZLIB_INCLUDE_DIRS "external/zlib/")
-	set(ZLIB_LIBRARIES "external/zlib/")
-	include_directories(external/zlib/)
-else()
-	find_package(ZLIB REQUIRED)
-	include_directories(${ZLIB_INCLUDE_DIRS})
-	link_libraries(${ZLIB_LIBRARIES})
 endif()
+
+find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIRS})
+link_libraries(${ZLIB_LIBRARIES})
 
 set(BIN_DIR "${CMAKE_SOURCE_DIR}/bin")
 

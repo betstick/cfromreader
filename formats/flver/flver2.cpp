@@ -45,7 +45,7 @@ namespace cfr
 
 			mseek(src,mat->header->gxOffset+startOffset,SEEK_CUR);
 
-			int ii;
+			int ii = 0;
 			int itemId;
 
 			do {
