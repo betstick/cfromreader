@@ -84,7 +84,7 @@ namespace cfr
 		}
 		else if(memcmp(magic,"DCX",3) == 0)
 		{
-			printf("DCX\n");
+			//printf("DCX\n");
 			if(memcmp(format,"DFLT",4) == 0)
 			{
 				if(unk10 == 0x24)

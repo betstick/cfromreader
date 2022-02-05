@@ -4,7 +4,7 @@ namespace cfr
 {
 	int inf(FILE *source, MEM *dest)
 	{
-		printf("Beginning inflation at position: %x\n", ftell(source));
+		//printf("Beginning inflation at position: %x\n", ftell(source));
 
 		int ret;
 		unsigned have;

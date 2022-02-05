@@ -54,14 +54,16 @@ namespace cfr
 				ii++;
 			} while(hdr->version >= 0x20010 && itemId != 0x7FFFFFFF && itemId != 0xFFFFFFFF);
 
-			mseek(src,0,pos);
+			mseek(src,pos,SEEK_SET);
 		}
 
+		//printf("\t end pos:%x\n",i,mtell(src)-startOffset);
 		return mat;
 	};
 
-	FLVER2::Bone* boneInit(MEM* src, int startOffset)
+	FLVER2::Bone* boneInit(MEM* src, int startOffset, int i)
 	{
+		//printf("bone[%i] pos:%x\n",i,mtell(src)-startOffset);
 		FLVER2::Bone* ptr = (FLVER2::Bone*)((char*)mtellptr(src) + startOffset);
 		mseek(src,sizeof(FLVER2::Bone),SEEK_CUR);
 		return ptr;
@@ -69,30 +71,39 @@ namespace cfr
 
 	FLVER2::Mesh* meshInit(MEM* src, int startOffset, FLVER2::Header* hdr)
 	{
-		FLVER2::Mesh* mesh;
+		printf("mesh[i] pos:%x\n",mtell(src)-startOffset);
+		FLVER2::Mesh* mesh = (FLVER2::Mesh*)malloc(sizeof(FLVER2::Mesh));
 
-		mesh->header = (FLVER2::Mesh::Header*)((char*)mtellptr(src) + startOffset);
+		mesh->header = (FLVER2::Mesh::Header*)mtellptr(src);
 		mseek(src,sizeof(FLVER2::Mesh::Header),SEEK_CUR);
+
+		int pos = mtell(src);
 
 		if(mesh->header->boundingBoxOffset != 0)
 		{
-			mesh->boundingBoxData = (FLVER2::Mesh::BoundingBoxData*)((char*)mtellptr(src) + startOffset);
+			mesh->boundingBoxData = (FLVER2::Mesh::BoundingBoxData*)mtellptr(src);
 			mseek(src,sizeof(FLVER2::Mesh::BoundingBoxData),SEEK_CUR);
-		}
 
-		if(hdr->version >= 0x2001A)
-		{
-			mesh->boundingBoxDataUnk = (FLVER2::Mesh::BoundingBoxDataUnk*)((char*)mtellptr(src) + startOffset);
-			mseek(src,sizeof(FLVER2::Mesh::BoundingBoxDataUnk),SEEK_CUR);
+			if(hdr->version >= 0x2001A)
+			{
+				mesh->boundingBoxDataUnk = (FLVER2::Mesh::BoundingBoxDataUnk*)mtellptr(src);
+				mseek(src,sizeof(FLVER2::Mesh::BoundingBoxDataUnk),SEEK_CUR);
+			}
 		}
 
 		if(mesh->header->boneCount > 0)
 		{
-			mesh->boneIndexData->boneIndices = (int32_t*)((char*)mtellptr(src) + startOffset);
-			mseek(src,sizeof(int32_t)*mesh->header->boneCount,SEEK_CUR);
+			mseek(src,sizeof(int32_t)*mesh->header->boneIndicesOffset+startOffset,SEEK_SET);
+			mesh->boneIndices = (int32_t**)mtellptr(src);
 		}
 
-		//THIS MAY NOT BE FINISHED
+		mseek(src,mesh->header->faceSetIndicesOffset+startOffset,SEEK_SET);
+		mesh->faceSetIndices = (int32_t**)mtellptr(src);
+
+		mseek(src,mesh->header->vertexBufferIndicesOffset+startOffset,SEEK_SET);
+		mesh->vertexBufferIndices = (int32_t**)mtellptr(src);
+
+		mseek(src,pos,SEEK_SET);
 
 		return mesh;
 	};
@@ -104,32 +115,105 @@ namespace cfr
 
 	FLVER2::EdgeIndices* edgeIndicesInit(MEM* src, int startOffset)
 	{
-		return nullptr;
+		FLVER2::EdgeIndices* indices = (FLVER2::EdgeIndices*)malloc(sizeof(FLVER2::EdgeIndices));
+		indices->header = (FLVER2::EdgeIndices::Header*)mtellptr(src);
+
+		indices->members = (FLVER2::Member*)malloc(sizeof(FLVER2::Member*)*indices->header->memberCount);
+
+		return indices;
 	};
 
-	FLVER2::FaceSet* faceSetInit(MEM* src, int startOffset)
+	FLVER2::FaceSet* faceSetInit(MEM* src, int startOffset, FLVER2::Header* hdr)
 	{
-		return nullptr;
+		FLVER2::FaceSet* set = (FLVER2::FaceSet*)malloc(sizeof(FLVER2::FaceSet));
+		set->header = (FLVER2::FaceSet::Header*)mtellptr(src);
+		mseek(src,sizeof(FLVER2::FaceSet::Header),SEEK_CUR);
+
+		//printf("faceset: count: %i\n",set->header->vertexIndexCount);
+		//printf("faceset: offset: 0x%x\n",set->header->vertexIndicesOffset);
+
+		if(hdr->version >= 0x20009)
+		{
+			set->vertInfo = (FLVER2::FaceSet::VertInfo*)mtellptr(src);
+			mseek(src,sizeof(FLVER2::FaceSet::VertInfo),SEEK_CUR);
+		}
+
+		set->vertexSize = hdr->vertexIndexSize == 0 ? set->vertexSize : hdr->vertexIndexSize;
+
+		long pos = mtell(src);
+		mseek(src,set->header->vertexIndicesOffset+hdr->dataOffset+startOffset,SEEK_SET);
+
+		if(set->vertexSize == 8)
+		{
+			//TODO: fix this mess later :/
+			/*set->vertexIndicesEdge = (FLVER2::EdgeIndices**)malloc(sizeof(FLVER2::EdgeIndices)*set->header->vertexIndexCount);
+
+			for(int i = 0; i < set->header->vertexIndexCount; i++)
+			{
+				set->vertexIndicesEdge[i] = edgeIndicesInit(src, startOffset);
+			}*/
+		}
+		else if(set->vertexSize == 16)
+		{
+			set->vertexIndicesShort = (uint16_t**)mtellptr(src);
+		}
+		else if(set->vertexSize == 32)
+		{
+			set->vertexIndicesInt = (uint32_t**)mtellptr(src);
+		}
+
+		mseek(src,pos,SEEK_SET);
+
+		return set;
 	};
 
-	FLVER2::VertexBuffer* vertexBufferInit(MEM* src, int startOffset)
+	FLVER2::VertexBuffer* vertexBufferInit(MEM* src, int startOffset, FLVER2::Header* hdr)
 	{
-		return nullptr;
-	};
+		FLVER2::VertexBuffer* buff = (FLVER2::VertexBuffer*)malloc(sizeof(FLVER2::VertexBuffer));
+		buff->header = (FLVER2::VertexBuffer::Header*)mtellptr(src);
+		mseek(src,sizeof(FLVER2::VertexBuffer::Header),SEEK_CUR);
 
-	FLVER2::LayoutMember* layoutMemberInit(MEM* src, int startOffset)
-	{
-		return nullptr;
+		if(buff->header->unk10 == 0 && buff->header->unk14 == 0)
+		{
+			long pos = mtell(src);
+			mseek(src,hdr->dataOffset+buff->header->bufferOffset+startOffset,SEEK_SET);
+
+			buff->vertices = (char**)mtellptr(src);
+
+			mseek(src,pos,SEEK_SET);
+		}
+
+		return buff;
 	};
 
 	FLVER2::BufferLayout* bufferLayoutInit(MEM* src, int startOffset)
 	{
-		return nullptr;
+		FLVER2::BufferLayout* layout = (FLVER2::BufferLayout*)malloc(sizeof(FLVER2::BufferLayout));
+		layout->header = (FLVER2::BufferLayout::Header*)mtellptr(src);
+		mseek(src,sizeof(FLVER2::BufferLayout::Header),SEEK_CUR);
+
+		long pos = mtell(src);
+
+		//is this needed?
+		layout->members = (FLVER2::LayoutMember**)malloc(sizeof(void*)*layout->header->memberCount);
+
+		for(int i = 0; i < layout->header->memberCount; i++)
+		{
+			layout->members[i] = (FLVER2::LayoutMember*)mtellptr(src);
+			mseek(src,sizeof(FLVER2::LayoutMember),SEEK_CUR);
+		}
+
+		mseek(src,pos,SEEK_SET);
+
+		return layout;
 	};
 
-	FLVER2::Texture* textureInit(MEM* src, int startOffset)
+	FLVER2::Texture* textureInit(MEM* src)
 	{
-		return nullptr;
+		FLVER2::Texture* tex = (FLVER2::Texture*)mtellptr(src);
+		mseek(src,sizeof(FLVER2::Texture),SEEK_CUR);
+
+		return tex;
 	};
 
 	FLVER2::VertexBoneWeights* vertexBoneWeightsInit(MEM* src, int startOffset)
@@ -146,24 +230,6 @@ namespace cfr
 	{
 		return nullptr;
 	};
-
-	//Don't use this outside of testing!
-	/*FLVER2::FLVER2(const char* path)
-	{
-		FILE* file = fopen(path,"rb");
-		if(file == NULL)
-			throw std::runtime_error("Failed to open FLVER2 file!\n");
-
-		fseek(file,0,SEEK_END);
-		long size = ftell(file);
-		rewind(file);
-
-		//there's no way to clear this :/ //TODO: make a way to free this
-		char* memory = (char*)malloc(size*sizeof(char));
-		fread(memory,size,1,file);
-
-		FLVER2(mopen(memory,size));
-	};*/
 
 	//Cast a FLVER2 from a position in memory
 	FLVER2* openFLVER2(MEM* src)
@@ -189,29 +255,34 @@ namespace cfr
 			flver->materials[i] = *materialInit(src,startOffset,flver->header,i);
 		
 		for(int32_t i = 0; i < flver->header->boneCount; i++)
-			flver->bones[i] = *boneInit(src,startOffset);
+			flver->bones[i] = *boneInit(src,startOffset,i);
+
+		for(int32_t i = 0; i < flver->header->meshCount; i++)
+			flver->meshes[i] = *meshInit(src,startOffset,flver->header);
+
+		for(int32_t i = 0; i < flver->header->faceSetCount; i++)
+			flver->faceSets[i] = *faceSetInit(src,startOffset,flver->header);
+
+		for(int32_t i = 0; i < flver->header->vertexBufferCount; i++)
+			flver->vertexBuffers[i] = *vertexBufferInit(src,startOffset,flver->header);
+
+		for(int32_t i = 0; i < flver->header->bufferLayoutCount; i++)
+			flver->bufferLayouts[i] = *bufferLayoutInit(src,startOffset);
+
+		for(int32_t i = 0; i < flver->header->textureCount; i++)
+			flver->textures[i] = *textureInit(src);
 
 		return flver;
 	};
 
-
-	/*void FLVER2::init(FILE* src, uint64_t offset)
+	void exportFLVER2(FLVER2 flver, const char* filename)
 	{
-		
+		FILE* out = fopen(filename,"w");
 
-		for(int32_t i = 0; i < header->meshCount; i++)
-			meshes[i] = FLVER2_Mesh(src,*header,startOffset);
+		char magicString[] = "magic: xxxxxx\n";
+		memcpy(&magicString[7],flver.header->magic,5); //cut off the null char
+		fwrite(magicString,14,1,out);
 
-		for(int32_t i = 0; i < header->faceSetCount; i++)
-			faceSets[i] = FLVER2_FaceSet(src,*header);
-
-		for(int32_t i = 0; i < header->vertexBufferCount; i++)
-			vertexBuffers[i] = FLVER2_VertexBuffer(src,*header,startOffset);
-
-		for(int32_t i = 0; i < header->bufferLayoutCount; i++)
-			bufferLayouts[i] = FLVER2_BufferLayout(src,startOffset);
-
-		for(int32_t i = 0; i < header->textureCount; i++)
-			textures[i] = FLVER2_Texture(src);
-	};*/
+		fclose(out);
+	};
 };

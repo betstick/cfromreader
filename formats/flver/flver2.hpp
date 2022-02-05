@@ -4,7 +4,6 @@
 #pragma once
 #include "../../util/stdafx.hpp"
 #include "../stdafx.hpp"
-//#include "flver2_structs.hpp"
 //welcome to FLVER-town
 
 //standard fromsoft model format from DSPTDE onwards
@@ -131,7 +130,7 @@ namespace cfr {
 			float translation_y;
 			float translation_z;
 
-			uint64_t nameOffset;
+			uint32_t nameOffset;
 
 			float rot_x;
 			float rot_y;
@@ -157,7 +156,7 @@ namespace cfr {
 			float boundingBoxMax_y;
 			float boundingBoxMax_z;
 			
-			char* emptyJunk[52]; //potentially needed for spacing :/
+			char emptyJunk[52]; //potentially needed for spacing :/
 		};
 
 		struct Mesh
@@ -177,8 +176,8 @@ namespace cfr {
 				
 				int32_t defaultBoneIndex;
 				int32_t boneCount;
-				uint32_t boundingBoxOffset;
-				uint32_t boneIndicesOffset;
+				uint32_t boundingBoxOffset = 0;
+				uint32_t boneIndicesOffset = 0;
 				
 				int32_t faceSetCount;
 				uint32_t faceSetIndicesOffset;
@@ -193,6 +192,7 @@ namespace cfr {
 				float boundingBoxMin_x;
 				float boundingBoxMin_y;
 				float boundingBoxMin_z;
+
 				float boundingBoxMax_x;
 				float boundingBoxMax_y;
 				float boundingBoxMax_z;
@@ -206,23 +206,12 @@ namespace cfr {
 				float boundingBoxUnk_z;
 			};
 			
-			//only if boneCount > 0
-			struct BoneIndexData
-			{
-				int32_t* boneIndices; //size of boneCount
-			};
-
-			struct MeshFooter
-			{
-				int32_t* faceSetIndices; //size of faceSetCount
-				int32_t* vertexBufferIndices; //size of vertexBufferCount
-			};
-			
 			Header* header = NULL;
 			BoundingBoxData* boundingBoxData = NULL;
 			BoundingBoxDataUnk* boundingBoxDataUnk = NULL;
-			BoneIndexData* boneIndexData = NULL;
-			MeshFooter* meshFooter = NULL;
+			int32_t** boneIndices; //size of boneCount
+			int32_t** faceSetIndices; //size of faceSetCount
+			int32_t** vertexBufferIndices; //size of vertexBufferCount
 		};
 
 		struct Member
@@ -280,39 +269,52 @@ namespace cfr {
 
 		struct FaceSet
 		{
-			uint32_t flags;
-			bool triangleStrip;
-			bool cullBackFaces;
-			char unk06;
-			char unk07;
-			int32_t vertexIndexCount; //number of indices
-			uint32_t vertexIndicesOffset;
+			struct Header
+			{
+				uint32_t flags;
+				bool triangleStrip;
+				bool cullBackFaces;
+				char unk06;
+				char unk07;
+				int32_t vertexIndexCount; //number of indices
+				uint32_t vertexIndicesOffset;
+			};
 
 			//only if header.version >= 0x20009
-			int32_t vertexIndicesLength; //i don't know
-			int32_t unk14; //assert(0)
-			int32_t vertexIndexSize; //byte size of indices
-			int32_t unk1C; //assert(0)
-
-			uint32_t location;
+			struct VertInfo
+			{
+				int32_t vertexIndicesLength; //i don't know
+				int32_t unk14; //assert(0)
+				int32_t vertexIndexSize; //byte size of indices
+				int32_t unk1C; //assert(0)
+			};
+			
+			Header* header;
+			VertInfo* vertInfo;
+			EdgeIndices** vertexIndicesEdge = NULL;
+			uint16_t** vertexIndicesShort = NULL; //vertexindexcount
+			uint32_t** vertexIndicesInt = NULL; //vertexindexcount
+			int vertexSize = 0; //more accurate
 		};
 
 		struct VertexBuffer
 		{
-			int32_t bufferIndex;
-			int32_t layoutIndex;
-			int32_t vertexSize;
-			int32_t vertexCount;
+			struct Header
+			{
+				int32_t bufferIndex;
+				int32_t layoutIndex;
+				int32_t vertexSize;
+				int32_t vertexCount;
 
-			int32_t unk10; //assert(0)
-			int32_t unk14; //assert(0)
+				int32_t unk10; //assert(0)
+				int32_t unk14; //assert(0)
 
-			uint32_t verticesLength; //0 in version 20005, non 0 in 20008
-			uint32_t bufferOffset;
-
-			uint64_t start; //position where the data starts
-			uint64_t trueSize; //how big it is
-			uint32_t location;
+				uint32_t verticesLength; //0 in version 20005, non 0 in 20008
+				uint32_t bufferOffset;
+			};
+			
+			Header* header;
+			char** vertices; //vertexCount * vertexSize
 		};
 
 		struct LayoutMember
@@ -322,7 +324,6 @@ namespace cfr {
 			uint32_t type;
 			uint32_t semantic;
 			int32_t index;
-			int32_t size; //calc'd via type
 		};
 
 		struct BufferLayout
@@ -338,13 +339,13 @@ namespace cfr {
 			};
 
 			Header* header;
-			LayoutMember* members; //size of memberCount
+			LayoutMember** members; //size of memberCount
 		};
 
 		struct Texture
 		{
-			uint64_t pathOffset;
-			uint64_t typeOffset;
+			uint32_t pathOffset;
+			uint32_t typeOffset;
 
 			float scale_x;
 			float scale_y;
@@ -384,17 +385,12 @@ namespace cfr {
 		VertexBuffer* vertexBuffers;
 		BufferLayout* bufferLayouts;
 		Texture* textures;
-
-		/*int startOffset = 0;
-		MEM* src;*/
-
-		//read from already opened file
-		//FLVER2(MEM* src);
-
-		//open file and read
-		//FLVER2(const char* path);
 	};
 
+	//Init FLVER2 from MEM, pos assumed to be at start of FLVER
 	FLVER2* openFLVER2(MEM* src);
+
+	//Export data from FLVER2 for validation.
+	void exportFLVER2(FLVER2 flver, const char* path);
 };
 //#endif
