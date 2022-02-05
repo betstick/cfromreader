@@ -314,7 +314,7 @@ namespace cfr {
 			};
 			
 			Header* header;
-			char** vertices; //vertexCount * vertexSize
+			char* vertices; //vertexCount * vertexSize
 		};
 
 		struct LayoutMember

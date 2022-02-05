@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <cstdlib>
-#include <bits/stdc++.h>
+#include <unordered_map>
 #include <wchar.h>
 
 //memory manipulation

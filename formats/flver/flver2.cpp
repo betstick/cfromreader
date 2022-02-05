@@ -178,7 +178,7 @@ namespace cfr
 			long pos = mtell(src);
 			mseek(src,hdr->dataOffset+buff->header->bufferOffset+startOffset,SEEK_SET);
 
-			buff->vertices = (char**)mtellptr(src);
+			buff->vertices = (char*)mtellptr(src);
 
 			mseek(src,pos,SEEK_SET);
 		}
@@ -216,6 +216,7 @@ namespace cfr
 		return tex;
 	};
 
+	//TODO: these?
 	FLVER2::VertexBoneWeights* vertexBoneWeightsInit(MEM* src, int startOffset)
 	{
 		return nullptr;

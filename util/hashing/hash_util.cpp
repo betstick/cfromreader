@@ -29,25 +29,15 @@ namespace cfr
 		int listFileSize = ftell(listFile);
 		fseek(listFile,0,SEEK_SET);
 
-		char* fileData;
-		fileData = (char*)malloc(listFileSize);
-		fread(fileData,listFileSize,1,listFile);
-		fclose(listFile);
-
-		FILE* listMem = fmemopen(fileData,listFileSize,"rb");
-		
-		if(listMem == NULL)
-			throw std::runtime_error("Failed to map file list memory.\n");
-
 		char* line;
 		size_t lineSize = 128;
 		size_t characters;
 
 		line = (char*)malloc(lineSize * sizeof(char));
 
-		while(feof(listMem) != 1 || ferror(listMem) != 0)
+		while(feof(listFile) != 1 || ferror(listFile) != 0)
 		{
-			characters = getline(&line,&lineSize,listMem);
+			characters = getline(&line,&lineSize,listFile);
 
 			std::string filePath = line;
 
@@ -57,7 +47,7 @@ namespace cfr
 			paths.push_back(filePath);
 		}
 
-		fclose(listMem);
+		fclose(listFile);
 
 		return paths;
 	}
