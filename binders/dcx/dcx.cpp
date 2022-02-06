@@ -4,7 +4,7 @@ namespace cfr
 {
 	char* openDCX(const char* path, size_t* size)
 	{
-		FILE* dcx = fopen(path,"rb");
+		FILE* dcx = v_fopen(path,"rb");
 		
 		//load entire file into memory
 		fseek(dcx,0,SEEK_END);

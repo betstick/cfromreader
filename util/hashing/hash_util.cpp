@@ -1,4 +1,5 @@
 #include "hash_util.hpp"
+#include "../files/files.hpp"
 
 namespace cfr
 {
@@ -20,7 +21,7 @@ namespace cfr
 		}
 
 		//open file and read to memory for performance
-		FILE* listFile = fopen(path,"rb");
+		FILE* listFile = v_fopen(path,"rb");
 
 		if(listFile == NULL)
 			throw std::runtime_error("Failed to open file list.\n");

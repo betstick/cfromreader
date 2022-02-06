@@ -62,6 +62,7 @@ unset(BUILD CACHE)
 include_directories(src)
 
 set(SOURCES 
+	"util/files/files.cpp"
 	"util/hashing/hash_util.cpp"
 	"util/filetypes.cpp"
 	"util/compat/compat.cpp"

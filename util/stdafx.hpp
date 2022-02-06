@@ -1,6 +1,8 @@
 #pragma once
 #include "../common/stdafx.hpp"
 
+#include "files/files.hpp"
+
 #include "memr/memr.hpp"
 #include "compression/zlib_inf.hpp"
 

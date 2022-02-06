@@ -278,7 +278,7 @@ namespace cfr
 
 	void exportFLVER2(FLVER2 flver, const char* filename)
 	{
-		FILE* out = fopen(filename,"w");
+		FILE* out = v_fopen(filename,"w");
 
 		char magicString[] = "magic: xxxxxx\n";
 		memcpy(&magicString[7],flver.header->magic,5); //cut off the null char
