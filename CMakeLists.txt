@@ -5,6 +5,7 @@ project(cfr VERSION 0.0.1 DESCRIPTION "cfr 001")
 enable_language(CXX)
 
 include(GNUInstallDirs)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   # using Clang
@@ -60,7 +61,6 @@ unset(BUILD CACHE)
 
 include_directories(src)
 
-#file(GLOB_RECURSE SOURCES "*.cpp")
 set(SOURCES 
 	"util/hashing/hash_util.cpp"
 	"util/filetypes.cpp"
@@ -76,19 +76,12 @@ set(SOURCES
 
 add_library(cfr SHARED ${SOURCES})
 
-
 set(MY_LIB_HEADER "cfr.hpp")
 set(PUBLIC_HEADERS "cfr.hpp" )
 
 set_target_properties(cfr PROPERTIES 
 	PUBLIC_HEADER ${PUBLIC_HEADERS}
 	RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
-
-
-#set_target_properties(cfr PROPERTIES PUBLIC_HEADER cfr.hpp)
-#target_include_directories(cfr PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-#target_include_directories(cfr PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-#target_include_directories(cfr PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 install(TARGETS cfr LIBRARY DESTINATION /usr/lib)
 install(FILES cfr.hpp DESTINATION include)
