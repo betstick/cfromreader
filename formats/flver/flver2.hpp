@@ -291,9 +291,9 @@ namespace cfr {
 			
 			Header* header;
 			VertInfo* vertInfo;
-			EdgeIndices** vertexIndicesEdge = NULL;
-			uint16_t** vertexIndicesShort = NULL; //vertexindexcount
-			uint32_t** vertexIndicesInt = NULL; //vertexindexcount
+			EdgeIndices* vertexIndicesEdge = NULL;
+			uint16_t* vertexIndicesShort = NULL; //vertexindexcount
+			uint32_t* vertexIndicesInt = NULL; //vertexindexcount
 			int vertexSize = 0; //more accurate
 		};
 
@@ -312,9 +312,14 @@ namespace cfr {
 				uint32_t verticesLength; //0 in version 20005, non 0 in 20008
 				uint32_t bufferOffset;
 			};
+
+			struct Vertex
+			{
+				char* data; //vertexSize blocks
+			};
 			
 			Header* header;
-			char* vertices; //vertexCount * vertexSize
+			Vertex* vertices; //vertexCount * vertexSize
 		};
 
 		struct LayoutMember
@@ -392,5 +397,8 @@ namespace cfr {
 
 	//Export data from FLVER2 for validation.
 	void exportFLVER2(FLVER2 flver, const char* path);
+
+	//Print FLVER2 data to console.
+	void printFLVER2(FLVER2* flver);
 };
 //#endif

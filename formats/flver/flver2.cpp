@@ -155,11 +155,11 @@ namespace cfr
 		}
 		else if(set->vertexSize == 16)
 		{
-			set->vertexIndicesShort = (uint16_t**)mtellptr(src);
+			set->vertexIndicesShort = (uint16_t*)mtellptr(src);
 		}
 		else if(set->vertexSize == 32)
 		{
-			set->vertexIndicesInt = (uint32_t**)mtellptr(src);
+			set->vertexIndicesInt = (uint32_t*)mtellptr(src);
 		}
 
 		mseek(src,pos,SEEK_SET);
@@ -173,12 +173,21 @@ namespace cfr
 		buff->header = (FLVER2::VertexBuffer::Header*)mtellptr(src);
 		mseek(src,sizeof(FLVER2::VertexBuffer::Header),SEEK_CUR);
 
+		buff->vertices = (FLVER2::VertexBuffer::Vertex*)malloc(
+				sizeof(FLVER2::VertexBuffer::Vertex)*buff->header->vertexCount
+		);
+
 		if(buff->header->unk10 == 0 && buff->header->unk14 == 0)
 		{
 			long pos = mtell(src);
 			mseek(src,hdr->dataOffset+buff->header->bufferOffset+startOffset,SEEK_SET);
 
-			buff->vertices = (char*)mtellptr(src);
+			for(int i = 0; i < buff->header->vertexCount; i++)
+			{
+				//printf("vertex[%i] loc: 0x%x\n",i,(mtell(src)-startOffset));
+				buff->vertices[i].data = (char*)mtellptr(src);
+				mseek(src,buff->header->vertexSize,SEEK_CUR);
+			}
 
 			mseek(src,pos,SEEK_SET);
 		}
@@ -195,7 +204,9 @@ namespace cfr
 		long pos = mtell(src);
 
 		//is this needed?
-		layout->members = (FLVER2::LayoutMember**)malloc(sizeof(void*)*layout->header->memberCount);
+		layout->members = (FLVER2::LayoutMember**)malloc(
+			sizeof(FLVER2::LayoutMember)*layout->header->memberCount
+		);
 
 		for(int i = 0; i < layout->header->memberCount; i++)
 		{
@@ -285,5 +296,46 @@ namespace cfr
 		fwrite(magicString,14,1,out);
 
 		fclose(out);
+	};
+
+	void printFLVER2(FLVER2* flver)
+	{
+		printf("header:\n");
+		printf("\tdummyCount:        %4i\n",flver->header->dummyCount);
+		printf("\tmaterialCount:     %4i\n",flver->header->materialCount);
+		printf("\tboneCount:         %4i\n",flver->header->boneCount);
+		printf("\tmeshCount:         %4i\n",flver->header->meshCount);
+		printf("\tvertexBufferCount: %4i\n",flver->header->vertexBufferCount);
+		printf("\ttrueFaceCount:     %4i\n",flver->header->trueFaceCount);
+		printf("\ttotalFaceCount:    %4i\n",flver->header->totalFaceCount);
+		printf("\tfaceSetCount:      %4i\n",flver->header->faceSetCount);
+		printf("\tbufferLayoutCount: %4i\n",flver->header->bufferLayoutCount);
+		printf("\ttextureCount:      %4i\n",flver->header->textureCount);
+		printf("\n");
+
+		for(int i = 0; i < flver->header->faceSetCount; i++)
+		{
+			printf("faceSet[%4i]\n",i);
+			printf("\tvertexIndexCount:      %12i\n",flver->faceSets[i].header->vertexIndexCount);
+			printf("\tvertexIndicesOffset: 0x%12x\n",flver->faceSets[i].header->vertexIndicesOffset);
+			printf("\n");
+		}
+
+		for(int i = 0; i < flver->header->vertexBufferCount; i++)
+		{
+			printf("vertexBuffer[%4i]:\n",i);
+			for(int j = 0; j < flver->vertexBuffers[i].header->vertexCount; j ++)
+			{
+				printf("\tvertex[%4i]: ",j);
+				for(int k = 0; k < flver->vertexBuffers[i].header->vertexSize; k++)
+				{
+					uint8_t c = 'x';
+					memcpy(&c,&flver->vertexBuffers[i].vertices[j].data[k],1);
+					printf("%3u, ", c);
+				}
+				printf("\n");
+			}
+			printf("\n");
+		}
 	};
 };
