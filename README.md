@@ -22,14 +22,19 @@ git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 vcpkg integrate install
 ```
-After you've done this add the location you chose to your PATH variable. Next, install the ZLIB package.
+After you've done this add the location you chose to your PATH variable. Also add the following to your path as well:
+```
+${VCPKGROOT}\installed\x64-windows\include
+${VCPKGROOT}\installed\x64-windows\lib
+```
+Next, install the ZLIB package.
 ```
 vcpkg install zlib
 ```
 From here, you should be good to clone this project and build it via the cmake stuffs. It compiles on my machine, I have no clue if it even works yet. I don't really understand VS, its a mess to me. Just install Linux.
 
 ## Misc
-This project currently is targetting Dark Souls PTDE due to Havok issues with the Remaster. More games/support may get added later. This code is primarily for my personal use in another project, and was initially abstracted for licensing reasons, but now its like this for organizational purposes.
+This project currently is targetting Dark Souls PTDE due to Havok issues with the Remaster. More games/support may get added later. This code is primarily for my personal use in another project, and was initially abstracted for licensing reasons, but now its like this for organizational purposes. If you're wondering, no this code is not secure nor is it "memory safe". It's probably highly vulnerable to overflows and whatnot. Its not networked.
 
 ## Credits
 JKAndarson's [SoulsTemplates](https://github.com/JKAnderson/SoulsTemplates) and [SoulsFormats](https://github.com/JKAnderson/SoulsFormats)<br/>
