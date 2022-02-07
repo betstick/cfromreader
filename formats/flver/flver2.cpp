@@ -324,6 +324,7 @@ namespace cfr
 		for(int i = 0; i < flver->header->vertexBufferCount; i++)
 		{
 			printf("vertexBuffer[%4i]:\n",i);
+			printf("\tlayoutIndex: %4i\n",flver->vertexBuffers[i].header->layoutIndex);
 			for(int j = 0; j < flver->vertexBuffers[i].header->vertexCount; j ++)
 			{
 				printf("\tvertex[%4i]: ",j);

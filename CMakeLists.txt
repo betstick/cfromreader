@@ -59,15 +59,18 @@ else()
 endif()
 unset(BUILD CACHE)
 
+message(STATUS "Given CMEM_LOCATION: " ${CMEM_DIR})
+include_directories(${CMEM_DIR})
+
 include_directories(src)
 
-set(SOURCES 
+set(SOURCES
+	${CMEM_LIB}
 	"util/files/files.cpp"
 	"util/hashing/hash_util.cpp"
 	"util/filetypes.cpp"
 	"util/compat/compat.cpp"
 	"util/compression/zlib_inf.cpp"
-	"util/memr/memr.cpp"
 	"binders/bdf/bdf3.cpp"
 	"binders/bhd/bhd5_1.cpp"
 	"binders/bnd/bnd3.cpp"

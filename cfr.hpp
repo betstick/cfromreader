@@ -7,7 +7,7 @@
 
 #include "util/stdafx.hpp"
 #include "util/hashing/hash_util.hpp"
-#include "binders/stdafx.hpp"
-#include "formats/stdafx.hpp"
+#include "binders/binders.hpp"
+#include "formats/formats.hpp"
 
 #endif

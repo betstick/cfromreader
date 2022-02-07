@@ -1,8 +1,10 @@
+#pragma once
+#include <stdio.h>
+#include <cstring>
+#include <stdexcept>
+
 #ifndef CFR_FILE_TYPES__
 #define CFR_FILE_TYPES__
-
-#pragma once
-#include "stdafx.hpp"
 
 namespace cfr
 {
