@@ -1,6 +1,3 @@
-//#ifndef CFR_FLVER2__
-//#define CFR_FLVER2__
-
 #pragma once
 #include "../../util/stdafx.hpp"
 #include "../stdafx.hpp"
@@ -11,6 +8,37 @@
 //to help shorten this for now, it won't support non souls games
 
 namespace cfr {
+	enum VertexSemantic
+	{
+		//FLVER2_VERTEX_SEMANTIC
+		FVS_POSITION     =  0,
+		FVS_BONE_WEIGHTS =  1,
+		FVS_BONE_INDICES =  2,
+		FVS_NORMAL       =  3,
+		FVS_UV           =  5,
+		FVS_TANGENT      =  6,
+		FVS_BITANGENT    =  7,
+		FVS_VERTEX_COLOR = 10
+	};
+
+	enum VertexType
+	{
+		FVT_VEC2               = 0x01, //two floats
+		FVT_VEC3               = 0x02, //three floats
+		FVT_VEC4               = 0x03, //four floats
+		FVT_UNK0               = 0x10, //unknown
+		FVT_4_BYTE_0           = 0x11, //four bytes
+		FVT_SHORT2             = 0x12, //two shorts
+		FVT_4_BYTE_1           = 0x13, //four bytes
+		FVT_UV                 = 0x15, //two shorts
+		FVT_UV_PAIR            = 0x16, //four shorts
+		FVT_SHORT_BONE_INDICES = 0x18, //four shorts
+		FVT_4_SHORT_0          = 0x1A, //four shorts
+		FVT_UNK1               = 0x2E, //unknown
+		FVT_UNK2               = 0x2F, //unknown
+		FVT_UNK3               = 0xF0, //unknown
+	};
+
 	struct FLVER2
 	{
 		struct Header
@@ -395,10 +423,15 @@ namespace cfr {
 	//Init FLVER2 from MEM, pos assumed to be at start of FLVER
 	FLVER2* openFLVER2(MEM* src);
 
+	//Init FLVER2 from a pointer
+	FLVER2* openFLVER2(void* src, size_t size);
+
+	//Init FLVER2 from a file
+	FLVER2* openFLVER2(const char* path);
+
 	//Export data from FLVER2 for validation.
 	void exportFLVER2(FLVER2 flver, const char* path);
 
 	//Print FLVER2 data to console.
 	void printFLVER2(FLVER2* flver);
 };
-//#endif

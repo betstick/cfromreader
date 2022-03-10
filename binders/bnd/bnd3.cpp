@@ -2,83 +2,7 @@
 
 namespace cfr
 {
-	/*BND3File* openBnd3(MEM* src, int* count)
-	{
-		unsigned int startPos = mtell(src);
-
-		char magic[4];
-		mread(magic,4,1,src);
-		if(memcmp(magic,"BND3",4) != 0){return NULL;}
-
-		mseek(src,8,SEEK_CUR); //skip version, not needed
-
-		uint8_t rawFormat;
-		mread(&rawFormat,1,1,src);
-
-		mseek(src,3,SEEK_CUR);
-
-		int32_t fileCount;
-		mread(&fileCount,4,1,src);
-		*count = fileCount; //copy to count pointer
-
-		mseek(src,12,SEEK_CUR); //skip to end of BND3 header
-
-		BND3File* fileArr = (BND3File*)malloc(fileCount*sizeof(BND3File));
-
-		//iterate thru and generate all the file structs for arr
-		for(int i = 0; i < fileCount; i++)
-		{
-			//file headers are 24 bytes total
-			uint8_t rawFlags;
-			mread(&rawFlags,1,1,src);
-
-			mseek(src,3,SEEK_CUR);
-
-			int32_t compressedSize;
-			mread(&compressedSize,4,1,src);
-
-			uint32_t dataOffset;
-			mread(&dataOffset,4,1,src);
-
-			int32_t id = -1;
-			if(rawFormat & 0b01000000)
-				mread(&id,4,1,src);
-
-			//check if nameOffset needs to be skipped
-			if((rawFormat & 0b00100000) | (rawFormat & 0b00010000))
-				mseek(src,4,SEEK_CUR);
-
-			int32_t uncompressedSize = 0;
-			if(rawFormat & 0b00000100)
-				mread(&uncompressedSize,4,1,src);
-
-			//step into the file to figure out its type
-			int pos = mtell(src);
-			mseek(src,dataOffset,SEEK_SET);
-
-			char magic[8];
-			mread(magic,8,1,src);
-
-			mseek(src,pos,SEEK_SET);
-
-			//get whichever is larger, shouldn't matter *too* much.
-			int totalSize = uncompressedSize > compressedSize ? uncompressedSize : compressedSize;
-			fileArr[i] = {src,dataOffset,totalSize,id,determineFormat(magic)};
-		}
-
-		mseek(src,startPos,SEEK_SET); //return to start for cleanliness
-		return fileArr;
-	};
-
-	BND3File* openBnd3(const char* path, int* count)
-	{
-		FILE* src = fopen(path,"rb");
-		
-		fclose(src);
-		return openBnd3(src,count);
-	};*/
-
-	BND3* openBnd3(MEM* src)
+	BND3* initBND3(MEM* src)
 	{
 		BND3* bnd = (BND3*)malloc(sizeof(BND3));
 
@@ -120,4 +44,30 @@ namespace cfr
 		return bnd;
 	};
 
+	BND3* openBND3(void* src, size_t size)
+	{
+		MEM* mem = mopen((char*)mem,size);
+		BND3* bnd = initBND3(mem);
+		mclose(mem);
+		return bnd;
+	};
+
+	BND3* openBND3(const char* path)
+	{
+		//load entire file into memory
+		FILE* fp = v_fopen(path,"br");
+		fseek(fp,0,SEEK_END);
+		int size = ftell(fp);
+		fseek(fp,0,SEEK_SET);
+		char* data = (char*)malloc(size);
+		fread(&data[0],size,1,fp);
+		fclose(fp);
+
+		return openBND3(data,size);
+	};
+
+	BND3* openBND3(MEM* mem)
+	{
+		return initBND3(mem);
+	};
 };

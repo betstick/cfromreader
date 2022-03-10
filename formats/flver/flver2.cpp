@@ -243,6 +243,28 @@ namespace cfr
 		return nullptr;
 	};
 
+	FLVER2* openFLVER2(void* src, size_t size)
+	{
+		MEM* mem = mopen((char*)src,size);
+		FLVER2* flver = openFLVER2(mem);
+		mclose(mem);
+		return flver;
+	};
+
+	FLVER2* openFLVER2(const char* path)
+	{
+		//load entire file into memory
+		FILE* fp = v_fopen(path,"br");
+		fseek(fp,0,SEEK_END);
+		int size = ftell(fp);
+		fseek(fp,0,SEEK_SET);
+		char* data = (char*)malloc(size);
+		fread(&data[0],size,1,fp);
+		fclose(fp);
+
+		return openFLVER2(data,size);
+	};
+
 	//Cast a FLVER2 from a position in memory
 	FLVER2* openFLVER2(MEM* src)
 	{

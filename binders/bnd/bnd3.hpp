@@ -47,11 +47,14 @@ namespace cfr
 		File* files;
 	};
 
-	//Init array of BND3 from current pos in file, count is set to array size
-	BND3* openBnd3(FILE* src, int* count);
+	//Init BND3 via current pos in memory
+	BND3* openBND3(void* src, size_t size);
 
-	//Init BND3 via current pos in MEM
-	BND3* openBnd3(MEM* src);
+	//Init BND3 via a path
+	BND3* openBND3(const char* path);
+
+	//Init BND3 via a MEM pointer
+	BND3* openBND3(MEM* mem);
 
 	//Returns array of formats for a BND3
 	//CfrFileType* getBnd3FileTypes(BND3* bnd);

@@ -61,11 +61,11 @@ unset(BUILD CACHE)
 
 message(STATUS "Given CMEM_LOCATION: " ${CMEM_DIR})
 include_directories(${CMEM_DIR})
-
-include_directories(src)
+include_directories(${HKLDR_DIR})
 
 set(SOURCES
 	${CMEM_LIB}
+	${HKLDR_LIBS}
 	"util/files/files.cpp"
 	"util/hashing/hash_util.cpp"
 	"util/filetypes.cpp"
