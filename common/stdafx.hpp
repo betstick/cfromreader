@@ -12,6 +12,10 @@
 #include <unordered_map>
 #include <wchar.h>
 
+//string conversions
+#include <locale>
+#include <codecvt>
+
 //memory manipulation
 #include <memory>
 
