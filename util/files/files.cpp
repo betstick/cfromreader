@@ -9,7 +9,11 @@ namespace cfr
 #endif
 	{
 		errno = 0;
+#ifdef _WIN32
+		FILE* ptr = fopen(filename,modes);
+#else
 		FILE* ptr = fopen(__filename,__modes);
+#endif
 
 		if(ptr == NULL || errno != 0)
 		{
