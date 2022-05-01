@@ -82,3 +82,13 @@ struct node
 worst case: bnd -> dcx -> bnd -> lots of data files
 
 honestly load whatever is in the DCX if one is found. cache its headers and be done with it. find some way to store a chain of vnodes to get the actual files if they are needed?
+
+
+ways to open files:
+directly opening the raw file from its actual path
+knowing the character id you want?
+idk.
+
+there's two conflicting systems. the base filesystem, and the fact that some binders are a blob.
+they cannot have individual files taken out. its all or nothing. so for those specific binders,
+it'd make sense to just load the entire file into memory and leave it.

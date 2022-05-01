@@ -70,4 +70,15 @@ namespace cfr
 
 		return wide;
 	};
+
+	/*std::string readStringFromOffset(MEM* src)
+	{
+		long pos = mtell(src);
+	};
+
+	std::string readWStringFromOffset(MEM* src, bool unicode)
+	{
+
+	};*/
+
 };

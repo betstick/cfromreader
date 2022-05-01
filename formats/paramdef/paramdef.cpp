@@ -21,8 +21,8 @@ namespace cfr
 			mread(&offset,sizeof(long),1,src);
 			long pos = mtell(src);
 			mseek(src,offset-start,SEEK_CUR);
-			//read the string
-			mseek(src,pos,SEEK_SET);
+			this->paramType = readString(src);
+			mseek(src,pos+start,SEEK_SET);
 			mread(&this->typePad2,sizeof(long),1,src);
 			mread(&this->typePad3,sizeof(long),1,src);
 			mread(&this->typePad4,sizeof(int),1,src);

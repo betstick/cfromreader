@@ -71,7 +71,7 @@ namespace cfr
 
 	FLVER2::Mesh* meshInit(MEM* src, int startOffset, FLVER2::Header* hdr)
 	{
-		printf("mesh[i] pos:%x\n",mtell(src)-startOffset);
+		//printf("mesh[i] pos:%x\n",mtell(src)-startOffset);
 		FLVER2::Mesh* mesh = (FLVER2::Mesh*)malloc(sizeof(FLVER2::Mesh));
 
 		mesh->header = (FLVER2::Mesh::Header*)mtellptr(src);

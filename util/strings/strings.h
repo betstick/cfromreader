@@ -13,4 +13,10 @@ namespace cfr
 	std::wstring readWstring(MEM* src);
 
 	std::wstring shortToWideString(std::string str);
+
+	//goto offset, then generate string from null term'd chars.
+	//std::string readStringFromOffset(MEM* src);
+
+	//goto offset, then generate string from null term'd chars. bool true if source are wchars.
+	//std::string readWStringFromOffset(MEM* src, bool unicode);
 };
