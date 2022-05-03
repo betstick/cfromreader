@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-
 project(cfr VERSION 0.0.1 DESCRIPTION "cfr 001")
-
-enable_language(CXX)
 
 include(GNUInstallDirs)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -59,14 +56,9 @@ else()
 endif()
 unset(BUILD CACHE)
 
-message(STATUS "Given CMEM_LOCATION: " ${CMEM_DIR})
-message(STATUS "Given HKLDR_LOCATION: " ${HKLDR_DIR})
 include_directories(${CMEM_DIR})
-include_directories(${HKLDR_DIR})
 
 set(SOURCES
-	${CMEM_LIB}
-	${HKLDR_LIBS}
 	"util/files/files.cpp"
 	"util/strings/strings.cpp"
 	"util/hashing/hash_util.cpp"
@@ -81,21 +73,6 @@ set(SOURCES
 	"formats/paramdef/paramdef.cpp"
 )
 
-add_library(cfr SHARED ${SOURCES})
+add_library(cfr ${SOURCES} "cfr.hpp")
 
-set(MY_LIB_HEADER "cfr.hpp")
-set(PUBLIC_HEADERS "cfr.hpp" )
-
-set_target_properties(cfr PROPERTIES 
-	PUBLIC_HEADER ${PUBLIC_HEADERS}
-	RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
-
-install(TARGETS cfr LIBRARY DESTINATION /usr/lib)
-install(FILES cfr.hpp DESTINATION include)
-
-install(TARGETS ${PROJECT_NAME}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-	PERMISSIONS 
-	OWNER_READ OWNER_WRITE 
-	GROUP_READ WORLD_READ )
+target_include_directories(cfr PUBLIC .)
