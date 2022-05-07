@@ -1,4 +1,5 @@
 #include "files.hpp"
+#define _CRT_SECURE_NO_DEPRECATE //shuts up microsoft's prattle
 
 namespace cfr
 {
@@ -9,11 +10,14 @@ namespace cfr
 #endif
 	{
 		errno = 0;
+
+		FILE* ptr = fopen(
 #ifdef _WIN32
-		FILE* ptr = fopen(filename,modes);
+			filename,modes
 #else
-		FILE* ptr = fopen(__filename,__modes);
+			__filename,__modes
 #endif
+		);
 
 		if(ptr == NULL || errno != 0)
 		{
@@ -23,4 +27,5 @@ namespace cfr
 
 		return ptr;
 	};
+
 };

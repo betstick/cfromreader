@@ -16,19 +16,19 @@ namespace cfr
 			bnd->files[i].header = (BND3::File::Header*)mtellptr(src);
 			mseek(src,sizeof(BND3::File::Header),SEEK_CUR);
 			
-			if(bnd->header->rawFarmat & 0b01000000)
+			if(bnd->header->rawFormat & 0b01000000)
 			{
 				bnd->files[i].id = (int32_t*)mtellptr(src);
 				mseek(src,4,SEEK_CUR);
 			}
 
-			if((bnd->header->rawFarmat & 0b00100000) | (bnd->header->rawFarmat & 0b00010000))
+			if((bnd->header->rawFormat & 0b00100000) | (bnd->header->rawFormat & 0b00010000))
 			{
 				bnd->files[i].nameOffset = (int32_t*)mtellptr(src) + mtell(src);
 				mseek(src,4,SEEK_CUR);
 			}
 
-			if(bnd->header->rawFarmat & 0b00000100)
+			if(bnd->header->rawFormat & 0b00000100)
 			{
 				bnd->files[i].uncompressedSize = (int32_t*)mtellptr(src);
 				mseek(src,4,SEEK_CUR);

@@ -9,7 +9,7 @@ namespace cfr
 		{
 			char magic[4];
 			char version[8];
-			uint8_t rawFarmat;
+			uint8_t rawFormat;
 			uint8_t bigEndian;
 			uint8_t bitBigEndian;
 			char unk0F;
