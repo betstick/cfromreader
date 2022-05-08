@@ -36,9 +36,9 @@ namespace cfr
 			Header* header;
 
 			//circumstantially fill these
-			int32_t* id = NULL;
-			int32_t* nameOffset = NULL;
-			int32_t* uncompressedSize = NULL;
+			int32_t id = 0;
+			int32_t nameOffset = 0;
+			int32_t uncompressedSize = 0;
 
 			char** data;
 		};
