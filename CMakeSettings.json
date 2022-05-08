@@ -9,7 +9,8 @@
 			"cmakeCommandArgs": "",
 			"buildCommandArgs": "/F ",
 			"ctestCommandArgs": "",
-			"inheritEnvironments": [ "msvc_x64_x64" ]
+			"inheritEnvironments": [ "msvc_x64_x64" ],
+			"cmakeToolchain": "${env.vcpkg_root}/scripts/buildsystems/vcpkg.cmake"
 		}
 	]
 }
