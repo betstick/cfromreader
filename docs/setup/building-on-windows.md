@@ -58,7 +58,7 @@ Add the following four paths. Each as their own line.
 ## ZLIB
 Installing is as simple as running this commmand from the location of your VCPKG install:
 ```
-vcpkg install zlib
+vcpkg install zlib:x64-windows
 ```
 
 ## CMEM

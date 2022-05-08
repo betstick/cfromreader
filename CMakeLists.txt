@@ -2,24 +2,21 @@ cmake_minimum_required(VERSION 3.10)
 project(cfr VERSION 0.0.1 DESCRIPTION "cfr 001")
 
 include(GNUInstallDirs)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(WIN32)
 	add_compile_definitions(_WIN32)
 endif()
 
 find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
-link_libraries(${ZLIB_LIBRARIES})
 
 #copy the filelists needed for dvdbnds
 file(COPY "res/" DESTINATION "release/res/")
 
-include_directories(${CMEM_DIR})
-#link_directories(${CMEM_DIR})
+include_directories(cmem)
 
 set(SOURCES
-	${CMEM_DIR}/cmem.c
 	"util/files/files.cpp"
 	"util/strings/strings.cpp"
 	"util/hashing/hash_util.cpp"
@@ -34,16 +31,8 @@ set(SOURCES
 	"formats/paramdef/paramdef.cpp"
 )
 
-add_library(cfr SHARED ${SOURCES}) #"cfr.hpp")
+add_library(cfr STATIC ${SOURCES} "cfr.hpp")
 
-#set(MY_LIB_HEADER "cfr.hpp")
-#set(PUBLIC_HEADERS "cfr.hpp" )
+target_link_libraries(cfr cmem ZLIB::ZLIB)
 
-#set_target_properties(cfr PROPERTIES 
-#	PUBLIC_HEADER ${PUBLIC_HEADERS}
-#	RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
-
-#target_link_libraries(cfr ${CMEM_DIR}/cmem.h)
-#link_libraries(${CMEM_DIR}/cmem.c)
-target_include_directories(cfr PUBLIC .)
-#target_include_directories(cfr PUBLIC ${CMEM_DIR})
+target_include_directories(cfr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
