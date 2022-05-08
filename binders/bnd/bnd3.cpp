@@ -46,7 +46,7 @@ namespace cfr
 
 	BND3* openBND3(void* src, size_t size)
 	{
-		MEM* mem = mopen((char*)mem,size);
+		MEM* mem = mopen((char*)src,size);
 		BND3* bnd = initBND3(mem);
 		mclose(mem);
 		return bnd;

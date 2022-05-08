@@ -2,7 +2,7 @@
 
 namespace cfr
 {
-	char* openDCX(const char* path, size_t* size)
+	/*char* openDCX(const char* path, size_t* size)
 	{
 		FILE* dcx = v_fopen(path,"rb");
 		
@@ -17,7 +17,7 @@ namespace cfr
 		mopen(dcxMem,fileSize);
 
 		return openDCX(dcxMem,size);
-	};
+	};*/
 
 	char* openDCX(FILE* src, size_t compressedSize, size_t* uncompressedSizeOut)
 	{
