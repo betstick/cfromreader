@@ -43,14 +43,16 @@ vcpkg integrate install
 
 If the commands don't work for you, try playing with the syntax a bit. Try using the `git-bash` application, just make sure you know where you're installing to. You can also try using CMD, PowerShell, or whatever other terminals you like.
 
+You'll need to create a new system environment variable. Name it `VCPKGROOT` and set the value to where you installed install `vcpkg` to. I installed it to `C:\dev\vcpkg` so that is what I set the variable to.
+
 Now make sure to add the package installation locations to your SYSTEM PATH environement variable. Search in the start menu for `environment variables`, then click `Environmnent Variables...` at the bottom. On the bottom are the SYSTEM variables. Select the one called `Path` and click `edit`.
 
-Add the following four paths. Each as their own line. Replace ${VCPKGROOT} with the location you installed VCPKG in.
+Add the following four paths. Each as their own line.
 ```
-${VCPKGROOT}\installed\x64-windows\include
-${VCPKGROOT}\installed\x64-windows\lib
-${VCPKGROOT}\installed\x86-windows\include
-${VCPKGROOT}\installed\x86-windows\lib
+%VCPKGROOT%\installed\x64-windows\include
+%VCPKGROOT%\installed\x64-windows\lib
+%VCPKGROOT%\installed\x86-windows\include
+%VCPKGROOT%\installed\x86-windows\lib
 ```
 
 ## ZLIB
